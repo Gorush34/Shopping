@@ -1,0 +1,296 @@
+@charset "UTF-8";
+
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
+#myheader      { display: flex; min-height:100px; position: relative; top: 60px; }
+#mycontainer   { padding:20px; }
+
+body {
+	font-family: 'Noto Sans KR', sans-serif;
+}
+
+
+/* 헤더 스타일  시작 */
+	
+	li.login_dropdown  { 
+		list-style : none;
+		display: inline-block;
+	}
+	
+	img#memberProfile {
+		max-width: 40px;
+		max-height: 40px;
+		border-radius: 100%;
+	}
+	
+	ul#secondHeaderGroup, .secondHeaderList {
+			list-style-type: none;
+			display: inline-block;
+	}
+	
+	
+	
+	#navbarSupportedContent > ul > li {
+		margin-right: 20px;
+		font-size: 18px;
+	}
+	
+	#myheader > nav > div:nth-child(4) {
+		font-size: 18px;
+	}
+
+/* 헤더 스타일  끝 */
+
+/* 내용물을 보여주는 div id="contentContainer" 작업 시작 */
+
+	div#contentContainer {
+		width: 80%;
+		margin: 30px auto;
+	}
+	
+
+/* 내용물을 보여주는 div id="contentContainer" 작업 끝 */
+
+/* customerList.jsp 작업 시작 */
+
+	table#tbl_searchCustmor {
+		background-color: #b3d9ff;
+		border: solid 1px gray;
+		width: 100%;
+		min-height: 100px;
+	}
+	
+	table#tbl_searchCustmor > thead > tr > td { padding-left: 10px; }
+	
+	.mg_tg_at{ margin: auto 0;}
+	.mg_td{ margin: 15px 0; }
+	.mg_left{ margin-left: 10px; }
+	.mg_right{ margin-right: 10px; }
+	
+	.pd_tg_at{ padding: auto 0;}
+	.pd_td{ padding: 15px 0; }
+	.pd_left{ padding-left: 10px; }
+	.pd_right{ padding-right: 10px; }
+	
+	.left{ text-align: left; }
+	.center{ text-align: center; }	
+	.right{ text-align: right; }	
+	
+	div#adminContainer {
+		margin: auto 0;
+		padding: 20px 20px 20px 0;
+		float: right;
+		
+	}
+	
+	
+	table#tbl_css {
+		margin-top: 50px;
+	}
+	
+	table{
+	    border-collapse: separate;
+    	border-spacing: 0;
+	}
+	
+	thead#tbl_css_header > tr > th {
+		background-color: #b3b3b3;
+	}
+	
+	thead#tbl_css_header > tr > th, thead#tbl_css_header > tr > td, table#tbl_css > tbody > tr > td {
+		border: solid 1px gray;
+	}
+	
+	input.small { max-width: 80px; }
+	input.medium { max-width: 120px; }
+	input.large { max-width: 140px; }
+	
+	input.dark { background-color: #b3b3b3; }
+	
+	.scrolltable {
+	  	table-layout: fixed;	
+	  	width:100%;
+	}
+	
+	.scrolltable thead {
+	    min-width:90%;
+	    display:block;
+	}
+	
+	.scrolltable tbody{
+		min-width:90%;
+	    display:block;
+	    overflow:auto;
+	    height:400px;
+	}
+	
+	#tbl_css_header > tr > td {
+		font-size: 20px; 
+	}
+	
+	.scrolltable th, .scrolltable td {
+	  padding: 10px;
+	  width: 185px;
+	  font-size: 0.875em;
+	}
+
+	button#updateLog {
+		width:80px;
+		height:40px;
+		font-size: 14px;
+	}
+	
+	td#no {
+		width:1480px;
+	}
+
+/* customerList.jsp 작업 끝 */
+
+/* viewCustomer.jsp 작업 시작 */
+
+	div#custBasicStatus {
+		width: 100%;
+		border: solid 1px gray;
+		height: 240px;
+	}
+	
+	#tbl_custBasicStatus, #tbl_purchase, #tbl_point, #tbl_recieveAgreement {
+		width:100%;
+		margin: 0;
+	}
+	
+	div#purchase, div#point, div#recieveAgreement {
+		width: 100%;
+		border: solid 1px gray;
+		height: 60px;
+	}
+	
+	td.td1, td.td3{ 
+		width:33%;
+		padding-left: 10px;
+	}
+	
+	td.td2{ 
+		width:34%;
+		padding-left: 10px;
+	}
+	
+
+
+/* viewCustomer.jsp 작업 끝 */
+
+	
+/* viewStorePerformance.jsp 작업 시작 */
+
+	div#sticky_both {
+		overflow: auto;
+		margin-top: 50px;
+		height:500px;
+	}
+
+	table.fixed {
+		 white-space: nowrap;
+		 margin: 0;
+		 border: none;
+		 border-collapse: separate;
+		 border-spacing: 0;
+		 table-layout: fixed;
+		 border: 1px solid black;
+	}
+	
+	table.fixed thead th {
+		padding: 3px;
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
+	
+	table.fixed thead th:first-child {
+		position: sticky;
+		left: 0;
+		z-index: 2;
+	}
+	
+	table.fixed thead th:second-child {
+		position: sticky;
+		left: 0;
+		z-index: 3;
+	}
+	
+	table.fixed tbody th {
+		border: solid 1px gray;
+		background-color: #f2f2f2;
+		position: sticky;
+		left: 0;
+		z-index: 1;
+	}
+	
+
+
+	div#sticky_both > table > thead {
+		border: solid 1px gray;
+		position: sticky;
+		top: 1;
+		left: 2;
+		z-index: 10;
+	}
+
+	table.both_scroll thead > tr > td, table.both_scroll tbody > tr > td {
+		min-width: 100px;
+	}
+	
+/* viewStorePerformance.jsp 작업 끝 */
+
+
+.view {
+  margin: 20px auto;
+  width: 100%;
+  height: 500px;
+}
+
+.wrapper {
+  position: relative;
+  overflow: auto;
+  white-space: nowrap;
+  height: 480px;
+}
+
+.sticky-col {
+  position: -webkit-sticky;
+  position: sticky;
+  background-color: white;
+}
+
+.first-col {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  left: 0px;
+  border: solid 1px gray;
+}
+
+.second-col {
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
+  left: 100px;
+  border: solid 1px gray;
+}
+
+.last-col {
+	width: 100px;
+	min-width: 100px;
+	max-width: 100px;
+	right: 0px;
+	border: solid 1px gray;
+}
+
+th.border {
+	border: solid 1px gray;
+	background-color: #b3b3b3;
+}
+
+td.border_td {
+	border: solid 1px gray;
+}
+
+

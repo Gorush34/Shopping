@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ==== #29. mapper 기본설정 ==== -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ==== #29. 루트 엘리먼트 & 네임스페이스 설정(프로젝트 전체내에서 유일해야 한다.) ==== -->
+<mapper namespace="shopping">
+
+	<!-- index 화면(임시) -->	
+	<resultMap type="HashMap" id="boardList">
+		<result property="chg_seq" column="chg_seq" javaType="int" />
+		<result property="cust_no" column="cust_no" javaType="String" />
+		<result property="chg_aft_cnt" column="chg_aft_cnt" javaType="String" />
+	</resultMap>
+
+	<select id="getBoardList" resultMap="boardList">
+		
+		select V.chg_seq, V.cust_no, V.chg_aft_cnt
+		from 
+		    (
+		    select rownum AS rno, chg_seq, cust_no, chg_aft_cnt
+		    from SD_CUST01_HT
+		    order by chg_seq desc
+		    ) V
+		where rno between 1 and 5
+		
+	</select>
+
+	
+	<resultMap type="com.spring.shopping.model.ShoppingVO" id="InfoMap">
+	    <result property="chg_seq" column="chg_seq" javaType="int" />
+		<result property="cust_no" column="cust_no" javaType="String" />
+		<result property="chg_aft_cnt" column="chg_aft_cnt" javaType="String" />
+  	</resultMap>
+  	
+  	<!-- 리스트 + 페이징 + 검색 -->
+	<select id="getListWithPaging" resultMap="InfoMap" parameterType="com.spring.shopping.common.SearchCriteria">
+		select chg_seq, cust_no, chg_aft_cnt
+		from
+		(
+			  SELECT rownum AS rno,
+			    chg_seq,
+			    cust_no,
+			    chg_aft_cnt
+			  FROM
+			    SD_CUST01_HT 
+			  WHERE chg_seq > 0
+			    <include refid="search"></include>
+			  ORDER BY  
+			    chg_seq desc
+		) V
+		where rno between #{pageStart} and #{endPage}
+	</select>
+  	
+  	<!-- 과제1 시작 -->
+
+  	
+	<!-- 로그인 시도를 한 사용자의 정보를 가져오기 -->
+	<select id="getLoginMember" parameterType="HashMap" resultType="com.spring.shopping.model.EmpVO">
+		SELECT USER_ID                            									/* 사용자ID */
+		     , USER_NM                            									/* 사용자명 */
+		     , USER_DT_CD                         									/* 사용자구분코드 */
+		     , USE_YN                             									/* 사용여부 */
+		     , USE_PWD                            									/* 비밀번호 */
+		     , ST_DT                              									/* 시작일자 */
+		     , NVL(ED_DT, ' ') AS ED_DT           									/* 종료일자 */ 
+		     , PRT_CD                             									/* 거래처코드 */
+		     , (SELECT PRT_NM FROM MA_PRT_MT B WHERE PRT_CD = A.PRT_CD) AS PRT_NM	/* 거래처명 */
+		     , NVL(PWD_UPD_DT, ' ') AS PWD_UPD_DT 									/* 비밀번호변경일자 */
+		     , FST_REG_DT                         									/* 최초등록일자 */
+		     , FST_USER_ID                        									/* 최초등록자 */
+		     , LST_UPD_DT                         									/* 최종수정일자 */
+		     , LST_UPD_ID                         									/* 최종수정자 */
+		FROM MA_USER_MT A
+		WHERE USER_ID = #{USER_ID} AND USE_PWD = #{USE_PWD}
+	</select>
+  	
+  	<resultMap type="HashMap" id="getTotalCountPrtMap">
+	   <result property="PRT_CNT" 		column="PRT_CNT" 		javaType="String" />
+	</resultMap>
+  	
+  	<!-- 매장 또는 고객을 조건으로 검색한 결과의 개수 가져오기 -->
+  	<select id="getTotalCountPrt" parameterType="HashMap" resultMap="getTotalCountPrtMap">
+  	SELECT DISTINCT COUNT(PRT_CD) AS PRT_CNT
+    FROM MA_PRT_MT 
+    WHERE ( 
+                PRT_CD LIKE '%' || #{searchWord_prt} || '%'           						/* 매장검색란에 적힌 값과 매장코드가 부분일치 하는 값 */
+                OR
+                PRT_NM LIKE '%' || #{searchWord_prt} || '%'									/* 매장검색란에 적힌 값과 매장명이 부분일치 하는 값 */	
+          )
+  	</select>
+  	
+  	<resultMap type="HashMap" id="getTotalCountCustMap">
+    <result property="CUST_CNT" 		column="CUST_CNT" 		javaType="String" />
+	</resultMap>
+  	
+  	<!-- 매장 또는 고객을 조건으로 검색한 결과의 개수 가져오기 -->
+  	<select id="getTotalCountCust" parameterType="HashMap" resultMap="getTotalCountCustMap">
+  	SELECT COUNT(CUST_NO) AS CUST_CNT
+    FROM CS_CUST01_MT 
+    WHERE CUST_NO LIKE '%' || #{searchWord_cust} || '%'
+  	</select>
+  	
+  	
+  	<!-- 
+	<select id="getTotalCount" parameterType="HashMap" resultMap="getTotalCountMap">
+	SELECT COUNT(B.PRT_CD) AS PRT_CNT
+	     , COUNT(DISTINCT A.CUST_NO) AS CUST_CNT
+	FROM CS_CUST01_MT A RIGHT OUTER JOIN MA_PRT_MT B                                            /* 고객관리테이블과 거래처관리 테이블 JOIN */
+	ON A.JN_PRT_CD = B.PRT_CD                                                           /* 가입매장코드 = 거래처코드 */
+	WHERE 1=1
+	<if test='from_cust = "true" '>
+	AND A.CUST_NO LIKE '%' || #{search_cust} || '%'	                                    /* 고객검색란에 적힌 값과 고객번호가 부분일치 하는 값 */
+	</if> 
+	<if test='from_prt = "true" '>
+	AND ( 
+	        B.PRT_CD LIKE '%' || #{search_prt} || '%'           						/* 매장검색란에 적힌 값과 매장코드가 부분일치 하는 값 */
+	        OR
+	        B.PRT_NM LIKE '%' || #{search_prt} || '%'									/* 매장검색란에 적힌 값과 매장명이 부분일치 하는 값 */	
+    	)
+	</if>
+  	</select>
+  	 -->
+  	
+  	<!-- 매장검색 결과가 하나인 결과 가져오기 -->
+  	<resultMap type="HashMap" id="getResultPrtMap">
+	   <result property="PRT_NM" 		column="PRT_NM" 		javaType="String" />
+	   <result property="PRT_CD" 		column="PRT_CD" 		javaType="String" />
+	</resultMap>
+
+  	<select id="getResultPrt" resultMap="getResultPrtMap" parameterType="HashMap">
+		SELECT DISTINCT COUNT(PRT_NM)
+		     , PRT_NM                     													/* 매장명 */                              
+		     , PRT_CD                     													/* 매장코드 */                                                        
+		FROM MA_PRT_MT                                    									
+		WHERE 	( 
+					PRT_CD LIKE '%' || #{searchWord_prt} || '%'           						/* 매장검색란에 적힌 값과 매장코드가 부분일치 하는 값 */
+					OR
+					PRT_NM LIKE '%' || #{searchWord_prt} || '%'									/* 매장검색란에 적힌 값과 매장명이 부분일치 하는 값 */	
+				)
+		GROUP BY PRT_CD, PRT_NM
+	</select>
+	
+	<!-- 고객검색 결과가 하나인 결과 가져오기 -->
+  	<resultMap type="HashMap" id="getResultCustMap">
+	   <result property="CUST_NO" 		column="CUST_NO" 		javaType="String" />
+	   <result property="CUST_NM" 		column="CUST_NM" 		javaType="String" />
+	</resultMap>
+
+  	<select id="getResultCust" resultMap="getResultCustMap" parameterType="HashMap">
+		SELECT CUST_NO																		/* 고객번호 */
+		     , CUST_NM																		/* 고객명 */
+		FROM CS_CUST01_MT                                    									
+		WHERE CUST_NO LIKE '%' || #{searchWord_cust} || '%'	                                    /* 고객검색란에 적힌 값과 고객번호가 부분일치 하는 값 */
+	</select>
+  	
+	<!-- 고객조회 목록 가져오기 -->
+	<resultMap type="HashMap" id="custListMap">
+	   <result property="CUST_NO" 		column="CUST_NO" 		javaType="String" />
+	   <result property="CUST_NM" 		column="CUST_NM" 		javaType="String" />
+	   <result property="MBL_NO" 		column="MBL_NO" 		javaType="String" />
+	   <result property="CUST_SS_CD" 	column="CUST_SS_CD" 	javaType="String" />
+	   <result property="JS_DT" 		column="JS_DT" 			javaType="String" />
+	   <result property="PRT_NM" 		column="PRT_NM" 		javaType="String" />
+	   <result property="USER_NM" 		column="USER_NM" 		javaType="String" />
+	   <result property="LST_UPD_DT" 	column="LST_UPD_DT" 	javaType="String" />
+	</resultMap>
+	<select id="getCustList" resultMap="custListMap" parameterType="HashMap">
+		SELECT A.CUST_NO AS CUST_NO                                                         /* 고객번호 */
+		     , CASE WHEN LENGTH(A.CUST_NM) = 2 THEN SUBSTR(A.CUST_NM, 1, 1) || '*'          /* 고객명 */
+		       ELSE                                                                         /* 2글자면 마지막 글자만 */
+		       SUBSTR(A.CUST_NM, 1, 1) ||                                                   /* 3글자이상시 첫,마지막을 제외한 */
+		       LPAD('*', LENGTH(A.CUST_NM)-2, '*') ||                                       /* 중간부분을 마스킹처리 */
+		       SUBSTR(A.CUST_NM, LENGTH(A.CUST_NM), 1)  END AS CUST_NM    
+		     , SUBSTR(A.MBL_NO,1,3) || '-' ||                                               /* 휴대폰번호 */    
+		       LPAD('*', LENGTH(A.MBL_NO)-7, '*') || '-' ||                                 /* 중간 번호를 마스킹 처리 */
+		       SUBSTR(A.MBL_NO, -4) AS MBL_NO                                                
+		     , CASE A.CUST_SS_CD                                                            /* 고객상태코드 */
+		       WHEN '10' THEN '정상'                                                         /* 코드가 10이면 정상 */
+		       WHEN '80' THEN '중지'                                                         /* 코드가 80이면 중지 */
+		       WHEN '90' THEN '해지'                                                         /* 코드가 90이면 해지 */
+		       END AS CUST_SS_CD    
+		     , TO_CHAR(TO_DATE(A.JS_DT), 'YYYY-MM-DD') AS JS_DT                             /* 가입일자 */
+		     , B.PRT_NM AS PRT_NM                                                           /* 가입매장 */
+		     , TO_CHAR(TO_DATE(A.FST_REG_DT), 'YYYY-MM-DD') || '/' || C.USER_NM AS USER_NM  /* 등록일자/등록자 */
+		     , TO_CHAR(TO_DATE(A.LST_UPD_DT), 'YYYY-MM-DD HH24:MI:SS') AS LST_UPD_DT        /* 수정일자 */
+		FROM CS_CUST01_MT A INNER JOIN MA_PRT_MT B                                          /* 고객관리테이블과 거래처관리 테이블 JOIN */
+		ON A.JN_PRT_CD = B.PRT_CD                                                           /* 가입매장코드 = 거래처코드 */
+		INNER JOIN MA_USER_MT C                                                             /* 고객관리테이블과 사용자 테이블 JOIN */
+		ON A.FST_USER_ID = C.USER_ID                                                        /* 등록자아이디 = 사용자아이디 */
+		WHERE 1=1
+		AND 		(
+								TO_DATE(A.JS_DT, 'YYYY-MM-DD') 								
+						BETWEEN TO_DATE(#{SDATE}, 'YYYY-MM-DD') 
+						AND 	TO_DATE(#{EDATE}, 'YYYY-MM-DD')
+					)	
+		<if test='SE_USER_DT_CD != 2 and PRT_CD_NM = "" '>                                  /* 사용자구분코드가 2가 아니고 매장번호가 공백이라면(초기조건) */
+		AND A.JN_PRT_CD = #{SE_PRT_CD}														/* 세션에 저장된 매장코드와 일치하는 값 */
+		</if>
+		<if test='PRT_CD_NM != "" '>                                  						/* 매장검색란이 공백이 아니라면(검색조건) */
+		AND ( 
+				A.JN_PRT_CD LIKE '%' || #{PRT_CD_NM} || '%'           						/* 매장검색란에 적힌 값과 매장코드가 부분일치 하는 값 */
+				OR
+				B.PRT_NM LIKE '%' || #{PRT_CD_NM} || '%'									/* 매장검색란에 적힌 값과 매장명이 부분일치 하는 값 */	
+			)
+		</if>
+		<if test='IN_CUST_NO != ""'>                                                           /* 고객번호가 기본값이 아니라면 */
+		AND A.CUST_NO LIKE '%' || #{IN_CUST_NO} || '%'										/* 고객번호검색란에 적힌 값과 고객번호가 부분일치 하는 값 */
+		</if>
+		<if test='CUST_SS_CD != ""'>                                                        /* 고객상태코드가 기본값이 아니라면 */
+		AND A.CUST_SS_CD = #{CUST_SS_CD}                                                    /* 고객상태코드가 일치하는 값 */
+		</if>
+		ORDER BY CUST_NO
+	</select>
+	
+	<!-- 매장조회 목록 가져오기 -->
+	<resultMap type="HashMap" id="prtListMap">
+	   <result property="PRT_CD" 		column="PRT_CD" 		javaType="String" />
+	   <result property="PRT_NM" 		column="PRT_NM" 		javaType="String" />
+	   <result property="PRT_DT_CD" 	column="PRT_DT_CD" 		javaType="String" />
+	   <result property="PRT_SS_CD" 	column="PRT_SS_CD" 		javaType="String" />
+	</resultMap>
+	<select id="getPrtList" resultMap="prtListMap" parameterType="HashMap">
+  	SELECT PRT_CD                                   				/* 거래처코드 */
+		     , PRT_NM                                   			/* 거래처명 */
+		     , PRT_DT_CD                                			/* 거래처구분코드 */
+		     , CASE PRT_SS_CD                           			/* 거래처상태코드 */
+		       WHEN '10' THEN '정상'                     			/* 코드가 10이면 정상 */
+		       WHEN '80' THEN '중지'                     			/* 코드가 80이면 중지 */
+		       WHEN '90' THEN '폐쇄'                     			/* 코드가 90이면 폐쇄 */
+		       END AS PRT_SS_CD
+		FROM MA_PRT_MT                                  			/* 거래처관리 테이블로부터 */
+		WHERE PRT_DT_CD = '2'                           			/* 거래처구분코드가 2이면서 */
+		  AND ( PRT_CD LIKE '%' || #{searchWord} || '%'             /* 매장코드와 부분일치하거나 */
+		   OR   PRT_NM LIKE '%' || #{searchWord} || '%' )           /* 또는 매장코드와 부분일치한 데이터들을 */
+		ORDER BY PRT_CD ASC                             			/* 거래처코드의 오름차순을 기준으로 가져온다. */
+  	</select>
+
+	<!-- 고객조회 목록 가져오기 -->
+	<resultMap type="HashMap" id="popUpListMap">
+	   <result property="CUST_NO" 		column="CUST_NO" 		javaType="String" />
+	   <result property="CUST_NM" 		column="CUST_NM" 		javaType="String" />
+	   <result property="MBL_NO" 		column="MBL_NO" 		javaType="String" />
+	   <result property="CUST_SS_CD" 	column="CUST_SS_CD" 	javaType="String" />
+	</resultMap>
+	<select id="getPopUpCustList" resultMap="popUpListMap" parameterType="HashMap">
+  	SELECT CUST_NO                                               /* 고객번호 */
+	     , CUST_NM                                               /* 고객명 */
+	     , SUBSTR(MBL_NO, 1, 3) || '-' ||
+	       SUBSTR(MBL_NO, 4, LENGTH(MBL_NO)-7 ) || '-' ||
+	       SUBSTR(MBL_NO, -4) AS MBL_NO                          /* 휴대폰 번호(-로연결) */
+	     , CASE CUST_SS_CD                                       /* 고객상태코드 */
+	       WHEN '10' THEN '정상'                                  /* 코드가 10이면 정상 */
+	       WHEN '80' THEN '중지'                                  /* 코드가 80이면 중지 */
+	       WHEN '90' THEN '해지'                                  /* 코드가 90이면 해지 */
+	       END AS CUST_SS_CD
+	FROM CS_CUST01_MT                                            /* 고객관리 테이블로부터 */
+	WHERE CUST_NO LIKE '%' || #{CUST_NO} || '%'                  /* 고객번호가 일부포함되거나 */
+	ORDER BY CUST_NO ASC
+  	</select>  	
+  	
+  	<!-- 검색기능을 위한 동적SQL -->
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND chg_seq LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'c'.toString()">AND cust_no LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'w'.toString()">AND chg_aft_cnt LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'tc'.toString()">AND ((chg_seq LIKE '%' || #{keyword} || '%' ) or (cust_no LIKE '%' || #{keyword} || '%'))</if>
+		</if>
+	</sql>
+
+</mapper>

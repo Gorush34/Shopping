@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ======= #23. tiles 레이아웃 설정하기 ======= -->
+
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+       
+<tiles-definitions>
+
+	<!-- 헷갈려하는 사람(나)을 위해 작성
+		1. *.mail 은 return "*.mail을 주면 됩니다.
+		2. 이때, 파일의 경로는 /WEB-INF/views/mail/*.jsp 이어야 합니다.
+		3. @RequestMapping(value = "/mail/mailList.bts")  부분에서
+		   value 부분은 웹사이트에 ctxPath(/bts) 다음 들어갈 주소입니다.
+		   예) 위의 jsp를 보려면 http://localhost:9090/bts/mail/mailList.bts 로 가면 되겠죠?
+	 -->
+
+	<!-- ==== tiles 를 사용하는 레이아웃(header,content,footer) 설정 시작 ==== -->
+	<definition name="layout-tiles1"  template="/WEB-INF/tiles/layout/layout-tiles1.jsp"> 
+		<put-attribute name="header"  value="/WEB-INF/tiles/tile1/header.jsp" />
+		<put-attribute name="content" value="" />
+		<put-attribute name="footer"  value="/WEB-INF/tiles/tile1/footer.jsp" />
+	</definition>
+	
+	<definition name="*.tiles1" extends="layout-tiles1">
+		<put-attribute name="content" value="/WEB-INF/views/tiles1/{1}.jsp"/>
+	</definition>
+	<definition name="*/*.tiles1" extends="layout-tiles1">
+		<put-attribute name="content" value="/WEB-INF/views/tiles1/{1}/{2}.jsp"/>
+	</definition>
+	<definition name="*/*/*.tiles1" extends="layout-tiles1">
+		<put-attribute name="content" value="/WEB-INF/views/tiles1/{1}/{2}/{3}.jsp"/>
+	</definition>
+	
+	
+	<!-- ==== tiles 를 사용하는 레이아웃(header,content,sideinfo,footer) 설정 시작 ==== -->
+	<definition name="layout-tiles2"  template="/WEB-INF/tiles/layout/layout-tiles2.jsp"> 
+		<put-attribute name="header"  value="/WEB-INF/tiles/tile2/header.jsp" />
+		<put-attribute name="content" value="" />
+		<put-attribute name="sideinfo"  value="/WEB-INF/tiles/tile2/sideinfo.jsp" />
+		<put-attribute name="footer"  value="/WEB-INF/tiles/tile2/footer.jsp" />
+	</definition>
+	
+	<definition name="*.tiles2" extends="layout-tiles2">
+		<put-attribute name="content" value="/WEB-INF/views/tiles2/{1}.jsp"/>
+	</definition>
+	<definition name="*/*.tiles2" extends="layout-tiles2">
+		<put-attribute name="content" value="/WEB-INF/views/tiles2/{1}/{2}.jsp"/>
+	</definition>
+	<definition name="*/*/*.tiles2" extends="layout-tiles2">
+		<put-attribute name="content" value="/WEB-INF/views/tiles2/{1}/{2}/{3}.jsp"/>
+	</definition>
+	
+	<!-- ==== 과제1을 위한 타일 설정 시작 ==== -->
+	<definition name="layout-report1"  template="/WEB-INF/tiles/layout/layout-report1.jsp">
+		<put-attribute name="header"  value="/WEB-INF/tiles/report1/header.jsp" />
+		<put-attribute name="content" value="" />
+	</definition>
+	
+	<definition name="*.report1" extends="layout-report1">
+		<put-attribute name="content" value="/WEB-INF/views/report1/{1}.jsp"/>
+	</definition>
+	<definition name="*/*.report1" extends="layout-report1">
+		<put-attribute name="content" value="/WEB-INF/views/report1/{1}/{2}.jsp"/>
+	</definition>
+	<definition name="*/*/*.report1" extends="layout-report1">
+		<put-attribute name="content" value="/WEB-INF/views/report1/{1}/{2}/{3}.jsp"/>
+	</definition>
+
+</tiles-definitions> 
+
+
+
+      
