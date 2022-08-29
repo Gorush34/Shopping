@@ -426,6 +426,57 @@ public class EmpController {
 		return mav;
 	} // end of public update(ModelAndView mav, HttpServletRequest request)-----------
 	
+	// 고객의 정보를 조회(팝업)
+	@ResponseBody
+	@RequestMapping(value = "/getCustInfoPopUp.dowell", produces="text/plain;charset=UTF-8")
+	public String getCustInfoPopUp(ModelAndView mav, @RequestParam Map<String, Object> map) {
+	
+		Map<String, String> custInfo = empService.getCustInfoPopUp(map);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("CUST_NO", custInfo.get("CUST_NO"));
+		jsonObj.put("CUST_NM", custInfo.get("CUST_NM"));
+		
+		return jsonObj.toString();
+	} // end of public String getCustInfoPopUp(ModelAndView mav, @RequestParam Map<String, Object> map)--------------
+	
+	// 고객의 변경이력을 조회 요청(팝업)
+	@ResponseBody
+	@RequestMapping(value = "/getCustHistoryPopUp.dowell", produces="text/plain;charset=UTF-8")
+	public String getCustHistoryPopUp(ModelAndView mav, @RequestParam Map<String, Object> map) {
+		
+		List<Map<String, String>> popUpHistoryList = empService.getPopUpHistoryList(map);
+		// parameter로 map을 담아 getPopUpHistotyList를 실행한 뒤 결과값을 담는 popUpHistoryList 생성
+		
+		JSONArray jsonArr = new JSONArray();
+		// 결과값을 화면에 출력하기 위해 JSON타입인 jsonArr 생성
+		
+		if(popUpHistoryList != null && popUpHistoryList.size() > 0) {
+			
+			for(Map<String, String> hisList : popUpHistoryList) {
+				// 반복대상 : custList ( 데이터 타입 : List<Map<String, String>> )
+				// 반복할 값의 데이터 타입 : Map<String, String>
+				// 반복할 값을 담을 변수명 : custMap
+				
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("CHG_DT", hisList.get("CHG_DT"));
+				jsonObj.put("CHG_CD", hisList.get("CHG_CD"));
+				jsonObj.put("CHG_BF_CNT", hisList.get("CHG_BF_CNT"));
+				jsonObj.put("CHG_AFT_CNT", hisList.get("CHG_AFT_CNT"));
+				jsonObj.put("LST_UPD_ID", hisList.get("LST_UPD_ID"));
+				jsonObj.put("LST_UPD_DT", hisList.get("LST_UPD_DT"));
+				jsonArr.put(jsonObj); 
+				// Map에서 받아온 값들은 jsonObj에 저장한 뒤, jsonObj를 배열 형태인 jsonArr에 담는다.
+			}
+			
+		}
+		
+		return jsonArr.toString(); // 배열 형태인 jsonArr을 String 형태로 변환하여 return 한다.
+	} // end of public String getPopUpCustList(ModelAndView mav, @RequestParam Map<String, Object> map)------------------------	
+	
+	
+
+	
 	// 비밀번호 변경완료 버튼 클릭시(추후수정)
 	/*
 	@RequestMapping(value="/pwdUpdateEnd.dowell", method = {RequestMethod.POST})

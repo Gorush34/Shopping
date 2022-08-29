@@ -12,7 +12,7 @@
 		<result property="cust_no" column="cust_no" javaType="String" />
 		<result property="chg_aft_cnt" column="chg_aft_cnt" javaType="String" />
 	</resultMap>
-
+	
 	<select id="getBoardList" resultMap="boardList">
 		
 		select V.chg_seq, V.cust_no, V.chg_aft_cnt
@@ -243,6 +243,7 @@
 	   <result property="MBL_NO" 		column="MBL_NO" 		javaType="String" />
 	   <result property="CUST_SS_CD" 	column="CUST_SS_CD" 	javaType="String" />
 	</resultMap>
+	
 	<select id="getPopUpCustList" resultMap="popUpListMap" parameterType="HashMap">
   	SELECT CUST_NO                                               /* 고객번호 */
 	     , CUST_NM                                               /* 고객명 */
@@ -255,9 +256,81 @@
 	       WHEN '90' THEN '해지'                                  /* 코드가 90이면 해지 */
 	       END AS CUST_SS_CD
 	FROM CS_CUST01_MT                                            /* 고객관리 테이블로부터 */
-	WHERE CUST_NO LIKE '%' || #{CUST_NO} || '%'                  /* 고객번호가 일부포함되거나 */
+	WHERE 1=1
+	<if test=' CUST_NO != "" '>
+	AND   CUST_NO LIKE '%' || #{CUST_NO} || '%'                  /* 고객번호가 일부포함되거나 */
+	</if>
+	<if test=" SEARCHWORD_NM != '' ">
+	AND   CUST_NM LIKE '%' || #{SEARCHWORD_NM} || '%'          /* 고객번호가 일부포함되거나 */
+	</if>
+	<if test=' SEARCHWORD_MBL != "" '>	   
+	AND    MBL_NO = #{SEARCHWORD_MBL}							 /* 핸드폰번호가 일치하면 */
+	</if>
 	ORDER BY CUST_NO ASC
   	</select>  	
+
+
+	<!-- 고객의 정보 가져오기(팝업) -->
+	<resultMap type="HashMap" id="custInfoMap">
+	   <result property="CUST_NO" 		column="CUST_NO" 		javaType="String" />
+	   <result property="CUST_NM" 		column="CUST_NM" 		javaType="String" />
+	</resultMap>
+	
+	<select id="getCustInfoPopUp" resultMap="custInfoMap" parameterType="HashMap">
+	SELECT CUST_NO                                                     				/* 고객번호 */
+	     , CUST_NM                                                     				/* 고객명 */ 
+	FROM CS_CUST01_MT                                            					/* 고객관리 테이블에서 */
+	WHERE CUST_NO = #{SEARCHWORD}                                                 /* 고객번호가 일치하는 것들만 */
+	</select>
+	
+
+	<!-- 고객조회 목록 가져오기 -->
+	<resultMap type="HashMap" id="hisListMap">
+	   <result property="CHG_DT" 		column="CHG_DT" 		javaType="String" />
+	   <result property="CHG_CD" 		column="CHG_CD" 		javaType="String" />
+	   <result property="CHG_BF_CNT" 	column="CHG_BF_CNT" 	javaType="String" />
+	   <result property="CHG_AFT_CNT" 	column="CHG_AFT_CNT" 	javaType="String" />
+	   <result property="LST_UPD_ID" 	column="LST_UPD_ID" 	javaType="String" />
+	   <result property="LST_UPD_DT" 	column="LST_UPD_DT" 	javaType="String" />
+	</resultMap>
+	
+	<select id="getPopUpHistoryList" resultMap="hisListMap" parameterType="HashMap">
+	SELECT A.CUST_NO AS CUST_NO                                                     /* 고객번호(추후 삭제고려) */
+	     , A.CUST_NM AS CUST_NM                                                     /* 고객명(추후 삭제고려) */ 
+	     , TO_CHAR(TO_DATE(B.CHG_DT), 'YYYY-MM-DD') AS CHG_DT                       /* 변경일자 */
+	     , CASE B.CHG_CD WHEN 'CUST_NM'         THEN '고객명'                        /* 변경코드가 CUST_NM 이면 '고객명' */
+	                     WHEN 'JN_PRT_CD'       THEN '가입매장코드'                   /* JN_PRT_CD 이면 '가입매장코드' */
+	                     WHEN 'EMAIL'           THEN '이메일'                        /* EMAIL 이면 '이메일' */
+	                     WHEN 'SCAL_YN'         THEN '양음력구분'                     /* SCAL_YN 이면 '양음력구분' */
+	                     WHEN 'BRDY_DT'         THEN '생년월일'                       /* BRDY_DT 이면 '생년월일' */
+	                     WHEN 'SEX_CD'          THEN '성별코드'                       /* SEX_CD 이면 '성별코드' */
+	                     WHEN 'MRRG_DT'         THEN '결혼기념일'                     /* MRRG_DT 이면 '결혼기념일' */
+	                     WHEN 'PSMT_GRC_CD'     THEN '우편물수령코드'                  /* PSMT_GRC_CD 이면 '우편물수령코드' */
+	                     WHEN 'ADDR'            THEN '주소'                          /* ADDR 이면 '주소' */
+	                     WHEN 'ADDR_DTL'        THEN '상세주소'                       /* ADDR_DTL 이면 '상세주소' */
+	                     WHEN 'STP_DT'          THEN '중지일자'                       /* STP_DT 이면 '중지일자' */
+	                     WHEN 'POC_CD'          THEN '직업코드'                       /* POC_CD 이면 '직업코드' */
+	                     WHEN 'MBL_NO'          THEN '휴대폰번호'                     /* MBL_NO 이면 '휴대폰번호' */
+	                     WHEN 'CUST_SS_CD'      THEN '고객상태코드'                    /* CUST_SS_CD 이면 '고객상태코드' */
+	                     WHEN 'CNCL_DT'         THEN '해지일자'                       /* CNCL_DT 이면 '해지일자' */
+	                     WHEN 'CNCL_CNTS'       THEN '해지사유내용'                    /* CNCL_CNTS 이면 '해지사유내용' */
+	                     WHEN 'EMAIL_RCV_YN'    THEN '이메일수신동의여부'               /* EMAIL_RCV_YN 이면 '이메일수신동의여부' */
+	                     WHEN 'DM_RCV_YN'       THEN 'DM수신동의여부'                  /* DM_RCV_YN 이면 'DM수신동의여부' */
+	                     WHEN 'SMS_RCV_YN'      THEN 'SMS수신동의여부'                 /* SMS_RCV_YN 이면 'SMS수신동의여부' */
+	                     END AS CHG_CD                                              /* 변경항목 */
+     	 , NVL(B.CHG_BF_CNT, '-') AS CHG_BF_CNT                                     /* 변경 전 내용 */
+     	 , NVL(B.CHG_AFT_CNT, '-') AS CHG_AFT_CNT                                   /* 변경 후 내용 */
+	     , B.LST_UPD_ID || '/' ||                                                   /* 최종수정자 ID / */
+	       (SELECT USER_NM FROM MA_USER_MT WHERE USER_ID = B.LST_UPD_ID)            /* 최종수정자 이름 */
+	       AS LST_UPD_ID 
+	     , TO_CHAR(B.LST_UPD_DT, 'YYYY-MM-DD HH24:MI:SS') AS LST_UPD_DT             /* 최종수정일시 */
+	FROM CS_CUST01_MT A INNER JOIN SD_CUST01_HT B                                   /* 고객관리 테이블과 고객이력 테이블을 INNER JOIN */
+	ON A.CUST_NO = B.CUST_NO                                                        /* 고객번호가 같은 항목들에 대해 */
+	WHERE A.CUST_NO = #{SEARCHWORD}                                                 /* 고객번호가 일치하는 것들만 */
+	ORDER BY CHG_DT DESC                                                            /* 변경일자의 내림차순으로 정렬 */
+  	</select> 
+  	
+ 
   	
   	<!-- 검색기능을 위한 동적SQL -->
 	<sql id="search">

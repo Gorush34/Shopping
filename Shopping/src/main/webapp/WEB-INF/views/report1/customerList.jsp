@@ -166,13 +166,11 @@
 		}); // end of $("input#IN_CUST_NO").keydown(function(event){})------------------------------
 
 		$("button#btn_search_prt").on("click", function (event) { // 매장 찾기 버튼을 클릭했을 때
-			alert("매장!");
 			from_prt = true;								// 매장 입력에서 왔음을 표시
 			getTotalCount();							// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
 		}); // end of $("button#btnSearch_prt").on("click", function (event) {})---------------------
 		
-		$("button#btn_search_cust").on("click", function (event) { // 고객번호 찾기 버튼을 클릭했을 때
-			alert("고객!");	
+		$("button#btn_search_cust").on("click", function (event) { // 고객번호 찾기 버튼을 클릭했을 때\
 			from_cust = true;								// 고객번호 입력에서 왔음을 표시
 			getTotalCount();							// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
 		}); // end of $("button#btnSearch_cust").on("click", function (event) {})---------------------
@@ -221,8 +219,8 @@
 		// 팝업창을 띄울 주소를 설정한다.
 		const url = "<%= ctxPath%>/"+loc+".dowell"; 
 		
-		// 너비 800, 높이 600 인 팝업창을 화면 가운데 위치시키기
-		const pop_width = 800;
+		// 너비 900, 높이 600 인 팝업창을 화면 가운데 위치시키기
+		const pop_width = 900;
 		const pop_height = 600;
 		const pop_left = Math.ceil( ((window.screen.width)-pop_width)/2 ) ; <%-- 정수로 만든다 --%>
 		const pop_top = Math.ceil( ((window.screen.height)-pop_height)/2 ) ;
@@ -263,13 +261,14 @@
 			success:function(json){ 						// return된 값이 존재한다면
 				
 				if(json.status != "1"){
-					alert("검색값이 없거나 두 개 이상입니다!");
 					if(from_prt) { 
 						// $("input#PRT_CD_NM").val(""); 
+						alert("검색값이 없거나 두 개 이상입니다!");
 						search_popup("search_prt");
 					}
 					else if(from_cust) { 
 						// $("input#IN_CUST_NO").val(""); 
+						alert("검색값이 없거나 두 개 이상입니다!");
 						search_popup("search_cust");
 					}
 				}
@@ -366,8 +365,11 @@
 	// 변경이력 버튼 클릭시 팝업을 불러오는 함수
 	function change_history(CUST_NO) {
 		
-		alert("내가 돌아왔다!" + CUST_NO);
+		var his_cust_no = CUST_NO;
+		alert(his_cust_no);
+		$("input#HIS_CUST_NO").val(his_cust_no);
 		
+		search_popup("change_history"); 
 		
 	} // end of function change_history(CUST_NO)--------------------
 	
@@ -391,7 +393,7 @@
 	    }
 	 
 	    return v;											// 종료
-	}
+	} // end of function date_mask(objValue) {})------------------
 	
 </script>
 
@@ -467,6 +469,7 @@
 			<input type="hidden" name="SE_PRT_CD" id="SE_PRT_CD" value="${sessionScope.loginuser.PRT_CD}" />
 			<input type="hidden" name="SE_USER_DT_CD" id="SE_USER_DT_CD" value="${sessionScope.loginuser.USER_DT_CD}" />
 			<input type="hidden" name="SE_PRT_NM" id="SE_PRT_NM" value="${sessionScope.loginuser.PRT_NM}" />
+			<input type="hidden" name="HIS_CUST_NO" id="HIS_CUST_NO" value="" />
 			
 			
 		</form>

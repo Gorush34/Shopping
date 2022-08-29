@@ -8,8 +8,18 @@
 %>    
 
 <script type="text/javascript">
+	
+	var prt_nm = "";
+	var se_prt_cd = "";
+	var se_prt_nm = "";
+	var se_user_dt_cd = "";
 
 	$(document).ready(function() {
+		
+		prt_nm = $("input#PRT_CD_NM").val();					// 매장검색란의 value값을 받아온다
+		se_prt_cd = $("input#SE_PRT_CD").val();					// 로그인유저의 매장코드를 받아온다
+		se_prt_nm = $("input#SE_PRT_NM").val();					// 로그인유저의 매장명을 받아온다
+		se_user_dt_cd = $("input#SE_USER_DT_CD").val();			// 로그인유저의 거래처구분코드를 받아온다
 		
 		defaultSearch();
 		
@@ -25,6 +35,13 @@
 	
 	// 기본 조건을 불러오는 함수
 	function defaultSearch() {
+		$("input#JN_PRT_CD").val("");							// disabled 처리된 고객번호 input 태그의 값을 비운다
+		$("input#PRT_CD_NM").val("");							// 고객번호 input 태그의 값을 비운다
+		
+		if( prt_nm === "" && se_user_dt_cd == 2 ) {				// 매장검색란에 아무 값이 없고 거래처구분코드가 2(매장)라면
+			$("input#JN_PRT_CD").val(se_prt_cd);				// 매장코드의 value값을 로그인유저의 매장코드로 적용한다
+			$("input#PRT_CD_NM").val(se_prt_nm);				// 매장검색란의 value값을 로그인유저의 매장명으로 적용한다
+		} 
 		
 	}
 	
@@ -52,6 +69,10 @@
 					 ", location = no" );
 		
 	} // end of function search_popup(location) {})---------------------------------------
+	
+	function searchStorePerformance() {
+		
+	}
 	
 </script>
 
@@ -83,11 +104,11 @@
 						</td>
 						<td class="pd_td" style="float: left; padding-top: 20px; ">
 							매장
-							<input type="text" class="dark medium" />
+							<input type="text" class="dark medium" name="JN_PRT_CD" id="JN_PRT_CD" disabled />&nbsp;
 							<button type="button" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" id="btnSearch_prt" class="btn btn-secondary" onclick="search_popup('search_prt')">
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
-							<input type="text" class="large" autofocus />
+							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt" value="" autofocus />
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="">
@@ -97,6 +118,11 @@
 					</tr>
 				</thead>
 			</table>	
+			
+			<input type="hidden" name="SE_PRT_CD" id="SE_PRT_CD" value="${sessionScope.loginuser.PRT_CD}" />
+			<input type="hidden" name="SE_USER_DT_CD" id="SE_USER_DT_CD" value="${sessionScope.loginuser.USER_DT_CD}" />
+			<input type="hidden" name="SE_PRT_NM" id="SE_PRT_NM" value="${sessionScope.loginuser.PRT_NM}" />
+			<input type="hidden" name="HIS_CUST_NO" id="HIS_CUST_NO" value="" />
 		</form>
 		
 		<div class="view">
@@ -153,116 +179,6 @@
 		  </div>
 		</div>
 		
-		<!--  
-		
-		<div id="sticky_both">
-			<table id="tbl_css"  class="both_scroll fixed">
-				<thead id="tbl_css_header" style="width: 100%;">
-					<tr>
-						<th class="center pd_td" style="min-width: 150px;">고객번호</th>
-						<th class="center" style="min-width: 150px;">고객이름</th>
-						<th class="center">휴대폰번호</th>
-						<th class="center">고객상태</th>
-						<th class="center">가입일자</th>
-						<th class="center">가입매장</th>
-						<th class="center">등록자</th>
-						<th class="center">수정일자</th>
-						
-						<th class="center">고객상태</th>
-						<th class="center">가입일자</th>
-						<th class="center">가입매장</th>
-						<th class="center">등록자</th>
-						<th class="center">수정일자</th>
-						<th class="center">고객상태</th>
-						<th class="center">가입일자</th>
-						<th class="center">가입매장</th>
-						<th class="center">등록자</th>
-						<th class="center">수정일자</th>
-						
-						<th class="center">1</th>
-						<th class="center">2</th>
-						<th class="center">3</th>
-						<th class="center">4</th>
-						<th class="center">5</th>
-						<th class="center">6</th>
-						<th class="center">7</th>
-						<th class="center">8</th>
-						<th class="center">9</th>
-						<th class="center">10</th>
-					</tr>
-				</thead>
-			
-				<tbody>
-					<c:forEach begin="1" end="30">
-					<tr style="width: 90%;">
-						<th class="left" style="min-width: 150px; max-width: 150px;">1</td>
-						<th class="left" style="min-width: 150px; max-width: 150px;">2</td>
-						<td class="center">3</td>
-						<td class="center">4</td>
-						<td class="center">5</td>
-						<td class="left">6</td>
-						<td class="left">7</td>
-						<td class="center">8</td>
-						
-						<td class="center">고객상태</td>
-						<td class="center">가입일자</td>
-						<td class="center">가입매장</td>
-						<td class="center">등록자</td>
-						<td class="center">수정일자</td>
-						<td class="center">고객상태</td>
-						<td class="center">가입일자</td>
-						<td class="center">가입매장</td>
-						<td class="center">등록자</td>
-						<td class="center">수정일자</td>
-						
-						<td class="center">1</td>
-						<td class="center">2</td>
-						<td class="center">3</td>
-						<td class="center">4</td>
-						<td class="center">5</td>
-						<td class="center">6</td>
-						<td class="center">7</td>
-						<td class="center">8</td>
-						<td class="center">9</td>
-						<td class="center">10</td>
-					</tr>
-					</c:forEach>
-					<tr>
-						<th colspan="2" class="center"> 합계</td>
-						<td class="center">3</td>
-						<td class="center">4</td>	
-						<td class="center">5</td>
-						<td class="left">6</td>
-						<td class="left">7</td>
-						<td class="center">8</td>
-						
-						<td class="center">고객상태</td>
-						<td class="center">가입일자</td>
-						<td class="center">가입매장</td>
-						<td class="center">등록자</td>
-						<td class="center">수정일자</td>
-						<td class="center">고객상태</td>
-						<td class="center">가입일자</td>
-						<td class="center">가입매장</td>
-						<td class="center">등록자</td>
-						<td class="center">수정일자</td>
-						
-						<td class="center">1</td>
-						<td class="center">2</td>
-						<td class="center">3</td>
-						<td class="center">4</td>
-						<td class="center">5</td>
-						<td class="center">6</td>
-						<td class="center">7</td>
-						<td class="center">8</td>
-						<td class="center">9</td>
-						<td class="center">10</td>
-					</tr>
-				</tbody>
-			
-			</table>
-			
-			-->
 		</div>
 	</div>
 

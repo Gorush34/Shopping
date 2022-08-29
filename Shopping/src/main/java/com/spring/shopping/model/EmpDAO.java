@@ -71,6 +71,20 @@ public class EmpDAO implements InterEmpDAO {
 		return sqlsession.selectOne("shopping.getResultCust", map);
 	}
 
+	// 고객의 변경이력 불러오기(팝업)
+	@Override
+	public List<Map<String, String>> getPopUpHistoryList(Map<String, Object> map) {
+		
+		return sqlsession.selectList("shopping.getPopUpHistoryList", map);
+	}
+
+	// 고객의 정보를 조회(팝업)
+	@Override
+	public Map<String, String> getCustInfoPopUp(Map<String, Object> map) {
+		
+		return sqlsession.selectOne("shopping.getCustInfoPopUp", map);
+	}
+
 
 
 	

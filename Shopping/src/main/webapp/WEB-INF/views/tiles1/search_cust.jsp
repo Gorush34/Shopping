@@ -115,50 +115,79 @@
 	 
 	<script type="text/javascript">
 	
+	let from_name = false;							// 고객이름을 검색하는지 알아오는 변수
+	let from_mobile = false;						// 핸드폰번호를 검색하는지 알아오는 변수
+	var CUST_NO = "";
+	var searchWord_nm = "";
+	var searchWord_mobile = "";
+	let flag = false;
+	
 		$(document).ready(function(){
 			
 			var CUST_NO = opener.$("input#IN_CUST_NO").val(); //부모창에서 id가 IN_CUST_NO인 input태그의 val()
 			// alert(CUST_NO);
 			$("input#CUST_NO").val(CUST_NO); //자식창에서 id가 CUST_NO인 val에 값을 넣기
 			
-			getPopUpCustList(CUST_NO); // 검색어로 고객목록을 가져오는 함수 실행 
+			getPopUpCustList(); // 검색어로 고객목록을 가져오는 함수 실행 
 			
 			
-			$("button#test").click(function(){
-	
-				$("#PRT_NM", opener.document).val($("#PRT_NM").val());
-				// 자식창에서 부모창으로 값 전달하기
-		        closeTabClick();
+			// 닫기 버튼을 눌렀을 때
+			$("button#test").click(function(){			
+				
+		        closeTabClick(); // 팝업창 닫는 함수 실행
 		        
 		    }); // end of $("button#test").click(function(){})------------
-	       
+	    	
 		 	// 검색버튼 클릭시
 		    $("button#btn_custSearch").click(function() {
-		    	getPopUpCustList(CUST_NO); // 검색어로 고객목록을 가져오는 함수 실행
+		    	checkWord(); // 검색어에 대한 유효성 검사 실행
 		    });
 		    
-		 	// 체크박스를 클릭시
+		    // 체크박스를 클릭시
 			$("input.chkBox").click(function() {
 			    $("input.chkBox").not(this).prop('checked', false); // 클릭하지 않은 다른 체크박스의 체크를 해제한다.
 			});
+			
+		    // 적용버튼 클릭시
+		    $("button#apply").click(function(){	
+		    	
+				var TO_CUST_NO = $("input[name='chBox']:checked").attr('id');
+		    	
+		    	$("#CUST_NO", opener.document).val(TO_CUST_NO); 	 // 자식창에서 부모창으로 온전한 매장명 전달하기
+		    	$("#IN_CUST_NO", opener.document).val(TO_CUST_NO); 		 // 자식창에서 부모창으로 온전한 매장번호 전달하기
+		    	closeTabClick(); // 팝업창 닫는 함수 실행
+		    	
+		    });
 		   
 		});	// end of $(document).ready(function(){})----------
 	
 		// Function Declaration
 		
 		// 검색어로 고객목록을 가져오는 함수 실행 
-		function getPopUpCustList(CUST_NO) {
+		function getPopUpCustList() {
 			
-			// alert("실행해라");
 			CUST_NO = $("input#CUST_NO").val();
 			
 			if(CUST_NO == undefined) {
 				CUST_NO = "";
 			} 
 			
+			if(flag) {
+				searchWord_nm = $("input#CUST_NM").val();
+				if(searchWord_nm == undefined) {
+					searchWord_nm = "";
+				}
+				searchWord_mobile = $("input#MBL_NO").val();
+				if(searchWord_mobile == undefined) {
+					searchWord_mobile = "";
+				}
+			}
+			
 			$.ajax({
 				url:"<%= request.getContextPath()%>/getPopUpCustList.dowell",
-				data: {"CUST_NO":CUST_NO}, 
+				data: {"CUST_NO":CUST_NO,
+					   "SEARCHWORD_NM":searchWord_nm,
+					   "SEARCHWORD_MBL":searchWord_mobile}, 
 				dataType:"JSON", 				// 데이터 타입을 JSON 형태로 전송
 				success:function(json){ 		// return된 값이 존재한다면
 					
@@ -168,11 +197,11 @@
 						$.each(json, function(index, item){		// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
 							
 							html += "<tr style='width: 100%;'>";  
-							html += "<td class='center'><input type='checkbox' class='chkBox' id='"+item.CUST_NO+"'/></td>";
-							html += "<td class='center' style='width:160px;' id='CUST_NO'>"+item.CUST_NO+"</td>";
-							html += "<td class='center' style='width:160px;' id='CUST_NM'>"+item.CUST_NM+"</td>";
-							html += "<td class='center' style='width:160px;' id='MBL_NO'>"+item.MBL_NO+"</td>";
-							html += "<td class='center' style='width:160px;' id='CUST_SS_CD'>"+item.CUST_SS_CD+"</td>";
+							html += "<td class='center'><input type='checkbox' name='chBox' class='chkBox' id='"+item.CUST_NO+"'/></td>";
+							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:160px;' id='CUST_NO'>"+item.CUST_NO+"</td>";
+							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:160px;' id='CUST_NM'>"+item.CUST_NM+"</td>";
+							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:160px;' id='MBL_NO'>"+item.MBL_NO+"</td>";
+							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:160px;' id='CUST_SS_CD'>"+item.CUST_SS_CD+"</td>";
 							html += "</tr>";
 							
 						});
@@ -192,11 +221,66 @@
 					
 			});
 			
+			$("input#CUST_NO").val("");
+			flag = false;
+			
 		} // end of function getPrtList(PRT_CD_NM)-------------------------
 		
+		// 고객이름 및 핸드폰번호 검색시 유효성 검사를 실행하는 함수
+		function checkWord() {
+			
+			CUST_NM = $("input#CUST_NM").val();											// 검색란의 고객이름 값을 받아온다 
+			let search_length = CUST_NM.length;											// 고객이름의 길이를 알아온다
+			alert(search_length);
+			var regex = RegExp(/[가-힣a-zA-Z]{2,20}$/);									// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
+			var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);											// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
+			
+			var mobile = $("input#MBL_NO").val();										// 검색란의 핸드폰번호 값을 받아온다 
+			let mobile_length = mobile.length;											// 핸드폰번호의 길이를 알아온다
+			alert(mobile);
+			var mofmt = RegExp(/[0-9]{10,11}$/);										// 핸드폰번호는 10-11자리 숫자만 들어가게끔 정규표현식을 선언한다
+			
+			if( (!regex.test(CUST_NM) && search_length != 0) || regex2.test(CUST_NM)) { // 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
+				alert("고객이름은 최소 두글자 이상 한글 혹은 영어로 입력하셔야 합니다.");
+				return false;															// 함수 종료
+			}
+			else {																		// 공란이거나 고객이름 정규표현식에 맞다면
+				alert("성공!");
+				
+				if(!mofmt.test(mobile) && mobile_length != 0){							// 핸드폰번호가 공란이 아니거나 정규표현식에 맞지 않다면
+					alert("핸드폰번호는 정확히 입력하셔야 합니다!");
+					return false;														// 함수 종료
+				}
+				else{																	// 공란이거나 핸드폰번호 정규표현식에 맞다면
+					flag = true;
+					alert(flag);
+					alert("정확히 입력했음!");
+					getPopUpCustList();
+					
+				}
+			}
+			
+		} // end of function checkWord() {})---------------------
+		
+		// 팝업창의 값을 부모 페이지로 전달하는 함수
+		function sendPopupToOpener_cust() {
+			const $target = $(event.target);			// 더블클릭이 된 해당 위치를 담는다
+			var tr = $target.parent();					// 해당 위치의 부모(tr)의 위치를 담는다
+			var td = tr.children();						// tr의 자식(td)의 위치를 담는다.
+			
+ 
+			var cst_no = td.eq(1).text();				// tr안에 있는 td에서 index가 1인 td의 text(매장명)를 담는다
+    		
+		    $("#IN_CUST_NO", opener.document).val(cst_no); 	 // 자식창에서 부모창으로 온전한 매장명 전달하기
+	    	$("#CUST_NO", opener.document).val(cst_no); 		 // 자식창에서 부모창으로 온전한 매장번호 전달하기
+	    	closeTabClick(); // 팝업창 닫는 함수 실행
+		} // end of function sendPopupToOpener_cust()---------------
+		
+		// 팝업창 닫기를 클릭했을때 실행되는 함수
 		function closeTabClick() {
 			window.close();
-        } // end of function closeTabClick()
+        } // end of function closeTabClick()---------------------------
+		
 		
 	</script>
 

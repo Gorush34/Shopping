@@ -85,6 +85,20 @@ public class EmpService implements InterEmpService {
 		return empDAO.getResultCust(map);
 	}
 
+	// 고객의 변경이력 불러오기(팝업)
+	@Override
+	public List<Map<String, String>> getPopUpHistoryList(Map<String, Object> map) {
+		
+		return empDAO.getPopUpHistoryList(map);
+	}
+
+	// 고객의 정보를 조회(팝업)
+	@Override
+	public Map<String, String> getCustInfoPopUp(Map<String, Object> map) {
+		
+		return empDAO.getCustInfoPopUp(map);
+	}
+
 
 	
 }
