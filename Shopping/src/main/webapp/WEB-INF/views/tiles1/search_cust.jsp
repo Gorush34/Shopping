@@ -231,13 +231,13 @@
 			
 			CUST_NM = $("input#CUST_NM").val();											// 검색란의 고객이름 값을 받아온다 
 			let search_length = CUST_NM.length;											// 고객이름의 길이를 알아온다
-			alert(search_length);
+			
 			var regex = RegExp(/[가-힣a-zA-Z]{2,20}$/);									// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
 			var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);											// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
 			
 			var mobile = $("input#MBL_NO").val();										// 검색란의 핸드폰번호 값을 받아온다 
 			let mobile_length = mobile.length;											// 핸드폰번호의 길이를 알아온다
-			alert(mobile);
+			
 			var mofmt = RegExp(/[0-9]{10,11}$/);										// 핸드폰번호는 10-11자리 숫자만 들어가게끔 정규표현식을 선언한다
 			
 			if( (!regex.test(CUST_NM) && search_length != 0) || regex2.test(CUST_NM)) { // 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
@@ -245,7 +245,7 @@
 				return false;															// 함수 종료
 			}
 			else {																		// 공란이거나 고객이름 정규표현식에 맞다면
-				alert("성공!");
+				// alert("성공!");
 				
 				if(!mofmt.test(mobile) && mobile_length != 0){							// 핸드폰번호가 공란이 아니거나 정규표현식에 맞지 않다면
 					alert("핸드폰번호는 정확히 입력하셔야 합니다!");
@@ -253,8 +253,8 @@
 				}
 				else{																	// 공란이거나 핸드폰번호 정규표현식에 맞다면
 					flag = true;
-					alert(flag);
-					alert("정확히 입력했음!");
+					// alert(flag);
+					// alert("정확히 입력했음!");
 					getPopUpCustList();
 					
 				}

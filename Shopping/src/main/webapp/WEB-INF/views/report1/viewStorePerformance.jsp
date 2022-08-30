@@ -23,10 +23,23 @@
 		se_prt_nm = $("input#SE_PRT_NM").val();					// 로그인유저의 매장명을 받아온다
 		se_user_dt_cd = $("input#SE_USER_DT_CD").val();			// 로그인유저의 거래처구분코드를 받아온다
 		
-		defaultSearch();
+		refresh();
+		// defaultSearch();
+		// searchPerfomance();
 		
+		$("input.enter_prt").keydown(function(event){			// 매장조건 입력란에서 키를 입력 후 
+			if(event.keyCode == 13) { 							// 엔터를 했을 경우
+				from_prt = true;								// 매장 입력에서 왔음을 표시
+				getTotalCount();							// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+			    // alert("매장키!");	
+			}
+		}); // end of $("input#PRT_CD_NM").keydown(function(event){})-------------------------------
 		
-		searchPerfomance();
+		$("button#btn_search_prt").on("click", function (event) { // 매장 찾기 버튼을 클릭했을 때
+			from_prt = true;								// 매장 입력에서 왔음을 표시
+			getTotalCount();							// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+		}); // end of $("button#btnSearch_prt").on("click", function (event) {})---------------------
+		
 		
 	}); // end of $(document).ready(function() {})--------------------------
 	
@@ -35,6 +48,9 @@
 	// 새로고침 아이콘 클릭시 실행되는 함수
 	function refresh() {
 		defaultSearch();
+		
+		
+		searchPerfomance();
 	}
 	
 	// 기본 조건을 불러오는 함수
@@ -51,6 +67,7 @@
 		if(se_user_dt_cd == 2) { 								// 거래처구분코드가 2(매장)라면
 			$(".not").attr("readonly", true);					// 매장검색버튼을 비활성화한다.
 																// disabled시 form 안넘어감!
+			$(".btn_not").attr("disabled", true);				// 버튼 disabled;
 		}		
 		
 	}
@@ -85,46 +102,22 @@
 		
 		$.trim("input#PRT_CD_NM");									// 매장검색란의 공백을 제거
 		var searchWord_prt = $("input#PRT_CD_NM").val();			// 매장검색란의 값을 가져옴
-		$.trim("input#IN_CUST_NO");									// 고객검색란의 공백을 제거
-		var searchWord_cust = $("input#IN_CUST_NO").val();			// 고객검색란의 값을 가져옴
-		
-		if(from_prt) { 												// 매장검색란에서 함수를 실행했다면
-			searchWord_cust = "";									// 고객검색란의 값을 비운다
-		}
-		else if(from_cust) {										// 고객검색란에서 함수를 실행했다면
-			searchWord_prt = ""; 									// 매장검색란의 값을 비운다
-		}
 		
 		$.ajax({
 			url:"<%= request.getContextPath()%>/getTotalCount.dowell",
-			data: { "searchWord_prt" : searchWord_prt,				// 검색어를 Map 형태로 넣어준다.
-				    "searchWord_cust" : searchWord_cust,
-				    "from_prt" : from_prt,
-				    "from_cust" : from_cust},
-			dataType:"JSON", 								// 데이터 타입을 JSON 형태로 전송
-			async:false,									// 동기로 처리(이게 끝나야 다른것을 진행하게끔)
-			success:function(json){ 						// return된 값이 존재한다면
+			data: { "searchWord_prt" : searchWord_prt },			// 검색어를 Map 형태로 넣어준다.
+			dataType:"JSON", 										// 데이터 타입을 JSON 형태로 전송
+			async:false,											// 동기로 처리(이게 끝나야 다른것을 진행하게끔)
+			success:function(json){ 								// return된 값이 존재한다면
 				
 				if(json.status != "1"){
-					if(from_prt) { 
-						// $("input#PRT_CD_NM").val(""); 
-						alert("검색값이 없거나 두 개 이상입니다!");
-						search_popup("search_prt");
-					}
-					else if(from_cust) { 
-						// $("input#IN_CUST_NO").val(""); 
-						alert("검색값이 없거나 두 개 이상입니다!");
-						search_popup("search_cust");
-					}
+					alert("검색값이 없거나 두 개 이상입니다!");
+					search_popup("search_prt");
 				}
-				else if(from_prt) { 											// 매장검색란에서 함수를 실행했다면
+				else { 													// 매장검색란에서 함수를 실행했다면
 					$("input#JN_PRT_CD").val(json.PRT_CD);
 					$("input#PRT_CD_NM").val(json.PRT_NM);
 				}
-				else if(from_cust) {									// 고객검색란에서 함수를 실행했다면
-					$("input#CUST_NO").val(json.CUST_NO);
-					$("input#IN_CUST_NO").val(json.CUST_NO);
-				} 
 				
 			},
 			error: function(request, status, error){
@@ -132,9 +125,6 @@
 			}
 			
 		}); // end of $.ajax()-----------------------------
-		
-		from_cust = false;								// 변수값을 초기화
-		from_prt = false; 								// 변수값을 초기화	
 		
 	} // end of function getTotalCount() {}--------------------------------------
 	
@@ -214,6 +204,8 @@
 						html += "<td class='sticky-col last-col border_td'>"+item.SUM+"</td>";
 						html += "</tr>";
 					
+						
+						
 					});
 				}
 				else {
@@ -243,7 +235,7 @@
 		<div style="margin: auto 0; padding: 0px 10px 5px 10px;">
 			<i class="far fa-star fa-2x"></i>
 			<span style="font-size: 30px; padding-left: 10px;">매장월별실적조회</span>&nbsp;&nbsp;
-			<button type="button" style="margin-bottom: 5px; width: 40px; height: 40px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="">
+			<button type="button" style="margin-bottom: 5px; width: 40px; height: 40px; padding: 0 0 0 7px;" id="refresh" class="btn btn-secondary" onclick="refresh()">
 				<span style="padding-right: 10px;"><i class="fa fa-redo-alt" aria-hidden="true" style="font-size:25px;"></i></span>
 			</button>
 		</div>
@@ -265,7 +257,7 @@
 						<td class="pd_td" style="float: left; padding-top: 20px; ">
 							매장
 							<input type="text" class="dark medium not" name="JN_PRT_CD" id="JN_PRT_CD" disabled />&nbsp;
-							<button type="button" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" id="btnSearch_prt" class="btn btn-secondary not" onclick="search_popup('search_prt')">
+							<button type="button" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" id="btn_search_prt" class="btn btn-secondary btn_not" onclick="search_popup('search_prt')">
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
 							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt not" value="" autofocus />

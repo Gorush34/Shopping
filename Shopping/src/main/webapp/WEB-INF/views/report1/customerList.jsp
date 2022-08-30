@@ -289,8 +289,8 @@
 	// 고객조회 목록을 불러오는 함수
 	function read_cust() {
 		
-		// 필수입력사항 검사 시작
 		/*
+		// 필수입력사항 검사 시작
 		let b_FlagRequiredInfo = false;
 		
 		$("input.requiredInfo").each(function(index, item) {
@@ -307,9 +307,8 @@
 			console.log("b_FlagRequiredInfo : " + b_FlagRequiredInfo);
 			return;
 		}
-		*/
 		// 필수입력사항 검사 끝
-		
+		*/
 		
 		$.trim("input#PRT_CD_NM");
 		var formData = $("form[name=searchFrm]").serialize(); 	// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
@@ -361,7 +360,7 @@
 	function change_history(CUST_NO) {
 		
 		var his_cust_no = CUST_NO;
-		alert(his_cust_no);
+		// alert(his_cust_no);
 		$("input#HIS_CUST_NO").val(his_cust_no);
 		
 		search_popup("change_history"); 

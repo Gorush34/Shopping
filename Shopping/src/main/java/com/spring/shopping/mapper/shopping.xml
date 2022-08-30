@@ -485,7 +485,9 @@
 	    ORDER BY PRT_CD ASC
 	) V INNER JOIN WS
 	ON V.PRT_CD = WS.PRT_CD
+	<if test=' SE_USER_DT_CD = "2" '>
 	WHERE V.PRT_NM LIKE '%' || #{PRT_CD_NM} || '%'
+ 	</if>
  	</select>
  
   	

@@ -183,7 +183,7 @@
     						
     						html += "<tr style='width: 100%;'>";  
     						html += "<td class='center' style='width:100px;'>"+item.CHG_DT+"</td>";
-    						html += "<td class='center' style='width:100px;'>"+item.CHG_CD+"</td>";
+    						html += "<td class='center' style='width:150px;'>"+item.CHG_CD+"</td>";
     						html += "<td class='left' 	style='width:150px;'>"+item.CHG_BF_CNT+"</td>";
     						html += "<td class='left' 	style='width:150px;'>"+item.CHG_AFT_CNT+"</td>";
     						html += "<td class='left' 	style='width:150px;'>"+item.LST_UPD_ID+"</td>";
@@ -194,7 +194,7 @@
     				}
     				else {
     					html += "<tr>";
-    					html += "<td colspan='6' class='center' id='no' style='width:780px;'>변경된 고객이력이 존재하지 않습니다.</td>";
+    					html += "<td colspan='6' class='center' id='no' style='width:830px;'>변경된 고객이력이 존재하지 않습니다.</td>";
     					html += "</tr>";
     				}
     				
@@ -244,7 +244,7 @@
 					<thead id="custList_header" style="width: 100%;">
 						<tr>
 							<th class="center" style="width:100px;">변경일자</th>
-							<th class="center" style="width:100px;">변경항목</th>
+							<th class="center" style="width:150px;">변경항목</th>
 							<th class="center" style="width:150px;">변경전</th>
 							<th class="center" style="width:150px;">변경후</th>
 							<th class="center" style="width:150px;">최종수정자</th>
