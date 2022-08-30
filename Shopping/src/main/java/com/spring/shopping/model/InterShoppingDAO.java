@@ -25,5 +25,8 @@ public interface InterShoppingDAO {
 	
 	// 총 게시글 개수 구하기
 	public int getTotalCount(SearchCriteria scri) throws Exception;
+
+	// 매장별 월별실적 불러오기
+	List<Map<String, String>> getPerformanceList(Map<String, Object> map);
 	
 }

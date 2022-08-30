@@ -72,6 +72,13 @@ public class ShoppingDAO implements InterShoppingDAO {
 		int totalCount = sqlsession.selectOne("shopping.getTotalCount", scri);
 		return totalCount;
 	}
+
+	// 매장별 월별실적 불러오기
+	@Override
+	public List<Map<String, String>> getPerformanceList(Map<String, Object> map) {
+		
+		return sqlsession.selectList("shopping.getPerformanceList", map);
+	}
 	
 	
 

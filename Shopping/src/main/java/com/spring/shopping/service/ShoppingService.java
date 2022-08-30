@@ -66,4 +66,11 @@ public class ShoppingService implements InterShoppingService {
 		return totalCount;
 	}
 
+	// 매장별 월별실적 불러오기
+	@Override
+	public List<Map<String, String>> getPerformanceList(Map<String, Object> map) {
+		
+		return dao.getPerformanceList(map);
+	}
+
 }

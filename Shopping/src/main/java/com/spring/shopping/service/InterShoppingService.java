@@ -1,7 +1,5 @@
 package com.spring.shopping.service;
 
-import java.util.List;
-
 import java.util.*;
 
 import com.spring.shopping.common.SearchCriteria;
@@ -26,5 +24,8 @@ public interface InterShoppingService {
 	
 	// 총 게시글 개수 구하기
 	public int getTotalCount(SearchCriteria scri) throws Exception;
+
+	// 매장별 월별실적 불러오기
+	List<Map<String, String>> getPerformanceList(Map<String, Object> map);
 
 }

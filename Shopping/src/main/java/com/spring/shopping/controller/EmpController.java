@@ -339,7 +339,7 @@ public class EmpController {
 		}
 		
 		return jsonArr.toString(); // 배열 형태인 jsonArr을 String 형태로 변환하여 return 한다.
-	}
+	} // end of public String readCust(ModelAndView mav, @RequestParam Map<String, Object> map) {}-------------
 	
 	// 매장조회 테이블 매장목록 불러오기(팝업)
 	@ResponseBody

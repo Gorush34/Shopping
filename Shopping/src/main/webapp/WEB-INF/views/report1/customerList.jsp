@@ -26,18 +26,9 @@
 
 		defaultSearch();
 		
-		/*
-		
-		if( prt_nm === "" && se_user_dt_cd == 2 ) {				// 매장검색란에 아무 값이 없고 거래처구분코드가 2(매장)라면
-			$("input#JN_PRT_CD").val(se_prt_cd);				// 매장코드의 value값을 로그인유저의 매장코드로 적용한다
-			$("input#PRT_CD_NM").val(se_prt_nm);				// 매장검색란의 value값을 로그인유저의 매장명으로 적용한다
-		} 
-		
 		if(se_user_dt_cd != 2 ) {								// 세션에 저장된 사용자구분코드가 2(특약점)가 아니라면
 			$("div#adminContainer").hide();						// 신규등록이 포함된 div를 숨긴다
 		}
-		
-		*/
 		
 		// ====================================== 가입일자 관련 기능 시작 ======================================
 		
@@ -184,7 +175,9 @@
 	
 	// 새로고침 아이콘 클릭시 실행되는 함수
 	function refresh() {
+		
 		defaultSearch();
+		read_cust(); 											// 고객조건을 조회하는 함수 실행
 	}
 	
 	// 기본 조건을 불러오는 함수
@@ -329,6 +322,8 @@
 			success:function(json){ 						// return된 값이 존재한다면
 				
 				let html = "";								// html 태그를 담기위한 변수 생성
+				$("input#START").val("");
+				
 				if(json.length > 0) { 
 					
 					$.each(json, function(index, item){		// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
@@ -470,7 +465,6 @@
 			<input type="hidden" name="SE_USER_DT_CD" id="SE_USER_DT_CD" value="${sessionScope.loginuser.USER_DT_CD}" />
 			<input type="hidden" name="SE_PRT_NM" id="SE_PRT_NM" value="${sessionScope.loginuser.PRT_NM}" />
 			<input type="hidden" name="HIS_CUST_NO" id="HIS_CUST_NO" value="" />
-			
 			
 		</form>
 		<!-- 검색조건 끝 -->
