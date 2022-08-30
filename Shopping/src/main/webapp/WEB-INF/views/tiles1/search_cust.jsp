@@ -115,47 +115,48 @@
 	 
 	<script type="text/javascript">
 	
-	let from_name = false;							// 고객이름을 검색하는지 알아오는 변수
-	let from_mobile = false;						// 핸드폰번호를 검색하는지 알아오는 변수
-	var CUST_NO = "";
-	var searchWord_nm = "";
-	var searchWord_mobile = "";
-	let flag = false;
+	let from_name = false;														// 고객이름을 검색하는지 알아오는 변수 선언
+	let from_mobile = false;													// 핸드폰번호를 검색하는지 알아오는 변수 선언
+	var CUST_NO = "";															// 고객번호를 담는 변수 선언
+	var searchWord_nm = "";														// 고객이름 검색어를 담는 변수 선언
+	var searchWord_mobile = "";													// 핸드폰번호 검색어를 담는 변수 선언
+	
+	let flag = false;															// 올바른 형식에 맞게 검색어를 입력하였는지 구분하기 위한 flag 변수 선언
 	
 		$(document).ready(function(){
 			
-			var CUST_NO = opener.$("input#IN_CUST_NO").val(); //부모창에서 id가 IN_CUST_NO인 input태그의 val()
+			var CUST_NO = opener.$("input#IN_CUST_NO").val(); 					// 부모창에서 id가 IN_CUST_NO인 input태그의 val()
 			// alert(CUST_NO);
-			$("input#CUST_NO").val(CUST_NO); //자식창에서 id가 CUST_NO인 val에 값을 넣기
+			$("input#CUST_NO").val(CUST_NO); 									// 자식창에서 id가 CUST_NO인 val에 값을 넣기
 			
-			getPopUpCustList(); // 검색어로 고객목록을 가져오는 함수 실행 
+			getPopUpCustList(); 												// 검색어로 고객목록을 가져오는 함수 실행 
 			
 			
 			// 닫기 버튼을 눌렀을 때
 			$("button#test").click(function(){			
 				
-		        closeTabClick(); // 팝업창 닫는 함수 실행
+		        closeTabClick(); 												// 팝업창 닫는 함수 실행
 		        
 		    }); // end of $("button#test").click(function(){})------------
 	    	
 		 	// 검색버튼 클릭시
 		    $("button#btn_custSearch").click(function() {
-		    	checkWord(); // 검색어에 대한 유효성 검사 실행
+		    	checkWord(); 													// 검색어에 대한 유효성 검사 실행
 		    });
 		    
 		    // 체크박스를 클릭시
 			$("input.chkBox").click(function() {
-			    $("input.chkBox").not(this).prop('checked', false); // 클릭하지 않은 다른 체크박스의 체크를 해제한다.
+			    $("input.chkBox").not(this).prop('checked', false); 			// 클릭하지 않은 다른 체크박스의 체크를 해제한다.
 			});
 			
 		    // 적용버튼 클릭시
 		    $("button#apply").click(function(){	
 		    	
-				var TO_CUST_NO = $("input[name='chBox']:checked").attr('id');
+				var TO_CUST_NO = $("input[name='chBox']:checked").attr('id');	// name 이 chBox인 체크박스의 id(매장명)를 가져온다
 		    	
-		    	$("#CUST_NO", opener.document).val(TO_CUST_NO); 	 // 자식창에서 부모창으로 온전한 매장명 전달하기
-		    	$("#IN_CUST_NO", opener.document).val(TO_CUST_NO); 		 // 자식창에서 부모창으로 온전한 매장번호 전달하기
-		    	closeTabClick(); // 팝업창 닫는 함수 실행
+		    	$("#CUST_NO", opener.document).val(TO_CUST_NO); 	 			// 자식창에서 부모창으로 온전한 매장명 전달하기
+		    	$("#IN_CUST_NO", opener.document).val(TO_CUST_NO); 		 		// 자식창에서 부모창으로 온전한 매장번호 전달하기
+		    	closeTabClick(); 												// 팝업창 닫는 함수 실행
 		    	
 		    });
 		   
@@ -166,35 +167,35 @@
 		// 검색어로 고객목록을 가져오는 함수 실행 
 		function getPopUpCustList() {
 			
-			CUST_NO = $("input#CUST_NO").val();
+			CUST_NO = $("input#CUST_NO").val();									// 매장명 값을 담는다
 			
-			if(CUST_NO == undefined) {
-				CUST_NO = "";
+			if(CUST_NO == undefined) {											// 비어있다면
+				CUST_NO = "";													// 공백처리
 			} 
 			
-			if(flag) {
-				searchWord_nm = $("input#CUST_NM").val();
-				if(searchWord_nm == undefined) {
-					searchWord_nm = "";
+			if(flag) {															// 정규표현식에 위배되지 않았다면
+				searchWord_nm = $("input#CUST_NM").val();						// 고객이름 검색칸의 값을 담는다
+				if(searchWord_nm == undefined) {								// 비어있다면
+					searchWord_nm = "";											// 공백처리
 				}
-				searchWord_mobile = $("input#MBL_NO").val();
-				if(searchWord_mobile == undefined) {
-					searchWord_mobile = "";
+				searchWord_mobile = $("input#MBL_NO").val();					// 핸드폰번호 검색칸의 값을 담는다
+				if(searchWord_mobile == undefined) {							// 비어있다면
+					searchWord_mobile = "";										// 공백처리
 				}
-			}
+			} // end of if(flag) {}--------------------------------
 			
 			$.ajax({
 				url:"<%= request.getContextPath()%>/getPopUpCustList.dowell",
 				data: {"CUST_NO":CUST_NO,
 					   "SEARCHWORD_NM":searchWord_nm,
 					   "SEARCHWORD_MBL":searchWord_mobile}, 
-				dataType:"JSON", 				// 데이터 타입을 JSON 형태로 전송
-				success:function(json){ 		// return된 값이 존재한다면
+				dataType:"JSON", 												// 데이터 타입을 JSON 형태로 전송
+				success:function(json){ 										// return된 값이 존재한다면
 					
-					let html = "";				// html 태그를 담기위한 변수 생성
+					let html = "";												// html 태그를 담기위한 변수 생성
 					if(json.length > 0) { 
 						
-						$.each(json, function(index, item){		// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
+						$.each(json, function(index, item){						// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
 							
 							html += "<tr style='width: 100%;'>";  
 							html += "<td class='center'><input type='checkbox' name='chBox' class='chkBox' id='"+item.CUST_NO+"'/></td>";
@@ -212,7 +213,7 @@
 						html += "</tr>";
 					}
 					
-					$("tbody#CUST_DISPLAY").html(html); // tbody의 id가 PRT_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
+					$("tbody#CUST_DISPLAY").html(html); 						// tbody의 id가 PRT_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
 	
 				},
 				error: function(request, status, error){
@@ -221,8 +222,8 @@
 					
 			});
 			
-			$("input#CUST_NO").val("");
-			flag = false;
+			$("input#CUST_NO").val("");													// 값을 초기화
+			flag = false;																// 정규표현식 구분 flag를 초기화
 			
 		} // end of function getPrtList(PRT_CD_NM)-------------------------
 		
@@ -264,21 +265,21 @@
 		
 		// 팝업창의 값을 부모 페이지로 전달하는 함수
 		function sendPopupToOpener_cust() {
-			const $target = $(event.target);			// 더블클릭이 된 해당 위치를 담는다
-			var tr = $target.parent();					// 해당 위치의 부모(tr)의 위치를 담는다
-			var td = tr.children();						// tr의 자식(td)의 위치를 담는다.
+			const $target = $(event.target);											// 더블클릭이 된 해당 위치를 담는다
+			var tr = $target.parent();													// 해당 위치의 부모(tr)의 위치를 담는다
+			var td = tr.children();														// tr의 자식(td)의 위치를 담는다.
 			
  
-			var cst_no = td.eq(1).text();				// tr안에 있는 td에서 index가 1인 td의 text(매장명)를 담는다
+			var cst_no = td.eq(1).text();												// tr안에 있는 td에서 index가 1인 td의 text(매장명)를 담는다
     		
-		    $("#IN_CUST_NO", opener.document).val(cst_no); 	 // 자식창에서 부모창으로 온전한 매장명 전달하기
-	    	$("#CUST_NO", opener.document).val(cst_no); 		 // 자식창에서 부모창으로 온전한 매장번호 전달하기
+		    $("#IN_CUST_NO", opener.document).val(cst_no); 	 							// 자식창에서 부모창으로 온전한 매장명 전달하기
+	    	$("#CUST_NO", opener.document).val(cst_no); 								// 자식창에서 부모창으로 온전한 매장번호 전달하기
 	    	closeTabClick(); // 팝업창 닫는 함수 실행
 		} // end of function sendPopupToOpener_cust()---------------
 		
 		// 팝업창 닫기를 클릭했을때 실행되는 함수
 		function closeTabClick() {
-			window.close();
+			window.close();																// 팝업을 닫는다
         } // end of function closeTabClick()---------------------------
 		
 		
@@ -295,6 +296,7 @@
 			<span style="font-size: 20px; padding-left: 10px;">고객조회</span>&nbsp;&nbsp;
 		</div>
 		
+		<!-- 고객정보를 검색하기 위한 form 시작 -->
 		<form>
 			<table id="tbl_searchCustmor">
 				<thead>
@@ -318,7 +320,9 @@
 				</thead>
 			</table>	
 		</form>
+		<!-- 고객정보를 검색하기 위한 form 끝 -->
 		
+		<!-- 검색결과를 보여주는 부분 시작 -->
 		<div id="popup_table_container">
 			<form>
 				<table id="custList"  class="scrolltable" style="margin: 15px auto;">
@@ -347,13 +351,16 @@
 				</table>
 			</form>
 		</div>
+		<!-- 검색결과를 보여주는 부분 끝 -->
 		
 	</div>
-
+	
+	<!-- 닫기 / 적용 버튼이 포함되어 있는 하단 부분 시작 -->
 	<div id="container_btn" style="padding: 0 auto; text-align: center;">
 		<button type="button" id="test" class="btn btn-secondary" >닫기</button>
 		<span style="padding: 10px 20px 10px 0;"></span>
 		<button type="button" id="apply" class="btn btn-secondary" >적용</button>
 	</div>
+	<!-- 닫기 / 적용 버튼이 포함되어 있는 하단 부분 끝 -->
 </body>
 </html>

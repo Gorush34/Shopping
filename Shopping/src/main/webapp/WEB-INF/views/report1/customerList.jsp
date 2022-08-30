@@ -9,13 +9,13 @@
 
 <script type="text/javascript">
 
-	let from_cust = false;						// 고객번호를 검색하는지 알아오는 변수
-	let from_prt = false;						// 매장을 검색하는지 알아오는 변수
+	let from_cust = false;										// 고객번호를 검색하는지 알아오는 변수
+	let from_prt = false;										// 매장을 검색하는지 알아오는 변수
 
-	var prt_nm = "";
-	var se_prt_cd = "";
-	var se_prt_nm = "";
-	var se_user_dt_cd = "";
+	var prt_nm = "";											// 매장명을 받을 변수 선언
+	var se_prt_cd = "";											// 세션에 저장된 매장코드를 받을 변수 선언
+	var se_prt_nm = "";											// 세션에 저장된 매장명을 받을 변수 선언
+	var se_user_dt_cd = "";										// 세션에 저장된 거래처구분코드를 받아올 변수 선언
 	
 	$(document).ready(function() {
 		
@@ -24,7 +24,7 @@
 		se_prt_nm = $("input#SE_PRT_NM").val();					// 로그인유저의 매장명을 받아온다
 		se_user_dt_cd = $("input#SE_USER_DT_CD").val();			// 로그인유저의 거래처구분코드를 받아온다
 
-		defaultSearch();
+		defaultSearch();										// 기본정보를 불러오는 함수 실행
 		
 		if(se_user_dt_cd != 2 ) {								// 세션에 저장된 사용자구분코드가 2(특약점)가 아니라면
 			$("div#adminContainer").hide();						// 신규등록이 포함된 div를 숨긴다
@@ -66,17 +66,17 @@
 	    $.datepicker.setDefaults($.datepicker.regional['ko']);
 	
 	    $('#SDATE').datepicker();
-	    $('#SDATE').datepicker('setDate', '-7D'); 								// (-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
-        $('#SDATE').datepicker("option", "maxDate", 'today');					// 시작일자의 최댓값을 오늘로 설정
-	    $('#SDATE').datepicker("option", "onClose", function ( selectedDate ) { // onClose 옵션을 주어야, 종료일이 시작일보다 뒤로 갈수 없고, 시작일이 종료일보다 앞으로 갈 수 없음
+	    $('#SDATE').datepicker('setDate', '-7D'); 									// (-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
+        $('#SDATE').datepicker("option", "maxDate", 'today');						// 시작일자의 최댓값을 오늘로 설정
+	    $('#SDATE').datepicker("option", "onClose", function ( selectedDate ) { 	// onClose 옵션을 주어야, 종료일이 시작일보다 뒤로 갈수 없고, 시작일이 종료일보다 앞으로 갈 수 없음
 	        $("#EDATE").datepicker( "option", "minDate", selectedDate );
 	    });
 	
 	    $('#EDATE').datepicker();
-	    $('#EDATE').datepicker('setDate', 'today'); 							//(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
-	    $('#EDATE').datepicker("option", "minDate", $("#SDATE").val());			// 종료일자의 최소값을 시작일자로 설정
-	    $('#EDATE').datepicker("option", "maxDate", 'today');					// 종료일자의 최댓값을 오늘로 설정
-	    $('#EDATE').datepicker("option", "onClose", function ( selectedDate ) { // onClose 옵션을 주어야, 종료일이 시작일보다 뒤로 갈수 없고, 시작일이 종료일보다 앞으로 갈 수 없음
+	    $('#EDATE').datepicker('setDate', 'today'); 								//(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
+	    $('#EDATE').datepicker("option", "minDate", $("#SDATE").val());				// 종료일자의 최소값을 시작일자로 설정
+	    $('#EDATE').datepicker("option", "maxDate", 'today');						// 종료일자의 최댓값을 오늘로 설정
+	    $('#EDATE').datepicker("option", "onClose", function ( selectedDate ) { 	// onClose 옵션을 주어야, 종료일이 시작일보다 뒤로 갈수 없고, 시작일이 종료일보다 앞으로 갈 수 없음
 	        $("#SDATE").datepicker( "option", "maxDate", selectedDate );
 	    });
 		
@@ -138,32 +138,32 @@
 		// ====================================== 가입일자 관련 기능 끝 ======================================
 			
 			
-		read_cust(); 											// 고객조건을 조회하는 함수 실행
+		read_cust(); 													// 고객조건을 조회하는 함수 실행
 		
-		$("input.enter_prt").keydown(function(event){			// 매장조건 입력란에서 키를 입력 후 
-			if(event.keyCode == 13) { 							// 엔터를 했을 경우
-				from_prt = true;								// 매장 입력에서 왔음을 표시
-				getTotalCount();							// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+		$("input.enter_prt").keydown(function(event){					// 매장조건 입력란에서 키를 입력 후 
+			if(event.keyCode == 13) { 									// 엔터를 했을 경우
+				from_prt = true;										// 매장 입력에서 왔음을 표시
+				getTotalCount();										// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
 			    // alert("매장키!");	
 			}
 		}); // end of $("input#PRT_CD_NM").keydown(function(event){})-------------------------------
 		
-		$("input.enter_cust").keydown(function(event){			// 고객번호 입력란에서 키를 입력 후 
-			if(event.keyCode == 13) { 							// 엔터를 했을 경우
-				from_cust = true;								// 고객번호 입력에서 왔음을 표시
-				getTotalCount();							// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+		$("input.enter_cust").keydown(function(event){					// 고객번호 입력란에서 키를 입력 후 
+			if(event.keyCode == 13) { 									// 엔터를 했을 경우
+				from_cust = true;										// 고객번호 입력에서 왔음을 표시
+				getTotalCount();										// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
 				// alert("고객키!");	
 			}
 		}); // end of $("input#IN_CUST_NO").keydown(function(event){})------------------------------
 
-		$("button#btn_search_prt").on("click", function (event) { // 매장 찾기 버튼을 클릭했을 때
-			from_prt = true;								// 매장 입력에서 왔음을 표시
-			getTotalCount();							// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+		$("button#btn_search_prt").on("click", function (event) { 		// 매장 찾기 버튼을 클릭했을 때
+			from_prt = true;											// 매장 입력에서 왔음을 표시
+			getTotalCount();											// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
 		}); // end of $("button#btnSearch_prt").on("click", function (event) {})---------------------
 		
-		$("button#btn_search_cust").on("click", function (event) { // 고객번호 찾기 버튼을 클릭했을 때\
-			from_cust = true;								// 고객번호 입력에서 왔음을 표시
-			getTotalCount();							// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+		$("button#btn_search_cust").on("click", function (event) { 		// 고객번호 찾기 버튼을 클릭했을 때\
+			from_cust = true;											// 고객번호 입력에서 왔음을 표시
+			getTotalCount();											// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
 		}); // end of $("button#btnSearch_cust").on("click", function (event) {})---------------------
 		
 
@@ -215,7 +215,7 @@
 		// 너비 900, 높이 600 인 팝업창을 화면 가운데 위치시키기
 		const pop_width = 900;
 		const pop_height = 600;
-		const pop_left = Math.ceil( ((window.screen.width)-pop_width)/2 ) ; <%-- 정수로 만든다 --%>
+		const pop_left = Math.ceil( ((window.screen.width)-pop_width)/2 ) ; 		// 값을 정수로 만든다
 		const pop_top = Math.ceil( ((window.screen.height)-pop_height)/2 ) ;
 		
 		window.open( url, 
@@ -231,47 +231,47 @@
 	// 결과가 하나인지 알아오는 함수 
 	function getTotalCount() {
 		
-		$.trim("input#PRT_CD_NM");									// 매장검색란의 공백을 제거
-		var searchWord_prt = $("input#PRT_CD_NM").val();			// 매장검색란의 값을 가져옴
-		$.trim("input#IN_CUST_NO");									// 고객검색란의 공백을 제거
-		var searchWord_cust = $("input#IN_CUST_NO").val();			// 고객검색란의 값을 가져옴
+		$.trim("input#PRT_CD_NM");										// 매장검색란의 공백을 제거
+		var searchWord_prt = $("input#PRT_CD_NM").val();				// 매장검색란의 값을 가져옴
+		$.trim("input#IN_CUST_NO");										// 고객검색란의 공백을 제거
+		var searchWord_cust = $("input#IN_CUST_NO").val();				// 고객검색란의 값을 가져옴
 		
-		if(from_prt) { 												// 매장검색란에서 함수를 실행했다면
-			searchWord_cust = "";									// 고객검색란의 값을 비운다
+		if(from_prt) { 													// 매장검색란에서 함수를 실행했다면
+			searchWord_cust = "";										// 고객검색란의 값을 비운다
 		}
-		else if(from_cust) {										// 고객검색란에서 함수를 실행했다면
-			searchWord_prt = ""; 									// 매장검색란의 값을 비운다
+		else if(from_cust) {											// 고객검색란에서 함수를 실행했다면
+			searchWord_prt = ""; 										// 매장검색란의 값을 비운다
 		}
 		
 		$.ajax({
 			url:"<%= request.getContextPath()%>/getTotalCount.dowell",
-			data: { "searchWord_prt" : searchWord_prt,				// 검색어를 Map 형태로 넣어준다.
+			data: { "searchWord_prt" : searchWord_prt,					// 검색어를 Map 형태로 넣어준다.
 				    "searchWord_cust" : searchWord_cust,
 				    "from_prt" : from_prt,
 				    "from_cust" : from_cust},
-			dataType:"JSON", 								// 데이터 타입을 JSON 형태로 전송
-			async:false,									// 동기로 처리(이게 끝나야 다른것을 진행하게끔)
-			success:function(json){ 						// return된 값이 존재한다면
+			dataType:"JSON", 											// 데이터 타입을 JSON 형태로 전송
+			async:false,												// 동기로 처리(이게 끝나야 다른것을 진행하게끔)
+			success:function(json){ 									// return된 값이 존재한다면
 				
-				if(json.status != "1"){
-					if(from_prt) { 
+				if(json.status != "1"){									// json으로 받아온 status의 값이 1이 아니라면(결과가 1이 아니라면)
+					if(from_prt) { 										// 매장코드 검색했을 때
 						// $("input#PRT_CD_NM").val(""); 
 						alert("검색값이 없거나 두 개 이상입니다!");
-						search_popup("search_prt");
+						search_popup("search_prt");						// 매장검색 팝업을 실행
 					}
-					else if(from_cust) { 
-						// $("input#IN_CUST_NO").val(""); 
-						alert("검색값이 없거나 두 개 이상입니다!");
-						search_popup("search_cust");
+					else if(from_cust) {								// 고객정보 검색했을 때 
+						// $("input#IN_CUST_NO").val(""); 			
+						alert("검색값이 없거나 두 개 이상입니다!");		
+						search_popup("search_cust");					// 고객정보 팝업을 실행
 					}
 				}
-				else if(from_prt) { 											// 매장검색란에서 함수를 실행했다면
-					$("input#JN_PRT_CD").val(json.PRT_CD);
-					$("input#PRT_CD_NM").val(json.PRT_NM);
+				else if(from_prt) { 									// 결과가 1이고 매장검색란에서 함수를 실행했다면
+					$("input#JN_PRT_CD").val(json.PRT_CD);				// 매장코드를 넣는다
+					$("input#PRT_CD_NM").val(json.PRT_NM);				// 매장명을 넣는다
 				}
-				else if(from_cust) {									// 고객검색란에서 함수를 실행했다면
-					$("input#CUST_NO").val(json.CUST_NO);
-					$("input#IN_CUST_NO").val(json.CUST_NO);
+				else if(from_cust) {									// 결과가 1이고 고객검색란에서 함수를 실행했다면
+					$("input#CUST_NO").val(json.CUST_NO);				// 고객번호를 넣는다
+					$("input#IN_CUST_NO").val(json.CUST_NO);			// 고객번호를 넣는다
 				} 
 				
 			},
@@ -281,8 +281,8 @@
 			
 		}); // end of $.ajax()-----------------------------
 		
-		from_cust = false;								// 변수값을 초기화
-		from_prt = false; 								// 변수값을 초기화	
+		from_cust = false;												// 어디에서 왔는지 구분하는 flag 초기화
+		from_prt = false; 												// 어디에서 왔는지 구분하는 flag 초기화
 		
 	} // end of function getTotalCount() {}--------------------------------------
 	
@@ -310,23 +310,24 @@
 		// 필수입력사항 검사 끝
 		*/
 		
-		$.trim("input#PRT_CD_NM");
-		var formData = $("form[name=searchFrm]").serialize(); 	// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
+		$.trim("input#PRT_CD_NM");									// 검색란의 공백을 제거한다.
+		$.trim("input#IN_CUST_NO");									// 검색란의 공백을 제거한다.
+		var formData = $("form[name=searchFrm]").serialize(); 		// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
 		
 		
 		$.ajax({
 			url:"<%= request.getContextPath()%>/readCust.dowell",
 			data: formData, 
-			dataType:"JSON", 								// 데이터 타입을 JSON 형태로 전송
-			success:function(json){ 						// return된 값이 존재한다면
+			dataType:"JSON", 										// 데이터 타입을 JSON 형태로 전송
+			success:function(json){ 								// return된 값이 존재한다면
 				
-				let html = "";								// html 태그를 담기위한 변수 생성
-				$("input#START").val("");
+				let html = "";										// html 태그를 담기위한 변수 생성
 				
 				if(json.length > 0) { 
 					
-					$.each(json, function(index, item){		// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
+					$.each(json, function(index, item){				// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
 						
+						// 결과값 한 행의 값들을 담는다
 						html += "<tr style='width: 100%;'>";  
 						html += "<td class='left'>"+(index+1)+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary' id='change_history' onclick='change_history("+item.CUST_NO+")'>변경이력</button></td>";
 						html += "<td class='left'>"+item.CUST_NM+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary' id='user_detail'  onclick='user_detail("+item.CUST_NO+")'>상세</button></td>";
@@ -340,7 +341,7 @@
 					
 					});
 				}
-				else {
+				else {												// 검색조건에 맞는 결과가 없다면
 					html += "<tr>";
 					html += "<td colspan='8' id='no' class='center'>검색조건에 맞는 고객이 존재하지 않습니다.</td>";
 					html += "</tr>";
@@ -359,11 +360,11 @@
 	// 변경이력 버튼 클릭시 팝업을 불러오는 함수
 	function change_history(CUST_NO) {
 		
-		var his_cust_no = CUST_NO;
+		var his_cust_no = CUST_NO;										// 버튼으로부터 고객번호를 받아온다
 		// alert(his_cust_no);
-		$("input#HIS_CUST_NO").val(his_cust_no);
+		$("input#HIS_CUST_NO").val(his_cust_no);						// input 태그(hidden)에 값을 저장(예비용)
 		
-		search_popup("change_history"); 
+		search_popup("change_history"); 								// 이력변경사항 팝업을 실행
 		
 	} // end of function change_history(CUST_NO)--------------------
 	

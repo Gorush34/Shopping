@@ -8,36 +8,34 @@
 %>    
 
 <script type="text/javascript">
-	
-	var prt_nm = "";
-	var se_prt_cd = "";
-	var se_prt_nm = "";
-	var se_user_dt_cd = "";
 
+	var prt_nm = "";													// 매장명을 받을 변수 선언
+	var se_prt_cd = "";													// 세션에 저장된 매장코드를 받을 변수 선언
+	var se_prt_nm = "";													// 세션에 저장된 매장명을 받을 변수 선언
+	var se_user_dt_cd = "";												// 세션에 저장된 거래처구분코드를 받아올 변수 선언
+	
 	$(document).ready(function() {
 		
-
-		
-		prt_nm = $("input#PRT_CD_NM").val();					// 매장검색란의 value값을 받아온다
-		se_prt_cd = $("input#SE_PRT_CD").val();					// 로그인유저의 매장코드를 받아온다
-		se_prt_nm = $("input#SE_PRT_NM").val();					// 로그인유저의 매장명을 받아온다
-		se_user_dt_cd = $("input#SE_USER_DT_CD").val();			// 로그인유저의 거래처구분코드를 받아온다
+		prt_nm = $("input#PRT_CD_NM").val();							// 매장검색란의 value값을 받아온다
+		se_prt_cd = $("input#SE_PRT_CD").val();							// 로그인유저의 매장코드를 받아온다
+		se_prt_nm = $("input#SE_PRT_NM").val();							// 로그인유저의 매장명을 받아온다
+		se_user_dt_cd = $("input#SE_USER_DT_CD").val();					// 로그인유저의 거래처구분코드를 받아온다
 		
 		refresh();
 		// defaultSearch();
 		// searchPerfomance();
 		
-		$("input.enter_prt").keydown(function(event){			// 매장조건 입력란에서 키를 입력 후 
-			if(event.keyCode == 13) { 							// 엔터를 했을 경우
-				from_prt = true;								// 매장 입력에서 왔음을 표시
-				getTotalCount();							// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+		$("input.enter_prt").keydown(function(event){					// 매장조건 입력란에서 키를 입력 후 
+			if(event.keyCode == 13) { 									// 엔터를 했을 경우
+				from_prt = true;										// 매장 입력에서 왔음을 표시
+				getTotalCount();										// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
 			    // alert("매장키!");	
 			}
 		}); // end of $("input#PRT_CD_NM").keydown(function(event){})-------------------------------
 		
-		$("button#btn_search_prt").on("click", function (event) { // 매장 찾기 버튼을 클릭했을 때
-			from_prt = true;								// 매장 입력에서 왔음을 표시
-			getTotalCount();							// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+		$("button#btn_search_prt").on("click", function (event) { 		// 매장 찾기 버튼을 클릭했을 때
+			from_prt = true;											// 매장 입력에서 왔음을 표시
+			getTotalCount();											// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
 		}); // end of $("button#btnSearch_prt").on("click", function (event) {})---------------------
 		
 		
@@ -47,27 +45,25 @@
 	
 	// 새로고침 아이콘 클릭시 실행되는 함수
 	function refresh() {
-		defaultSearch();
-		
-		
-		searchPerfomance();
+		defaultSearch();																// 기본 조건을 불러오는 함수 실행
+		searchPerfomance();																// 월별 실적을 불러오는 함수 실행
 	}
 	
 	// 기본 조건을 불러오는 함수
 	function defaultSearch() {
-		$("input#JN_PRT_CD").val("");							// disabled 처리된 고객번호 input 태그의 값을 비운다
-		$("input#PRT_CD_NM").val("");							// 고객번호 input 태그의 값을 비운다
-		document.getElementById('SAL_DT').value= new Date().toISOString().slice(0, 7);
+		$("input#JN_PRT_CD").val("");													// disabled 처리된 고객번호 input 태그의 값을 비운다
+		$("input#PRT_CD_NM").val("");													// 고객번호 input 태그의 값을 비운다
+		document.getElementById('SAL_DT').value= new Date().toISOString().slice(0, 7);	// 매출월의 연월을 담는다
 			
-		if( se_user_dt_cd == 2 ) {								// 거래처구분코드가 2(매장)라면
-			$("input#JN_PRT_CD").val(se_prt_cd);				// 매장코드의 value값을 로그인유저의 매장코드로 적용한다
-			$("input#PRT_CD_NM").val(se_prt_nm);				// 매장검색란의 value값을 로그인유저의 매장명으로 적용한다
+		if( se_user_dt_cd == 2 ) {														// 거래처구분코드가 2(매장)라면
+			$("input#JN_PRT_CD").val(se_prt_cd);										// 매장코드의 value값을 로그인유저의 매장코드로 적용한다
+			$("input#PRT_CD_NM").val(se_prt_nm);										// 매장검색란의 value값을 로그인유저의 매장명으로 적용한다
 		} 
 		
-		if(se_user_dt_cd == 2) { 								// 거래처구분코드가 2(매장)라면
-			$(".not").attr("readonly", true);					// 매장검색버튼을 비활성화한다.
-																// disabled시 form 안넘어감!
-			$(".btn_not").attr("disabled", true);				// 버튼 disabled;
+		if(se_user_dt_cd == 2) { 														// 거래처구분코드가 2(매장)라면
+			$(".not").attr("readonly", true);											// 매장검색버튼을 비활성화한다.
+																						// disabled시 form 안넘어감!
+			$(".btn_not").attr("disabled", true);										// 버튼 disabled;
 		}		
 		
 	}
@@ -100,23 +96,23 @@
 	// 결과가 하나인지 알아오는 함수 
 	function getTotalCount() {
 		
-		$.trim("input#PRT_CD_NM");									// 매장검색란의 공백을 제거
-		var searchWord_prt = $("input#PRT_CD_NM").val();			// 매장검색란의 값을 가져옴
+		$.trim("input#PRT_CD_NM");											// 매장검색란의 공백을 제거
+		var searchWord_prt = $("input#PRT_CD_NM").val();					// 매장검색란의 값을 가져옴
 		
 		$.ajax({
 			url:"<%= request.getContextPath()%>/getTotalCount.dowell",
-			data: { "searchWord_prt" : searchWord_prt },			// 검색어를 Map 형태로 넣어준다.
-			dataType:"JSON", 										// 데이터 타입을 JSON 형태로 전송
-			async:false,											// 동기로 처리(이게 끝나야 다른것을 진행하게끔)
-			success:function(json){ 								// return된 값이 존재한다면
+			data: { "searchWord_prt" : searchWord_prt },					// 검색어를 Map 형태로 넣어준다.
+			dataType:"JSON", 												// 데이터 타입을 JSON 형태로 전송
+			async:false,													// 동기로 처리(이게 끝나야 다른것을 진행하게끔)
+			success:function(json){ 										// return된 값이 존재한다면
 				
-				if(json.status != "1"){
+				if(json.status != "1"){										// json으로 받아온 status의 값이 1이 아니라면(결과가 1이 아니라면)
 					alert("검색값이 없거나 두 개 이상입니다!");
-					search_popup("search_prt");
+					search_popup("search_prt");								// 매장정보 팝업을 실행
 				}
-				else { 													// 매장검색란에서 함수를 실행했다면
-					$("input#JN_PRT_CD").val(json.PRT_CD);
-					$("input#PRT_CD_NM").val(json.PRT_NM);
+				else { 														// 결과가 1이라면
+					$("input#JN_PRT_CD").val(json.PRT_CD);					// 매장명을 넣는다	
+					$("input#PRT_CD_NM").val(json.PRT_NM);					// 매장코드를 넣는다
 				}
 				
 			},
@@ -132,40 +128,40 @@
 	function searchPerfomance() {
 		
 		// 필수입력사항 검사 시작
-		let b_FlagRequiredInfo = false;
+		let b_FlagRequiredInfo = false;														// 필수입력사항을 구분하기 위한 flag 선언
 		
-		$("input.requiredInfo").each(function(index, item) {
-			const data = $(item).val().trim();
-			if(data == ""){
-				console.log("item : " + data);
-				alert("*표시된 필수입력사항은 모두 입력하셔야 합니다.");
-				b_FlagRequiredInfo = true;
-				return false; 
+		$("input.requiredInfo").each(function(index, item) {								// 필수입력사항들 각각에 대해 실행
+			const data = $(item).val().trim();												// 데이터의 값을 받아오고 공백 제거
+			if(data == ""){																	// 값이 공백이라면
+				console.log("item : " + data);										
+				alert("*표시된 필수입력사항은 모두 입력하셔야 합니다.");								// 경고 표시
+				b_FlagRequiredInfo = true;													// flag 를 true로 변경
+				return false; 																// each 종료
 			}
 		});
 		
-		if(b_FlagRequiredInfo) {
+		if(b_FlagRequiredInfo) {															// 필수입력사항이 모두 입력되지 않았다면
 			console.log("b_FlagRequiredInfo : " + b_FlagRequiredInfo);
-			return;
+			return;																			// 함수 종료
 		}
 		// 필수입력사항 검사 끝
 		
 		
-		$.trim("input#PRT_CD_NM");
-		var formData = $("form[name=searchFrm]").serialize(); 	// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
+		$.trim("input#PRT_CD_NM");															// 매장 검색창의 공백 제거
+		var formData = $("form[name=searchFrm]").serialize();								// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
 		
 		
 		$.ajax({
 			url:"<%= request.getContextPath()%>/searchPerformance.dowell",
 			data: formData, 
-			dataType:"JSON", 								// 데이터 타입을 JSON 형태로 전송
-			success:function(json){ 						// return된 값이 존재한다면
+			dataType:"JSON", 																// 데이터 타입을 JSON 형태로 전송
+			success:function(json){ 														// return된 값이 존재한다면
 				
 				$("tfoot#TFOOT_SUM").show();
-				let html = "";								// html 태그를 담기위한 변수 생성
+				let html = "";																// html 태그를 담기위한 변수 생성
 				if(json.length > 0) { 
 					
-					$.each(json, function(index, item){		// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
+					$.each(json, function(index, item){										// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
 						
 						html += "<tr style='width: 100%;'>";  
 						html += "<td class='sticky-col first-col'>"+item.PRT_CD+"</td>";
@@ -215,7 +211,7 @@
 					$("tfoot#TFOOT_SUM").hide();
 				}
 				
-				$("tbody#PERFORM_DISPLAY").html(html); // tbody의 id가 PERFORM_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
+				$("tbody#PERFORM_DISPLAY").html(html); 					// tbody의 id가 PERFORM_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
 				
 			},
 			error: function(request, status, error){

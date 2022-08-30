@@ -110,40 +110,36 @@
 	
 		$(document).ready(function(){
 			
-			var his_cust_no = opener.$("input#HIS_CUST_NO").val(); //부모창에서 id가 parent인 태그의 val()
-			$("input#HIS_CUST_NO").val(his_cust_no); //자식창에서 id가 child인 val에 id를 넣기
+			var his_cust_no = opener.$("input#HIS_CUST_NO").val();						// 부모창에서 id가 parent인 태그의 val()
+			$("input#HIS_CUST_NO").val(his_cust_no);									// 자식창에서 id가 child인 val에 id를 넣기
 
-			getCustInfo(his_cust_no);		
-			getCustHistory(his_cust_no);
+			getCustInfo(his_cust_no);													// 변경이력을 조회할 고객의 정보를 알아오는 함수 실행
+			getCustHistory(his_cust_no);												// 고객의 변경이력을 불러오는 함수 실행
 			
-			$("button#close").click(function(){
-		        
-				closeTabClick();
-		        
+			$("button#close").click(function(){											// 닫기버튼을 눌렀을 때
+				closeTabClick();														// 팝업을 닫는다
 		   }); // end of $("button#test").click(function(){})------------
 	    	
-			$("input.chkBox").click(function() {
-			    $("input.chkBox").not(this).prop('checked', false);
-			});
-		   
 		});	// end of $(document).ready(function(){})----------
 	
 		// Function Declaration
 		
 		// 고객정보를 조회해오는 함수
 		function getCustInfo(CUST_NO) {
-			var cust_no = CUST_NO;
+			var cust_no = CUST_NO;														// 고객코드를 담는다
 			
 			$.ajax({
     			url:"<%= request.getContextPath()%>/getCustInfoPopUp.dowell",
     			data: {"SEARCHWORD":cust_no}, 
-    			dataType:"JSON", 								// 데이터 타입을 JSON 형태로 전송
-    			success:function(json){ 						// return된 값이 존재한다면
+    			dataType:"JSON", 														// 데이터 타입을 JSON 형태로 전송
+    			success:function(json){ 												// return된 값이 존재한다면
     				
-    				let info = "";								// html 태그를 담기위한 변수 생성
+    				let info = "";														// html 태그를 담기위한 변수 생성
+    				
+    				// 고객의 정보를 담는다
     				info = "<td style='padding-left:20px;'>고객&nbsp;&nbsp;&nbsp;"+json.CUST_NO+"&nbsp;&nbsp;&nbsp;"+json.CUST_NM+"</td>";
     				
-    				$("tr#info").html(info); // tr의 id가 info인 부분에 html 변수에 담긴 html 태그를 놓는다.
+    				$("tr#info").html(info); 											// tr의 id가 info인 부분에 html 변수에 담긴 html 태그를 놓는다.
     				
     			},
     			error: function(request, status, error){
@@ -158,28 +154,18 @@
         
         function getCustHistory(CUST_NO) {
         	
-        	var cust_no = CUST_NO;
+        	var cust_no = CUST_NO;														// 고객번호를 담는다
         	
         	$.ajax({
     			url:"<%= request.getContextPath()%>/getCustHistoryPopUp.dowell",
     			data: {"SEARCHWORD":cust_no}, 
-    			dataType:"JSON", 								// 데이터 타입을 JSON 형태로 전송
-    			success:function(json){ 						// return된 값이 존재한다면
+    			dataType:"JSON", 														// 데이터 타입을 JSON 형태로 전송
+    			success:function(json){ 												// return된 값이 존재한다면
     				
-    				
-    				 // let info = "";								// 고객 정보를 담기 위한 
-    				let html = "";								// html 태그를 담기위한 변수 생성
+    				let html = "";														// html 태그를 담기위한 변수 생성
     				if(json.length > 0) { 
     					
-    					/*
-    					$.each(json, function(index, item){
-    						info = "<td style='padding-left:20px;'>고객&nbsp;&nbsp;&nbsp;"+item.CUST_NO+"&nbsp;&nbsp;&nbsp;"+item.CUST_NM+"</td>";
-    						alert(info);
-    						return false;
-    					});
-    					*/
-    					
-    					$.each(json, function(index, item){		// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
+    					$.each(json, function(index, item){								// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
     						
     						html += "<tr style='width: 100%;'>";  
     						html += "<td class='center' style='width:100px;'>"+item.CHG_DT+"</td>";
@@ -198,8 +184,7 @@
     					html += "</tr>";
     				}
     				
-    				// $("tr#info").html(info); // tr의 id가 info인 부분에 html 변수에 담긴 html 태그를 놓는다.
-    				$("tbody#HISTORY_DISPLAY").html(html); // tbody의 id가 CUST_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
+    				$("tbody#HISTORY_DISPLAY").html(html); 						// tbody의 id가 CUST_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
     				
     			},
     			error: function(request, status, error){
@@ -211,7 +196,7 @@
         
         // 닫기 버튼을 클릭했을 때 실행하는 함수
 		function closeTabClick() {
-			window.close();
+			window.close();														// 팝업을 닫는다
         } // end of function closeTabClick()
         
 	</script>
@@ -227,6 +212,7 @@
 			<span style="font-size: 20px; padding-left: 10px;">변경이력</span>&nbsp;&nbsp;
 		</div>
 		
+		<!-- 변경이력을 조회한 고객의 정보 출력부분 시작 -->
 		<form>
 			<table id="tbl_searchCustmor">
 				<thead>
@@ -237,7 +223,9 @@
 				</thead>
 			</table>	
 		</form>
+		<!-- 변경이력을 조회한 고객의 정보 출력부분 끝 -->
 		
+		<!-- 조회한 결과들을 보여주는 부분 시작 -->
 		<div id="popup_table_container">
 			<form>
 				<table id="custList"  class="scrolltable" style="margin: 15px auto;">
@@ -259,12 +247,16 @@
 				<input type="hidden" name="HIS_CUST_NO" id="HIS_CUST_NO" value="" />
 			</form>
 		</div>
+		<!-- 조회한 결과들을 보여주는 부분 끝 -->
 		
 	</div>
 
+	<!-- 닫기 버튼이 포함된 부분 시작 -->
 	<div id="container_btn" style="padding: 0 auto; text-align: center;">
 		<button type="button" id="close" class="btn btn-secondary" >닫기</button>
 		<span style="padding: 10px 20px 10px 0;"></span>
 	</div>
+	<!-- 닫기 버튼이 포함된 부분 끝 -->
+	
 </body>
 </html>

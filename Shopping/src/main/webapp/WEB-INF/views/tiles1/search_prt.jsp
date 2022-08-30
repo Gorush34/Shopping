@@ -106,26 +106,26 @@
 	 
 	<script type="text/javascript">
 	
-		var tr = "";
-		var td = "";
+		var tr = "";														// 값을 부모창에게 전달하기 위해 위치 파악하는 변수 생성
+		var td = "";														// 값을 부모창에게 전달하기 위해 위치 파악하는 변수 생성
 	
 		$(document).ready(function(){
-			var PRT_CD_NM = opener.$("input#PRT_CD_NM").val(); //부모창에서 id가 PRT_CD_NM인 태그의 val()
-			$("input#PRT_CD_NM").val(PRT_CD_NM); //자식창에서 id가 PRT_CD_NM인 val에 id를 넣기
+			var PRT_CD_NM = opener.$("input#PRT_CD_NM").val(); 				//부모창에서 id가 PRT_CD_NM인 태그의 val()
+			$("input#PRT_CD_NM").val(PRT_CD_NM); 							//자식창에서 id가 PRT_CD_NM인 val에 id를 넣기
 			
-			getPrtList(PRT_CD_NM); // 검색어로 거래처목록을 가져오는 함수 실행 
+			getPrtList(PRT_CD_NM); 											// 검색어로 거래처목록을 가져오는 함수 실행 
 
 			
 			// 닫기 버튼을 눌렀을 때
 			$("button#test").click(function(){			
 				
-		        closeTabClick(); // 팝업창 닫는 함수 실행
+		        closeTabClick(); 											// 팝업창 닫는 함수 실행
 		        
 		    }); // end of $("button#test").click(function(){})------------
 	    		    
 		    // 검색버튼 클릭시
 		    $("button#btn_prtSearch").click(function() {
-		    	getPrtList(PRT_CD_NM);
+		    	getPrtList(PRT_CD_NM);										// PRT_CD_NM 를 검색조건으로 하는 매장목록 검색 함수 실행
 		    });
 
 		    
@@ -137,12 +137,12 @@
 		    // 적용버튼 클릭시
 		    $("button#apply").click(function(){	
 		    	
-				var PRT_CD_NM = $("input[name='chBox']:checked").attr('id');
-		    	var PRT_CD = $("input[name='chBox']:checked").parent().parent().children().eq(1).text();
+				var PRT_CD_NM = $("input[name='chBox']:checked").attr('id');								// name 이 chBox인 체크박스의 id(매장명)를 가져온다
+		    	var PRT_CD = $("input[name='chBox']:checked").parent().parent().children().eq(1).text();	// 체크한 위치를 기반으로 매장코드를 가져온다
 		    	
-		    	$("#PRT_CD_NM", opener.document).val(PRT_CD_NM); 	 // 자식창에서 부모창으로 온전한 매장명 전달하기
-		    	$("#JN_PRT_CD", opener.document).val(PRT_CD); 		 // 자식창에서 부모창으로 온전한 매장번호 전달하기
-		    	closeTabClick(); // 팝업창 닫는 함수 실행
+		    	$("#PRT_CD_NM", opener.document).val(PRT_CD_NM); 	 										// 자식창에서 부모창으로 온전한 매장명 전달하기
+		    	$("#JN_PRT_CD", opener.document).val(PRT_CD); 		 										// 자식창에서 부모창으로 온전한 매장번호 전달하기
+		    	closeTabClick(); 																			// 팝업창 닫는 함수 실행
 		    	
 		    });
 		
@@ -156,24 +156,24 @@
 		function getPrtList(PRT_CD_NM) {
 			
 			// alert("실행해라");
-			PRT_CD_NM = $("input#PRT_CD_NM").val();
+			PRT_CD_NM = $("input#PRT_CD_NM").val();								// 검색창의 값을 넣는다
 			
-			if(PRT_CD_NM == undefined) {
-				PRT_CD_NM = "";
+			if(PRT_CD_NM == undefined) {										// 아무것도 입력하지 않았다면
+				PRT_CD_NM = "";													// 빈칸처리
 			} 
 			// alert("값이 뭐니?" + PRT_CD_NM);
 			
 			$.ajax({
 				url:"<%= request.getContextPath()%>/getPrtList.dowell",
 				data: {"searchWord":PRT_CD_NM}, 
-				dataType:"JSON", 				// 데이터 타입을 JSON 형태로 전송
+				dataType:"JSON", 												// 데이터 타입을 JSON 형태로 전송
 				async: false,
-				success:function(json){ 		// return된 값이 존재한다면
+				success:function(json){ 										// return된 값이 존재한다면
 					
-					let html = "";				// html 태그를 담기위한 변수 생성
+					let html = "";												// html 태그를 담기위한 변수 생성
 					if(json.length > 0) { 
 						
-						$.each(json, function(index, item){		// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
+						$.each(json, function(index, item){						// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
 							
 							html += "<tr style='width: 100%;'>";  
 							html += "<td class='center'><input type='checkbox' name='chBox' class='chkBox' id='"+item.PRT_NM+"'/></td>";
@@ -190,7 +190,7 @@
 						html += "</tr>";
 					}
 					
-					$("tbody#PRT_DISPLAY").html(html); // tbody의 id가 PRT_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
+					$("tbody#PRT_DISPLAY").html(html); 							// tbody의 id가 PRT_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
 	
 				},
 				error: function(request, status, error){
@@ -204,23 +204,23 @@
 		// 팝업창의 값을 부모 페이지로 전달하는 함수
 		function sendPopupToOpener_prt() {
 			
-			const $target = $(event.target);			// 더블클릭이 된 해당 위치를 담는다
-			var tr = $target.parent();					// 해당 위치의 부모(tr)의 위치를 담는다
-			var td = tr.children();						// tr의 자식(td)의 위치를 담는다.
+			const $target = $(event.target);									// 더블클릭이 된 해당 위치를 담는다
+			var tr = $target.parent();											// 해당 위치의 부모(tr)의 위치를 담는다
+			var td = tr.children();												// tr의 자식(td)의 위치를 담는다.
 			
  
-			var prt_cd = td.eq(1).text();				// tr안에 있는 td에서 index가 1인 td의 text(매장명)를 담는다
-    		var prt_cd_nm = td.eq(2).text();			// tr안에 있는 td에서 index가 2인 td의 text(매장번호)를 담는다  	
+			var prt_cd = td.eq(1).text();										// tr안에 있는 td에서 index가 1인 td의 text(매장명)를 담는다
+    		var prt_cd_nm = td.eq(2).text();									// tr안에 있는 td에서 index가 2인 td의 text(매장번호)를 담는다  	
 		    
-		    $("#PRT_CD_NM", opener.document).val(prt_cd_nm); 	 // 자식창에서 부모창으로 온전한 매장명 전달하기
-	    	$("#JN_PRT_CD", opener.document).val(prt_cd); 		 // 자식창에서 부모창으로 온전한 매장번호 전달하기
-	    	closeTabClick(); // 팝업창 닫는 함수 실행
+		    $("#PRT_CD_NM", opener.document).val(prt_cd_nm); 	 				// 자식창에서 부모창으로 온전한 매장명 전달하기
+	    	$("#JN_PRT_CD", opener.document).val(prt_cd); 		 				// 자식창에서 부모창으로 온전한 매장번호 전달하기
+	    	closeTabClick(); 													// 팝업창 닫는 함수 실행
 	    	
 		} // end of function sendPopupToOpener() {})-------------------------
 		
 		// 팝업창 닫기를 클릭했을때 실행되는 함수
 		function closeTabClick() {
-			window.close();
+			window.close();														// 팝업을 닫는다
         } // end of function closeTabClick()---------------------------
 		
 	</script>
@@ -236,6 +236,7 @@
 			<span style="font-size: 20px; padding-left: 10px;">매장조회</span>&nbsp;&nbsp;
 		</div>
 		
+		<!-- 검색조건이 들어있는 form 시작 -->
 		<form onsubmit="return false;"><!-- form 태그안 input 태그 1개 존재시 엔터로 submit됨 방지 -->
 			<table id="tbl_searchCustmor">
 				<thead>
@@ -253,7 +254,9 @@
 				</thead>
 			</table>	
 		</form>
+		<!-- 검색조건이 들어있는 form 끝 -->
 		
+		<!-- 검색결과를 보여주는 테이블 시작 -->
 		<div id="popup_table_container">
 			<form>
 				<table id="custList"  class="scrolltable" style="margin: 15px auto;">
@@ -271,13 +274,15 @@
 				</table>
 			</form>
 		</div>
-		
+		<!-- 검색결과를 보여주는 테이블 끝 -->
 	</div>
 
+	<!-- 닫기 / 적용 버튼이 포함되어 있는 하단 부분 시작 -->
 	<div id="container_btn" style="padding: 0 auto; text-align: center;">
 		<button type="button" id="test" class="btn btn-secondary" >닫기</button>
 		<span style="padding: 10px 20px 10px 0;"></span>
 		<button type="button" id="apply" class="btn btn-secondary" >적용</button>
 	</div>
+	<!-- 닫기 / 적용 버튼이 포함되어 있는 하단 부분 끝 -->
 </body>
 </html>
