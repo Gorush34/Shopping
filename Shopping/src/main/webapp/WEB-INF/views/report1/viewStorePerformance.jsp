@@ -233,28 +233,32 @@
 	// 각 열의 합계를 구하는 함수
 	function getTotalQty() {
 		
-		var row_array = new Array();				// 행의 값들을 담을 배열 생성
-		
-		const table = document.getElementById('PERFORM_DISPLAY');
-		var row_length = $("tbody#PERFORM_DISPLAY tr").length;
-		// alert(" 진실 혹은 거짓 : " + is_exist);
-		// alert("행의 길이는 : " + row_length);
-		
-		// $("tr:eq("+i+") td:eq("+j+")").text(woman[i][j]);
-        // i번째 행의 j번째 열에 woman[i][j] 데이터 넣음
+		var sum_array = new Array();														// 행의 값들을 담을 배열 생성
+    	var sum = "";																		// 각 일자별 합계를 담을 변수 생성
+		var rows = document.getElementById("PERFORM_DISPLAY").getElementsByTagName("tr");	// tbody 안의 tr의 개수(조회된 매장의 수)를 구한다
+		// alert(rows.length);
         
-		// 합계 계산
-	    let sum = 0;
-	    for(let i = 0; i < row_length; i++)  {
-	      
-	    	for(let j=0; j<32; j++) {
-	    		// alert(table.rows[i].cells[j+2].innerHTML);
-	    		// row_array[j] += parseInt(table.rows[i].cells[j+2].innerHTML);
-	    	}
-	    }
-		
-	    // alert(row_array);
-		is_exist = false;													// flag 초기화
+        for( let i = 0; i < 32; i++ ) { 													// 1일부터 31일 + 총 합계만큼 반복
+        	
+        	sum = 0;																		// 일자별로 합을 넣은 후 다음 작업을 위한 초기화
+        	
+        	for(let j=0; j< rows.length; j++) {												// tr의 개수만큼 반복(조회된 매장의 수만큼)
+        		
+        		var cells = rows[j].getElementsByTagName("td");								// row의 j번째 인덱스에 있는 td의 위치를 담는다
+        		
+        		var cell_val = parseInt( cells[(i+2)].firstChild.data );					// j번째 row에 위치한 i+2번째 td의 값을 담는 변수 생성 
+        		sum += cell_val;															// 그 값을 sum에 더해준다
+        	}
+        	
+        	// alert((i+1)+"일의 합계 : " + sum);
+        	sum_array.push(sum);															// 배열의 i번째 인덱스에 sum값을 넣는다(일별 총계)
+        	// alert(sum_array[i]);
+        	
+        	// tfoot(모든 매장의 일별 합계를 보여주는 곳)의 첫번째 row(tr)의 i+1번째 td값을 변경한다
+			document.getElementById("TFOOT_SUM").getElementsByTagName("tr")[0].getElementsByTagName("td")[(i+1)].innerHTML = sum_array[i];
+        }
+
+		is_exist = false;																	// flag 초기화
 		
 	} // end of function getTotalQty() {}------------------
 	
@@ -368,37 +372,37 @@
 		      <tfoot id="TFOOT_SUM">
     		       	<tr>
 		       		  <td class="sticky-col first-col" colspan="2">합계</td>
-		       		  <td class="border_td">1일</td>
-			          <td class="border_td">2일</td>
-			          <td class="border_td">3일</td>
-			          <td class="border_td">4일</td>
-			          <td class="border_td">5일</td>
-			          <td class="border_td">6일</td>
-			          <td class="border_td">7일</td>
-			          <td class="border_td">8일</td>
-			          <td class="border_td">9일</td>
-			          <td class="border_td">10일</td>
-			          <td class="border_td">11일</td>
-			          <td class="border_td">12일</td>
-			          <td class="border_td">13일</td>
-			          <td class="border_td">14일</td>
-			          <td class="border_td">15일</td>
-			          <td class="border_td">16일</td>
-			          <td class="border_td">17일</td>
-			          <td class="border_td">18일</td>
-			          <td class="border_td">19일</td>
-			          <td class="border_td">20일</td>
-			          <td class="border_td">21일</td>
-			          <td class="border_td">22일</td>
-			          <td class="border_td">23일</td>
-			          <td class="border_td">24일</td>
-			          <td class="border_td">25일</td>
-			          <td class="border_td">26일</td>
-			          <td class="border_td">27일</td>
-			          <td class="border_td">28일</td>
-			          <td class="border_td">29일</td>
-			          <td class="border_td">30일</td>
-			          <td class="border_td">31일</td>
+		       		  <td class="border_td" style="text-align: right;">1일</td>
+			          <td class="border_td" style="text-align: right;">2일</td>
+			          <td class="border_td" style="text-align: right;">3일</td>
+			          <td class="border_td" style="text-align: right;">4일</td>
+			          <td class="border_td" style="text-align: right;">5일</td>
+			          <td class="border_td" style="text-align: right;">6일</td>
+			          <td class="border_td" style="text-align: right;">7일</td>
+			          <td class="border_td" style="text-align: right;">8일</td>
+			          <td class="border_td" style="text-align: right;">9일</td>
+			          <td class="border_td" style="text-align: right;">10일</td>
+			          <td class="border_td" style="text-align: right;">11일</td>
+			          <td class="border_td" style="text-align: right;">12일</td>
+			          <td class="border_td" style="text-align: right;">13일</td>
+			          <td class="border_td" style="text-align: right;">14일</td>
+			          <td class="border_td" style="text-align: right;">15일</td>
+			          <td class="border_td" style="text-align: right;">16일</td>
+			          <td class="border_td" style="text-align: right;">17일</td>
+			          <td class="border_td" style="text-align: right;">18일</td>
+			          <td class="border_td" style="text-align: right;">19일</td>
+			          <td class="border_td" style="text-align: right;">20일</td>
+			          <td class="border_td" style="text-align: right;">21일</td>
+			          <td class="border_td" style="text-align: right;">22일</td>
+			          <td class="border_td" style="text-align: right;">23일</td>
+			          <td class="border_td" style="text-align: right;">24일</td>
+			          <td class="border_td" style="text-align: right;">25일</td>
+			          <td class="border_td" style="text-align: right;">26일</td>
+			          <td class="border_td" style="text-align: right;">27일</td>
+			          <td class="border_td" style="text-align: right;">28일</td>
+			          <td class="border_td" style="text-align: right;">29일</td>
+			          <td class="border_td" style="text-align: right;">30일</td>
+			          <td class="border_td" style="text-align: right;">31일</td>
 			          <td class="sticky-col last-col border_td">합계</td>
 		       		</tr>
 		      </tfoot>
