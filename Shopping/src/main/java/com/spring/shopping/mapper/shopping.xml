@@ -201,19 +201,19 @@
 	   <result property="PRT_SS_CD" 	column="PRT_SS_CD" 		javaType="String" />
 	</resultMap>
 	<select id="getPrtList" resultMap="prtListMap" parameterType="HashMap">
-  	SELECT PRT_CD                                   										/* 거래처코드 */
-		     , PRT_NM                                   									/* 거래처명 */
-		     , PRT_DT_CD                                									/* 거래처구분코드 */
-		     , CASE PRT_SS_CD                           									/* 거래처상태코드 */
-		       WHEN '10' THEN '정상'                     									/* 코드가 10이면 정상 */
-		       WHEN '80' THEN '중지'                     									/* 코드가 80이면 중지 */
-		       WHEN '90' THEN '폐쇄'                     									/* 코드가 90이면 폐쇄 */
-		       END AS PRT_SS_CD
-		FROM MA_PRT_MT                                  									/* 거래처관리 테이블로부터 */
-		WHERE PRT_DT_CD = '2'                           									/* 거래처구분코드가 2이면서 */
-		  AND ( PRT_CD LIKE '%' || #{searchWord} || '%'             						/* 매장코드와 부분일치하거나 */
-		   OR   PRT_NM LIKE '%' || #{searchWord} || '%' )           						/* 또는 매장코드와 부분일치한 데이터들을 */
-		ORDER BY PRT_CD ASC                             									/* 거래처코드의 오름차순을 기준으로 가져온다 */
+  	SELECT PRT_CD                                   									/* 거래처코드 */
+	     , PRT_NM                                   									/* 거래처명 */
+	     , PRT_DT_CD                                									/* 거래처구분코드 */
+	     , CASE PRT_SS_CD                           									/* 거래처상태코드 */
+	       WHEN '10' THEN '정상'                     									/* 코드가 10이면 정상 */
+	       WHEN '80' THEN '중지'                     									/* 코드가 80이면 중지 */
+	       WHEN '90' THEN '폐쇄'                     									/* 코드가 90이면 폐쇄 */
+	       END AS PRT_SS_CD
+	FROM MA_PRT_MT                                  									/* 거래처관리 테이블로부터 */
+	WHERE PRT_DT_CD = '2'                           									/* 거래처구분코드가 2이면서 */
+	  AND ( PRT_CD LIKE '%' || #{searchWord} || '%'             						/* 매장코드와 부분일치하거나 */
+	   OR   PRT_NM LIKE '%' || #{searchWord} || '%' )           						/* 또는 매장코드와 부분일치한 데이터들을 */
+	ORDER BY PRT_CD ASC                             									/* 거래처코드의 오름차순을 기준으로 가져온다 */
   	</select>
 
 	<!-- 고객조회 목록 가져오기 -->
@@ -349,16 +349,16 @@
  	</resultMap>
  	<select id="getPerformanceList" parameterType="HashMap" resultMap="performMap">
  	/*
- 		1. 이 쿼리문은 WITH WS절과 VIEW V절의 INNER JOIN으로 이루어져 있으며 조인조건은 매장코드의 일치이다.
- 		2. WITH WS절의 목적은 매장별 1개월동안 실판매되어진 수량을 구해오는 SUM 컬럼을 생성하기 위해서이다.
+ 		1. 이 쿼리문은 크게 WITH WS절과 VIEW V절의 INNER JOIN으로 이루어져 있으며 조인조건은 매장코드의 일치이다.
+ 		2. WITH WS절의 목적은 매장별 1개월동안 실제로 판매되어진 수량을 구해오는 SUM 컬럼을 생성하기 위해서이다.
  			2-1. WS절은 VIEW S절을 포함하고 있으며, S절은 판매구분코드를 통해 구매와 반품을 구분한 컬럼을 생성(TOT_SAL_TP_QTY)하여
- 				 WS절에서 매장코드별로(GROUP BY) 합계를 구해온다.
- 		3. VIEW V절의 목적은 매장별로 각 일자마다 판매되어진 수량을 구해오는 컬럼들을 생성하기 위해서이다.
+ 				 WS절에서 매장코드별로(GROUP BY) 실제 판매합계를 구해온다.
+ 		3. VIEW V절의 목적은 매장별로 각 일자마다 실제로 판매되어진 수량을 구해오는 컬럼들을 생성하기 위해서이다.
  			3-1. V절은 판매, 반품을 구분하기 위한 WITH W1절을 통해 
  					  일별 판매,반품의 합을 알아오기 위한 WITH W2절을 생성하고
- 					  W2의 실구매수량의 합을 이용한 PIVOT을 일자별로 실시한다. 
+ 					  W2의 실판매수량의 합을 이용한 PIVOT을 일자별로 실시한다. 
  		4. 파라미터는 총 2개가 들어간다. 
- 		   - 파라미터 SAL_DT 는 해당년도와 월을 포함하고 있어, W1절의 일자를 조회하는데 있어 해당년도와 월을 조건으로 검색하는데 사용된다.
+ 		   - 파라미터 SAL_DT 는 해당년도와 월을 포함하고 있어, W1절의 일자를 조회하는데 있어 해당년도와 월을 선택하는 조건으로 사용된다.
  		   - 파라미터 PRT_CD_NM 은 매장명을 포함하고 있어, 최종적으로 어떤 매장을 조회할 것인지에 대한 조건으로 사용된다.
  	*/
  	

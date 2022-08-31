@@ -256,12 +256,12 @@
 				if(json.status != "1"){									// json으로 받아온 status의 값이 1이 아니라면(결과가 1이 아니라면)
 					if(from_prt) { 										// 매장코드 검색했을 때
 						// $("input#PRT_CD_NM").val(""); 
-						alert("검색값이 없거나 두 개 이상입니다!");
+						// alert("검색값이 없거나 두 개 이상입니다!");
 						search_popup("search_prt");						// 매장검색 팝업을 실행
 					}
 					else if(from_cust) {								// 고객정보 검색했을 때 
 						// $("input#IN_CUST_NO").val(""); 			
-						alert("검색값이 없거나 두 개 이상입니다!");		
+						// alert("검색값이 없거나 두 개 이상입니다!");		
 						search_popup("search_cust");					// 고객정보 팝업을 실행
 					}
 				}
@@ -390,6 +390,17 @@
 	    return v;											// 종료
 	} // end of function date_mask(objValue) {})------------------
 	
+	// 특수문자 입력 방지
+	function characterCheck(obj){
+	var regExp = /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi; 
+	// 허용할 특수문자는 여기서 삭제하면 됨
+	// 지금은 띄어쓰기도 특수문자 처리됨 참고하셈
+	if( regExp.test(obj.value) ){
+		alert("특수문자는 입력하실수 없습니다.");
+		obj.value = obj.value.substring( 0 , obj.value.length - 1 ); // 입력한 특수문자 한자리 지움
+		}
+	} // end of function characterCheck(obj){}--------------------
+	
 </script>
 
 <div>
@@ -420,7 +431,7 @@
 							<!-- 
 								<i class="fas fa-search fa-border"></i>&nbsp;
 							 -->
-							&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt" value="" autofocus />
+							&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt" value="" onkeyup="characterCheck(this)" onkeydown="characterCheck(this)" autofocus />
 						</td>
 						
 						<td class="pd_td" style="float:right;">고객번호</td>
@@ -429,7 +440,7 @@
 							<button type="button" id="btn_search_cust" class="btn btn-secondary" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" >
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
-							<input type="text" class="large enter_cust" name="IN_CUST_NO" id="IN_CUST_NO" value="" />
+							<input type="text" class="large enter_cust" name="IN_CUST_NO" id="IN_CUST_NO" value="" onkeyup="characterCheck(this)" onkeydown="characterCheck(this)" />
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="read_cust()">

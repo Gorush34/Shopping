@@ -170,10 +170,10 @@
     						html += "<tr style='width: 100%;'>";  
     						html += "<td class='center' style='width:100px;'>"+item.CHG_DT+"</td>";
     						html += "<td class='center' style='width:150px;'>"+item.CHG_CD+"</td>";
-    						html += "<td class='left' 	style='width:150px;'>"+item.CHG_BF_CNT+"</td>";
-    						html += "<td class='left' 	style='width:150px;'>"+item.CHG_AFT_CNT+"</td>";
-    						html += "<td class='left' 	style='width:150px;'>"+item.LST_UPD_ID+"</td>";
-    						html += "<td class='center' style='width:130px;'>"+item.LST_UPD_DT+"</td>";
+    						html += "<td class='left' 	style='width:170px; max-width:170px;'>"+item.CHG_BF_CNT+"</td>";
+    						html += "<td class='left' 	style='width:170px; max-width:170px;'>"+item.CHG_AFT_CNT+"</td>";
+    						html += "<td class='left' 	style='width:130px;'>"+item.LST_UPD_ID+"</td>";
+    						html += "<td class='center' style='width:110px;'>"+item.LST_UPD_DT+"</td>";
     						html += "</tr>";
     					
     					});
@@ -233,10 +233,10 @@
 						<tr>
 							<th class="center" style="width:100px;">변경일자</th>
 							<th class="center" style="width:150px;">변경항목</th>
-							<th class="center" style="width:150px;">변경전</th>
-							<th class="center" style="width:150px;">변경후</th>
-							<th class="center" style="width:150px;">최종수정자</th>
-							<th class="center" style="width:130px;">최종수정일시</th>
+							<th class="center" style="width:170px; max-width:170px;">변경전</th>
+							<th class="center" style="width:170px; max-width:170px;">변경후</th>
+							<th class="center" style="width:130px;">최종수정자</th>
+							<th class="center" style="width:110px;">최종수정일시</th>
 						</tr>
 					</thead>
 				

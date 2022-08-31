@@ -137,6 +137,14 @@
 		    // 적용버튼 클릭시
 		    $("button#apply").click(function(){	
 		    	
+		    	let is_checked = $('.chkBox').prop('checked');
+		    	//alert(checkList);
+		    	
+		    	if(!is_checked) {
+		    		alert("항목을 선택한 후 적용버튼을 눌러주세요!");
+		    		return false;
+		    	}
+		    	
 				var PRT_CD_NM = $("input[name='chBox']:checked").attr('id');								// name 이 chBox인 체크박스의 id(매장명)를 가져온다
 		    	var PRT_CD = $("input[name='chBox']:checked").parent().parent().children().eq(1).text();	// 체크한 위치를 기반으로 매장코드를 가져온다
 		    	
@@ -223,6 +231,17 @@
 			window.close();														// 팝업을 닫는다
         } // end of function closeTabClick()---------------------------
 		
+     	// 특수문자 입력 방지
+    	function characterCheck(obj){
+    	var regExp = /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi; 
+    	// 허용할 특수문자는 여기서 삭제하면 됨
+    	// 지금은 띄어쓰기도 특수문자 처리됨 참고하셈
+    	if( regExp.test(obj.value) ){
+    		alert("특수문자는 입력하실수 없습니다.");
+    		obj.value = obj.value.substring( 0 , obj.value.length - 1 ); // 입력한 특수문자 한자리 지움
+    		}
+    	} // end of function characterCheck(obj){}--------------------
+        
 	</script>
 
 <meta charset="UTF-8">
@@ -243,7 +262,7 @@
 					<tr>
 						<td class="pd_td pd_left" style="float:right;">매장&nbsp;&nbsp;&nbsp;&nbsp;</td>
 						<td>
-							<input type="text" id="PRT_CD_NM" autofocus />&nbsp;
+							<input type="text" id="PRT_CD_NM" placeholder="매장코드 또는 매장명 검색" onkeyup="characterCheck(this)" onkeydown="characterCheck(this)" autofocus />&nbsp;
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btn_prtSearch" class="btn btn-secondary">

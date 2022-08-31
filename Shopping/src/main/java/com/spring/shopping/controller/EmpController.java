@@ -251,6 +251,9 @@ public class EmpController {
 		return mav;
 	}
 
+	// ============================================= 과제1 시작 =============================================
+	
+	
 	// 고객리스트 페이지 요청
 	@RequestMapping(value="/customerList.dowell")
 	public ModelAndView requiredLogin_customerList(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @ModelAttribute("scri") SearchCriteria scri) throws Exception {

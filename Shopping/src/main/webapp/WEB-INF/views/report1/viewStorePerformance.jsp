@@ -13,6 +13,8 @@
 	var se_prt_cd = "";													// 세션에 저장된 매장코드를 받을 변수 선언
 	var se_prt_nm = "";													// 세션에 저장된 매장명을 받을 변수 선언
 	var se_user_dt_cd = "";												// 세션에 저장된 거래처구분코드를 받아올 변수 선언
+	let from_prt = false;												// 매장을 검색하는지 알아오는 변수
+	let is_exist = false;												// 일자별 총 합계를 구하기 위해 결과가 있는지 알아오는 변수
 	
 	$(document).ready(function() {
 		
@@ -101,13 +103,14 @@
 		
 		$.ajax({
 			url:"<%= request.getContextPath()%>/getTotalCount.dowell",
-			data: { "searchWord_prt" : searchWord_prt },					// 검색어를 Map 형태로 넣어준다.
+			data: { "searchWord_prt" : searchWord_prt,
+						  "from_prt" : from_prt			},					// 검색어를 Map 형태로 넣어준다.
 			dataType:"JSON", 												// 데이터 타입을 JSON 형태로 전송
 			async:false,													// 동기로 처리(이게 끝나야 다른것을 진행하게끔)
 			success:function(json){ 										// return된 값이 존재한다면
 				
 				if(json.status != "1"){										// json으로 받아온 status의 값이 1이 아니라면(결과가 1이 아니라면)
-					alert("검색값이 없거나 두 개 이상입니다!");
+					// alert("검색값이 없거나 두 개 이상입니다!");
 					search_popup("search_prt");								// 매장정보 팝업을 실행
 				}
 				else { 														// 결과가 1이라면
@@ -155,10 +158,12 @@
 			url:"<%= request.getContextPath()%>/searchPerformance.dowell",
 			data: formData, 
 			dataType:"JSON", 																// 데이터 타입을 JSON 형태로 전송
+			async: false,
 			success:function(json){ 														// return된 값이 존재한다면
 				
 				$("tfoot#TFOOT_SUM").show();
 				let html = "";																// html 태그를 담기위한 변수 생성
+				
 				if(json.length > 0) { 
 					
 					$.each(json, function(index, item){										// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
@@ -199,10 +204,9 @@
 						html += "<td class='right border_td'>"+item.D31+"</td>";
 						html += "<td class='sticky-col last-col border_td'>"+item.SUM+"</td>";
 						html += "</tr>";
+					}); // end of $.each----------------
 					
-						
-						
-					});
+					is_exist = true;									// 값을 출력해주기 위한 flag true
 				}
 				else {
 					html += "<tr>";
@@ -218,8 +222,52 @@
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 			}
 		}); // end of $.ajax()-----------------------
-		  
-	}// end of function goReadComment(){}--------------------------	
+
+		
+		if(is_exist) {
+			getTotalQty();											// 각 열의 합계를 구하는 함수 실행
+		}
+		
+	}// end of function searchPerfomance(){}--------------------------	
+	
+	// 각 열의 합계를 구하는 함수
+	function getTotalQty() {
+		
+		var row_array = new Array();				// 행의 값들을 담을 배열 생성
+		
+		const table = document.getElementById('PERFORM_DISPLAY');
+		var row_length = $("tbody#PERFORM_DISPLAY tr").length;
+		// alert(" 진실 혹은 거짓 : " + is_exist);
+		// alert("행의 길이는 : " + row_length);
+		
+		// $("tr:eq("+i+") td:eq("+j+")").text(woman[i][j]);
+        // i번째 행의 j번째 열에 woman[i][j] 데이터 넣음
+        
+		// 합계 계산
+	    let sum = 0;
+	    for(let i = 0; i < row_length; i++)  {
+	      
+	    	for(let j=0; j<32; j++) {
+	    		// alert(table.rows[i].cells[j+2].innerHTML);
+	    		// row_array[j] += parseInt(table.rows[i].cells[j+2].innerHTML);
+	    	}
+	    }
+		
+	    // alert(row_array);
+		is_exist = false;													// flag 초기화
+		
+	} // end of function getTotalQty() {}------------------
+	
+	// 특수문자 입력 방지
+	function characterCheck(obj){
+	var regExp = /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi; 
+	// 허용할 특수문자는 여기서 삭제하면 됨
+	// 지금은 띄어쓰기도 특수문자 처리됨 참고하셈
+	if( regExp.test(obj.value) ){
+		alert("특수문자는 입력하실수 없습니다.");
+		obj.value = obj.value.substring( 0 , obj.value.length - 1 ); // 입력한 특수문자 한자리 지움
+		}
+	} // end of function characterCheck(obj){}--------------------
 	
 </script>
 
@@ -256,7 +304,7 @@
 							<button type="button" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" id="btn_search_prt" class="btn btn-secondary btn_not" onclick="search_popup('search_prt')">
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
-							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt not" value="" autofocus />
+							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt not" value=""  onkeyup="characterCheck(this)" onkeydown="characterCheck(this)" autofocus />
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="searchPerfomance()">
@@ -282,38 +330,38 @@
 		        <tr>
 			          <th class="sticky-col first-col border">매장코드</th>
 			          <th class="sticky-col second-col border">매장명</th>
-			          <th class="border">1일</th>
-			          <th class="border">2일</th>
-			          <th class="border">3일</th>
-			          <th class="border">4일</th>
-			          <th class="border">5일</th>
-			          <th class="border">6일</th>
-			          <th class="border">7일</th>
-			          <th class="border">8일</th>
-			          <th class="border">9일</th>
-			          <th class="border">10일</th>
-			          <th class="border">11일</th>
-			          <th class="border">12일</th>
-			          <th class="border">13일</th>
-			          <th class="border">14일</th>
-			          <th class="border">15일</th>
-			          <th class="border">16일</th>
-			          <th class="border">17일</th>
-			          <th class="border">18일</th>
-			          <th class="border">19일</th>
-			          <th class="border">20일</th>
-			          <th class="border">21일</th>
-			          <th class="border">22일</th>
-			          <th class="border">23일</th>
-			          <th class="border">24일</th>
-			          <th class="border">25일</th>
-			          <th class="border">26일</th>
-			          <th class="border">27일</th>
-			          <th class="border">28일</th>
-			          <th class="border">29일</th>
-			          <th class="border">30일</th>
-			          <th class="border">31일</th>
-			          <th class="sticky-col last-col border">합계</th>
+			          <th class="border" id="sum_1">1일</th>
+			          <th class="border" id="sum_2">2일</th>
+			          <th class="border" id="sum_3">3일</th>
+			          <th class="border" id="sum_4">4일</th>
+			          <th class="border" id="sum_5">5일</th>
+			          <th class="border" id="sum_6">6일</th>
+			          <th class="border" id="sum_7">7일</th>
+			          <th class="border" id="sum_8">8일</th>
+			          <th class="border" id="sum_9">9일</th>
+			          <th class="border" id="sum_10">10일</th>
+			          <th class="border" id="sum_11">11일</th>
+			          <th class="border" id="sum_12">12일</th>
+			          <th class="border" id="sum_13">13일</th>
+			          <th class="border" id="sum_14">14일</th>
+			          <th class="border" id="sum_15">15일</th>
+			          <th class="border" id="sum_16">16일</th>
+			          <th class="border" id="sum_17">17일</th>
+			          <th class="border" id="sum_18">18일</th>
+			          <th class="border" id="sum_19">19일</th>
+			          <th class="border" id="sum_20">20일</th>
+			          <th class="border" id="sum_21">21일</th>
+			          <th class="border" id="sum_22">22일</th>
+			          <th class="border" id="sum_23">23일</th>
+			          <th class="border" id="sum_24">24일</th>
+			          <th class="border" id="sum_25">25일</th>
+			          <th class="border" id="sum_26">26일</th>
+			          <th class="border" id="sum_27">27일</th>
+			          <th class="border" id="sum_28">28일</th>
+			          <th class="border" id="sum_29">29일</th>
+			          <th class="border" id="sum_30">30일</th>
+			          <th class="border" id="sum_31">31일</th>
+			          <th class="sticky-col last-col border" id="sum_32">합계</th>
 		        </tr>
 		      </thead>
 		      <tbody id="PERFORM_DISPLAY"></tbody>
