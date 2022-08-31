@@ -120,14 +120,20 @@
 	var CUST_NO = "";															// 고객번호를 담는 변수 선언
 	var searchWord_nm = "";														// 고객이름 검색어를 담는 변수 선언
 	var searchWord_mobile = "";													// 핸드폰번호 검색어를 담는 변수 선언
+	var regexHan = RegExp(/[ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]+/);
 	
 	let flag = false;															// 올바른 형식에 맞게 검색어를 입력하였는지 구분하기 위한 flag 변수 선언
 	
 		$(document).ready(function(){
 			
 			var CUST_NO = opener.$("input#IN_CUST_NO").val(); 					// 부모창에서 id가 IN_CUST_NO인 input태그의 val()
-			// alert(CUST_NO);
 			$("input#CUST_NO").val(CUST_NO); 									// 자식창에서 id가 CUST_NO인 val에 값을 넣기
+			
+			if(regexHan.test(CUST_NO)){											// 부모창에서 받아온 값이 한글로만 있다면
+				$("input#CUST_NM").val(CUST_NO);								// 고객명 검색칸에 값을 넣는다
+				searchWord_nm = $("input#CUST_NO").val();						// 고객명 파라미터를 넣는다
+				$("input#CUST_NO").val("");										// 고객번호 파라미터를 공백으로 만든다
+			}
 			
 			getPopUpCustList(); 												// 검색어로 고객목록을 가져오는 함수 실행 
 			
@@ -142,18 +148,17 @@
 		 	// 검색버튼 클릭시
 		    $("button#btn_custSearch").click(function() {
 		    	checkWord(); 													// 검색어에 대한 유효성 검사 실행
-		    });
+		    }); // end of $("button#btn_custSearch").click(function() {})-----------
 		    
 		    // 체크박스를 클릭시
 			$("input.chkBox").click(function() {
 			    $("input.chkBox").not(this).prop('checked', false); 			// 클릭하지 않은 다른 체크박스의 체크를 해제한다.
-			});
+			}); // end of $("input.chkBox").click(function() {})---------------------
 			
 		    // 적용버튼 클릭시
 		    $("button#apply").click(function(){	
 		    	
 		    	let is_checked = $('.chkBox').prop('checked');
-		    	//alert(checkList);
 		    	
 		    	if(!is_checked) {
 		    		alert("항목을 선택한 후 적용버튼을 눌러주세요!");
@@ -207,17 +212,17 @@
 							
 							html += "<tr style='width: 100%;'>";  
 							html += "<td class='center'><input type='checkbox' name='chBox' class='chkBox' id='"+item.CUST_NO+"'/></td>";
-							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:160px;' id='CUST_NO'>"+item.CUST_NO+"</td>";
-							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:160px;' id='CUST_NM'>"+item.CUST_NM+"</td>";
-							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:160px;' id='MBL_NO'>"+item.MBL_NO+"</td>";
-							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:160px;' id='CUST_SS_CD'>"+item.CUST_SS_CD+"</td>";
+							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:190px;' id='CUST_NO'>"+item.CUST_NO+"</td>";
+							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:190px;' id='CUST_NM'>"+item.CUST_NM+"</td>";
+							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:190px;' id='MBL_NO'>"+item.MBL_NO+"</td>";
+							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:190px;' id='CUST_SS_CD'>"+item.CUST_SS_CD+"</td>";
 							html += "</tr>";
 							
 						});
 					}
 					else {
 						html += "<tr>";
-						html += "<td colspan='5' id='no'>결과와 일치하는 고객이 없습니다.</td>";
+						html += "<td colspan='5' id='no' style='width:810px;'>결과와 일치하는 고객이 없습니다.</td>";
 						html += "</tr>";
 					}
 					
@@ -225,7 +230,7 @@
 	
 				},
 				error: function(request, status, error){
-					// alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 				}
 					
 			});
@@ -254,7 +259,6 @@
 				return false;															// 함수 종료
 			}
 			else {																		// 공란이거나 고객이름 정규표현식에 맞다면
-				// alert("성공!");
 				
 				if(!mofmt.test(mobile) && mobile_length != 0){							// 핸드폰번호가 공란이 아니거나 정규표현식에 맞지 않다면
 					alert("핸드폰번호는 정확히 입력하셔야 합니다!");
@@ -262,11 +266,9 @@
 				}
 				else{																	// 공란이거나 핸드폰번호 정규표현식에 맞다면
 					flag = true;
-					// alert(flag);
-					// alert("정확히 입력했음!");
 					getPopUpCustList();
-					
 				}
+			
 			}
 			
 		} // end of function checkWord() {})---------------------
@@ -347,10 +349,10 @@
 					<thead id="custList_header" style="width: 100%;">
 						<tr>
 							<th class="center pd_td">선택</th>
-							<th class="center" style="width:160px;">고객번호</th>
-							<th class="center" style="width:160px;">고객명</th>
-							<th class="center" style="width:160px;">핸드폰번호</th>
-							<th class="center" style="width:160px;">고객상태</th>
+							<th class="center" style="width:190px;">고객번호</th>
+							<th class="center" style="width:190px;">고객명</th>
+							<th class="center" style="width:190px;">핸드폰번호</th>
+							<th class="center" style="width:190px;">고객상태</th>
 						</tr>
 					</thead>
 				

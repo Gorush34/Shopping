@@ -417,7 +417,7 @@ public class EmpController {
 		mav.setViewName("tiles1/search_cust");
 		
 		return mav;
-	} // end of public update(ModelAndView mav, HttpServletRequest request)-----------
+	} // end of public requiredLogin_search_cust(ModelAndView mav, HttpServletRequest request)-----------
 	
 	
 	// 고객조회 페이지에서 변경이력버튼 클릭시 팝업 요청
@@ -427,7 +427,7 @@ public class EmpController {
 		mav.setViewName("tiles1/change_history");
 		
 		return mav;
-	} // end of public update(ModelAndView mav, HttpServletRequest request)-----------
+	} // end of public requiredLogin_changeHistory(ModelAndView mav, HttpServletRequest request)-----------
 	
 	// 고객의 정보를 조회(팝업)
 	@ResponseBody
@@ -457,9 +457,9 @@ public class EmpController {
 		if(popUpHistoryList != null && popUpHistoryList.size() > 0) {
 			
 			for(Map<String, String> hisList : popUpHistoryList) {
-				// 반복대상 : custList ( 데이터 타입 : List<Map<String, String>> )
+				// 반복대상 : popUpHistoryList ( 데이터 타입 : List<Map<String, String>> )
 				// 반복할 값의 데이터 타입 : Map<String, String>
-				// 반복할 값을 담을 변수명 : custMap
+				// 반복할 값을 담을 변수명 : hisList
 				
 				JSONObject jsonObj = new JSONObject();
 				jsonObj.put("CHG_DT", hisList.get("CHG_DT"));
@@ -475,7 +475,7 @@ public class EmpController {
 		}
 		
 		return jsonArr.toString(); // 배열 형태인 jsonArr을 String 형태로 변환하여 return 한다.
-	} // end of public String getPopUpCustList(ModelAndView mav, @RequestParam Map<String, Object> map)------------------------	
+	} // end of public String getCustHistoryPopUp(ModelAndView mav, @RequestParam Map<String, Object> map)------------------------	
 	
 	
 

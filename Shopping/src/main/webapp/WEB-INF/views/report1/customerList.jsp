@@ -62,7 +62,7 @@
 	        maxDate: 0
 	        
 	    };
-		
+	
 	    $.datepicker.setDefaults($.datepicker.regional['ko']);
 	
 	    $('#SDATE').datepicker();
@@ -80,6 +80,8 @@
 	        $("#SDATE").datepicker( "option", "maxDate", selectedDate );
 	    });
 		
+	    // $('img.ui-datepicker-trigger').css({'cursor':'pointer', 'padding-left':'5px', 'padding-right':'10px'});  //아이콘(icon) 위치
+			
 		// 가입일자를 입력하기 위한 datepicker 부분 끝 ================================
 		
 		// 시작일자에서 커서가 벗어나는 순간 실행	
@@ -138,13 +140,12 @@
 		// ====================================== 가입일자 관련 기능 끝 ======================================
 			
 			
-		read_cust(); 													// 고객조건을 조회하는 함수 실행
+		// read_cust(); 												// 고객조건을 조회하는 함수 실행
 		
 		$("input.enter_prt").keydown(function(event){					// 매장조건 입력란에서 키를 입력 후 
 			if(event.keyCode == 13) { 									// 엔터를 했을 경우
 				from_prt = true;										// 매장 입력에서 왔음을 표시
 				getTotalCount();										// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
-			    // alert("매장키!");	
 			}
 		}); // end of $("input#PRT_CD_NM").keydown(function(event){})-------------------------------
 		
@@ -152,7 +153,6 @@
 			if(event.keyCode == 13) { 									// 엔터를 했을 경우
 				from_cust = true;										// 고객번호 입력에서 왔음을 표시
 				getTotalCount();										// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
-				// alert("고객키!");	
 			}
 		}); // end of $("input#IN_CUST_NO").keydown(function(event){})------------------------------
 
@@ -175,9 +175,7 @@
 	
 	// 새로고침 아이콘 클릭시 실행되는 함수
 	function refresh() {
-		
-		defaultSearch();
-		read_cust(); 											// 고객조건을 조회하는 함수 실행
+		defaultSearch();										// 기본조건으로 세팅
 	}
 	
 	// 기본 조건을 불러오는 함수
@@ -255,13 +253,9 @@
 				
 				if(json.status != "1"){									// json으로 받아온 status의 값이 1이 아니라면(결과가 1이 아니라면)
 					if(from_prt) { 										// 매장코드 검색했을 때
-						// $("input#PRT_CD_NM").val(""); 
-						// alert("검색값이 없거나 두 개 이상입니다!");
 						search_popup("search_prt");						// 매장검색 팝업을 실행
 					}
 					else if(from_cust) {								// 고객정보 검색했을 때 
-						// $("input#IN_CUST_NO").val(""); 			
-						// alert("검색값이 없거나 두 개 이상입니다!");		
 						search_popup("search_cust");					// 고객정보 팝업을 실행
 					}
 				}
@@ -271,7 +265,7 @@
 				}
 				else if(from_cust) {									// 결과가 1이고 고객검색란에서 함수를 실행했다면
 					$("input#CUST_NO").val(json.CUST_NO);				// 고객번호를 넣는다
-					$("input#IN_CUST_NO").val(json.CUST_NO);			// 고객번호를 넣는다
+					$("input#IN_CUST_NO").val(json.CUST_NM);			// 고객명을 넣는다
 				} 
 				
 			},
@@ -329,8 +323,8 @@
 						
 						// 결과값 한 행의 값들을 담는다
 						html += "<tr style='width: 100%;'>";  
-						html += "<td class='left'>"+(index+1)+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary' id='change_history' onclick='change_history("+item.CUST_NO+")'>변경이력</button></td>";
-						html += "<td class='left'>"+item.CUST_NM+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary' id='user_detail'  onclick='user_detail("+item.CUST_NO+")'>상세</button></td>";
+						html += "<td class='left'>"+(index+1)+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary' id='change_history' onclick='change_history("+item.CUST_NO+")' style='float:right;'>변경이력</button></td>";
+						html += "<td class='left'>"+item.CUST_NM+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary' id='user_detail'  onclick='user_detail("+item.CUST_NO+")' style='float:right;'>상세</button></td>";
 						html += "<td class='center'>"+item.MBL_NO+"</td>";
 						html += "<td class='center'>"+item.CUST_SS_CD+"</td>";
 						html += "<td class='center'>"+item.JS_DT+"</td>";
@@ -422,7 +416,7 @@
 			<table id="tbl_searchCustmor">
 				<thead>
 					<tr>
-						<td class="pd_td pd_left" style="float:right;">매장</td>
+						<td class="pd_td pd_left" style="float:right; padding-right: 28px; padding-bottom: 20px;">매장</td>
 						<td>
 							<input type="text" class="dark medium" name="JN_PRT_CD" id="JN_PRT_CD" disabled />&nbsp;
 							<button type="button" id="btn_search_prt" class="btn btn-secondary" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" >
@@ -454,10 +448,10 @@
 							고객상태
 						</td>
 						<td>
-							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="" id="default" checked="checked"/>&nbsp;전체
-							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="10" />&nbsp;정상
-							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="80" />&nbsp;중지
-							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="90" />&nbsp;해지
+							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="" id="default" checked="checked"/>&nbsp;&nbsp;전체&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="10" />&nbsp;&nbsp;정상&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="80" />&nbsp;&nbsp;중지&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="90" />&nbsp;&nbsp;해지&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</td>
 						
 						<td class="pd_td" style="float:right;">

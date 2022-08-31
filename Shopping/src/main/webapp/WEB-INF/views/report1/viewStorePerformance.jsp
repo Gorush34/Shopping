@@ -23,15 +23,14 @@
 		se_prt_nm = $("input#SE_PRT_NM").val();							// 로그인유저의 매장명을 받아온다
 		se_user_dt_cd = $("input#SE_USER_DT_CD").val();					// 로그인유저의 거래처구분코드를 받아온다
 		
-		refresh();
-		// defaultSearch();
-		// searchPerfomance();
+		defaultSearch();
+		
+		$("tfoot#TFOOT_SUM").hide();
 		
 		$("input.enter_prt").keydown(function(event){					// 매장조건 입력란에서 키를 입력 후 
 			if(event.keyCode == 13) { 									// 엔터를 했을 경우
 				from_prt = true;										// 매장 입력에서 왔음을 표시
 				getTotalCount();										// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
-			    // alert("매장키!");	
 			}
 		}); // end of $("input#PRT_CD_NM").keydown(function(event){})-------------------------------
 		
@@ -48,15 +47,17 @@
 	// 새로고침 아이콘 클릭시 실행되는 함수
 	function refresh() {
 		defaultSearch();																// 기본 조건을 불러오는 함수 실행
-		searchPerfomance();																// 월별 실적을 불러오는 함수 실행
+		// searchPerfomance();																// 월별 실적을 불러오는 함수 실행
 	}
 	
 	// 기본 조건을 불러오는 함수
 	function defaultSearch() {
 		$("input#JN_PRT_CD").val("");													// disabled 처리된 고객번호 input 태그의 값을 비운다
 		$("input#PRT_CD_NM").val("");													// 고객번호 input 태그의 값을 비운다
-		document.getElementById('SAL_DT').value= new Date().toISOString().slice(0, 7);	// 매출월의 연월을 담는다
-			
+		var today = new Date().toISOString().slice(0, 7);								// 현재연도와 월을 알아온다
+		document.getElementById('SAL_DT').value= today;									// SAL_DT에 기본값을 담는다		
+		$("#SAL_DT").attr("max", today);												// 선택할 수 있는 최대값을 현재달로 설정한다ㅅ
+		
 		if( se_user_dt_cd == 2 ) {														// 거래처구분코드가 2(매장)라면
 			$("input#JN_PRT_CD").val(se_prt_cd);										// 매장코드의 value값을 로그인유저의 매장코드로 적용한다
 			$("input#PRT_CD_NM").val(se_prt_nm);										// 매장검색란의 value값을 로그인유저의 매장명으로 적용한다
@@ -110,7 +111,6 @@
 			success:function(json){ 										// return된 값이 존재한다면
 				
 				if(json.status != "1"){										// json으로 받아온 status의 값이 1이 아니라면(결과가 1이 아니라면)
-					// alert("검색값이 없거나 두 개 이상입니다!");
 					search_popup("search_prt");								// 매장정보 팝업을 실행
 				}
 				else { 														// 결과가 1이라면
@@ -236,12 +236,10 @@
 		var sum_array = new Array();														// 행의 값들을 담을 배열 생성
     	var sum = "";																		// 각 일자별 합계를 담을 변수 생성
 		var rows = document.getElementById("PERFORM_DISPLAY").getElementsByTagName("tr");	// tbody 안의 tr의 개수(조회된 매장의 수)를 구한다
-		// alert(rows.length);
         
         for( let i = 0; i < 32; i++ ) { 													// 1일부터 31일 + 총 합계만큼 반복
         	
         	sum = 0;																		// 일자별로 합을 넣은 후 다음 작업을 위한 초기화
-        	
         	for(let j=0; j< rows.length; j++) {												// tr의 개수만큼 반복(조회된 매장의 수만큼)
         		
         		var cells = rows[j].getElementsByTagName("td");								// row의 j번째 인덱스에 있는 td의 위치를 담는다
@@ -250,15 +248,14 @@
         		sum += cell_val;															// 그 값을 sum에 더해준다
         	}
         	
-        	// alert((i+1)+"일의 합계 : " + sum);
         	sum_array.push(sum);															// 배열의 i번째 인덱스에 sum값을 넣는다(일별 총계)
-        	// alert(sum_array[i]);
         	
         	// tfoot(모든 매장의 일별 합계를 보여주는 곳)의 첫번째 row(tr)의 i+1번째 td값을 변경한다
 			document.getElementById("TFOOT_SUM").getElementsByTagName("tr")[0].getElementsByTagName("td")[(i+1)].innerHTML = sum_array[i];
         }
 
 		is_exist = false;																	// flag 초기화
+		$("tfoot#TFOOT_SUM").show();
 		
 	} // end of function getTotalQty() {}------------------
 	
@@ -371,39 +368,39 @@
 		      <tbody id="PERFORM_DISPLAY"></tbody>
 		      <tfoot id="TFOOT_SUM">
     		       	<tr>
-		       		  <td class="sticky-col first-col" colspan="2">합계</td>
-		       		  <td class="border_td" style="text-align: right;">1일</td>
-			          <td class="border_td" style="text-align: right;">2일</td>
-			          <td class="border_td" style="text-align: right;">3일</td>
-			          <td class="border_td" style="text-align: right;">4일</td>
-			          <td class="border_td" style="text-align: right;">5일</td>
-			          <td class="border_td" style="text-align: right;">6일</td>
-			          <td class="border_td" style="text-align: right;">7일</td>
-			          <td class="border_td" style="text-align: right;">8일</td>
-			          <td class="border_td" style="text-align: right;">9일</td>
-			          <td class="border_td" style="text-align: right;">10일</td>
-			          <td class="border_td" style="text-align: right;">11일</td>
-			          <td class="border_td" style="text-align: right;">12일</td>
-			          <td class="border_td" style="text-align: right;">13일</td>
-			          <td class="border_td" style="text-align: right;">14일</td>
-			          <td class="border_td" style="text-align: right;">15일</td>
-			          <td class="border_td" style="text-align: right;">16일</td>
-			          <td class="border_td" style="text-align: right;">17일</td>
-			          <td class="border_td" style="text-align: right;">18일</td>
-			          <td class="border_td" style="text-align: right;">19일</td>
-			          <td class="border_td" style="text-align: right;">20일</td>
-			          <td class="border_td" style="text-align: right;">21일</td>
-			          <td class="border_td" style="text-align: right;">22일</td>
-			          <td class="border_td" style="text-align: right;">23일</td>
-			          <td class="border_td" style="text-align: right;">24일</td>
-			          <td class="border_td" style="text-align: right;">25일</td>
-			          <td class="border_td" style="text-align: right;">26일</td>
-			          <td class="border_td" style="text-align: right;">27일</td>
-			          <td class="border_td" style="text-align: right;">28일</td>
-			          <td class="border_td" style="text-align: right;">29일</td>
-			          <td class="border_td" style="text-align: right;">30일</td>
-			          <td class="border_td" style="text-align: right;">31일</td>
-			          <td class="sticky-col last-col border_td">합계</td>
+		       		  <td class="sticky-col first-col" colspan="2" style="text-align: center;">합계</td>
+		       		  <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="border_td" style="text-align: right;"></td>
+			          <td class="sticky-col last-col border_td"></td>
 		       		</tr>
 		      </tfoot>
 		    </table>

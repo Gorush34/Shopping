@@ -126,7 +126,7 @@
 		    // 검색버튼 클릭시
 		    $("button#btn_prtSearch").click(function() {
 		    	getPrtList(PRT_CD_NM);										// PRT_CD_NM 를 검색조건으로 하는 매장목록 검색 함수 실행
-		    });
+		    }); // end of $("button#btn_prtSearch").click(function() {}-----------------
 
 		    
 			// 체크박스를 클릭시
@@ -138,7 +138,6 @@
 		    $("button#apply").click(function(){	
 		    	
 		    	let is_checked = $('.chkBox').prop('checked');
-		    	//alert(checkList);
 		    	
 		    	if(!is_checked) {
 		    		alert("항목을 선택한 후 적용버튼을 눌러주세요!");
@@ -152,7 +151,7 @@
 		    	$("#JN_PRT_CD", opener.document).val(PRT_CD); 		 										// 자식창에서 부모창으로 온전한 매장번호 전달하기
 		    	closeTabClick(); 																			// 팝업창 닫는 함수 실행
 		    	
-		    });
+		    }); // end of $("button#apply").click(function(){}---------------
 		
 		});	// end of $(document).ready(function(){})----------
 	
@@ -163,13 +162,11 @@
 		// 검색어로 거래처목록을 가져오는 함수
 		function getPrtList(PRT_CD_NM) {
 			
-			// alert("실행해라");
 			PRT_CD_NM = $("input#PRT_CD_NM").val();								// 검색창의 값을 넣는다
 			
 			if(PRT_CD_NM == undefined) {										// 아무것도 입력하지 않았다면
 				PRT_CD_NM = "";													// 빈칸처리
 			} 
-			// alert("값이 뭐니?" + PRT_CD_NM);
 			
 			$.ajax({
 				url:"<%= request.getContextPath()%>/getPrtList.dowell",
@@ -185,16 +182,16 @@
 							
 							html += "<tr style='width: 100%;'>";  
 							html += "<td class='center'><input type='checkbox' name='chBox' class='chkBox' id='"+item.PRT_NM+"'/></td>";
-							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:140px; text-align:center;' id='PRT_CD'>"+item.PRT_CD+"</td>";
-							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:140px; text-align:center;' id='PRT_NM'>"+item.PRT_NM+"</td>";
-							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:140px; text-align:center;' id='PRT_SS_CD'>"+item.PRT_SS_CD+"</td>";
+							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:170px; text-align:center;' id='PRT_CD'>"+item.PRT_CD+"</td>";
+							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:170px; text-align:center;' id='PRT_NM'>"+item.PRT_NM+"</td>";
+							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:170px; text-align:center;' id='PRT_SS_CD'>"+item.PRT_SS_CD+"</td>";
 							html += "</tr>";
 							
 						});
 					}
 					else {
 						html += "<tr>";
-						html += "<td colspan='4' id='no'>검색조건에 맞는 매장이 존재하지 않습니다.</td>";
+						html += "<td colspan='4' id='no' style='width:560px;'>검색조건에 맞는 매장이 존재하지 않습니다.</td>";
 						html += "</tr>";
 					}
 					
@@ -282,9 +279,9 @@
 					<thead id="custList_header" style="width: 100%;">
 						<tr>
 							<th class="center pd_td">선택</th>
-							<th class="center" style="width:140px;">매장코드</th>
-							<th class="center" style="width:140px;">매장명</th>
-							<th class="center" style="width:140px;">매장상태</th>
+							<th class="center" style="width:170px;">매장코드</th>
+							<th class="center" style="width:170px;">매장명</th>
+							<th class="center" style="width:170px;">매장상태</th>
 						</tr>
 					</thead>
 				
