@@ -157,9 +157,9 @@
                                     </form>
                                     <hr>
                                     <div class="text-center">
+                                    	<!-- 
                                     	<a href="<%= ctxPath%>/idFind.dowell">ID 찾기</a><span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-                                        <a href="<%= ctxPath%>/pwdFind.dowell">비밀번호 찾기</a><span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-                                        <a href="<%= ctxPath%>/registerEmp.dowell">회원가입</a>
+                                    	 -->
                                     </div>
                                     <div class="text-center">
                                         	문의 : 인사과(정환모 / 8887)
