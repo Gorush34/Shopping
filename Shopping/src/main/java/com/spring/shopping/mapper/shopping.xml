@@ -167,7 +167,7 @@
 		       END AS CUST_SS_CD    
 		     , TO_CHAR(TO_DATE(A.JS_DT), 'YYYY-MM-DD') AS JS_DT                             /* 가입일자 */
 		     , B.PRT_NM AS PRT_NM                                                           /* 가입매장 */
-		     , TO_CHAR(TO_DATE(A.FST_REG_DT), 'YYYY-MM-DD') || '/' || C.USER_NM AS USER_NM  /* 등록일자/등록자 */
+		     , A.FST_USER_ID || '/' || C.USER_NM AS USER_NM  								/* 등록자 아이디 / 등록자 */
 		     , TO_CHAR(TO_DATE(A.LST_UPD_DT), 'YYYY-MM-DD HH24:MI:SS') AS LST_UPD_DT        /* 수정일자 */
 		FROM CS_CUST01_MT A INNER JOIN MA_PRT_MT B                                          /* 고객관리테이블과 거래처관리 테이블 JOIN */
 		ON A.JN_PRT_CD = B.PRT_CD                                                           /* 가입매장코드 = 거래처코드 */
@@ -300,103 +300,8 @@
 	                     WHEN 'DM_RCV_YN'       THEN 'DM수신동의여부'                  		/* DM_RCV_YN 이면 'DM수신동의여부' */
 	                     WHEN 'SMS_RCV_YN'      THEN 'SMS수신동의여부'                 		/* SMS_RCV_YN 이면 'SMS수신동의여부' */
 	                     END AS CHG_CD                                              		/* 변경항목 */
-     	 , CASE WHEN B.CHG_BF_CNT = '10' AND B.CHG_CD ='POC_CD' THEN '학생'   				/* 변경 전 내용 시작 */
-                WHEN B.CHG_BF_CNT = '20' AND B.CHG_CD ='POC_CD' THEN '회사원'					
-                WHEN B.CHG_BF_CNT = '30' AND B.CHG_CD ='POC_CD' THEN '공무원'					/* 변경코드가 POC_CD(직업코드)이고 */
-                WHEN B.CHG_BF_CNT = '40' AND B.CHG_CD ='POC_CD' THEN '전문직'					/* 값이 10이면 학생, 20이면 회사원, 30이면 공무원 */
-                WHEN B.CHG_BF_CNT = '50' AND B.CHG_CD ='POC_CD' THEN '군인'					/* 값이 40이면 전문직, 50이면 군인, 60이면 주부 */
-                WHEN B.CHG_BF_CNT = '60' AND B.CHG_CD ='POC_CD' THEN '주부'					/* 값이 90이면 연예인, 99면 기타 */
-                WHEN B.CHG_BF_CNT = '90' AND B.CHG_CD ='POC_CD' THEN '연예인'
-                WHEN B.CHG_BF_CNT = '99' AND B.CHG_CD ='POC_CD' THEN '기타'
-                
-                WHEN B.CHG_BF_CNT = 'H' AND B.CHG_CD ='PSMT_GRC_CD' THEN '자택'				/* 변경코드가 PSMT_GRC_CD(우편물수령코드)이고 */
-                WHEN B.CHG_BF_CNT = 'O' AND B.CHG_CD ='PSMT_GRC_CD' THEN '직장'				/* 값이 H면 자택, O면 직장 */
-                
-                WHEN B.CHG_BF_CNT = '10' AND B.CHG_CD ='CUST_SS_CD' THEN '정상'				/* 변경코드가 CUST_SS_CD(고객상태코드)이고 */
-                WHEN B.CHG_BF_CNT = '80' AND B.CHG_CD ='CUST_SS_CD' THEN '중지'				/* 값이 10이면 정상, 80이면 중지, 90이면 해지 */
-                WHEN B.CHG_BF_CNT = '90' AND B.CHG_CD ='CUST_SS_CD' THEN '해지'
-                
-                WHEN B.CHG_BF_CNT = 'M' AND B.CHG_CD ='SEX_CD' THEN '남자'					/* 변경코드가 SEX_CD(성별코드)이고 */
-                WHEN B.CHG_BF_CNT = 'F' AND B.CHG_CD ='SEX_CD' THEN '여자'					/* 값이 M이면 남자, F면 여자 */
-                
-                WHEN B.CHG_BF_CNT = '0' AND B.CHG_CD ='SCAL_YN' THEN '양력'					/* 변경코드가 SCAL_YN(양음력구분)이고 */
-                WHEN B.CHG_BF_CNT = '1' AND B.CHG_CD ='SCAL_YN' THEN '음력'					/* 값이 0이면 양력, 1이면 음력 */
-                
-                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '동의'				/* 변경코드가 EMAIL_RCV_YN(이메일수신동의여부)이고 */
-                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '미동의'			/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='DM_RCV_YN' THEN '동의'				/* 변경코드가 DM_RCV_YN(DM수신동의여부)이고 */
-                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='DM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='SMS_RCV_YN' THEN '동의'				/* 변경코드가 SMS_RCV_YN(SMS수신동의여부)이고 */
-                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='SMS_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='TM_RCV_YN' THEN '동의'				/* 변경코드가 TM_RCV_YN(TM수신동의여부)이고 */
-                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='TM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN REGEXP_LIKE(B.CHG_BF_CNT, '^[A-Z][0-9]{7}$')							/* 변경전 내용이 매장코드라면(알파벳1자리, 숫자7자리) */
-                THEN (SELECT PRT_NM FROM MA_PRT_MT M WHERE M.PRT_CD = B.CHG_BF_CNT) 		/* 매장코드를 매장명으로 변경 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 8	/* 변경전 내용이 날짜라면(8자리로 이루어진 숫자) */
-                THEN TO_CHAR(TO_DATE(B.CHG_BF_CNT), 'YYYY-MM-DD')							/* YYYY-MM-DD 형식으로 변환 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 10	/* 변경전 내용이 핸드폰번호(중간번호 3자리) 라면 */
-                THEN SUBSTR(B.CHG_BF_CNT,1,3) || '-' || SUBSTR(B.CHG_BF_CNT,4,3) || '-' || SUBSTR(B.CHG_BF_CNT,7) /* 000-000-0000 으로 변환 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 11	/* 변경전 내용이 핸드폰번호(중간번호 4자리) 라면 */
-                THEN SUBSTR(B.CHG_BF_CNT,1,3) || '-' || SUBSTR(B.CHG_BF_CNT,4,4) || '-' || SUBSTR(B.CHG_BF_CNT,8) /* 000-0000-0000 으로 변환 */
-                
-                ELSE NVL(B.CHG_BF_CNT, '-') 												/* 그 외에는 NULL이면 -, NULL이 아니면 내용을 그대로 출력한다 */
-                END AS CHG_BF_CNT                                     						/* 변경 전 내용 끝 */
-                
-         , CASE WHEN B.CHG_AFT_CNT = '10' AND B.CHG_CD ='POC_CD' THEN '학생'   				/* 변경 후 내용 시작 */
-                WHEN B.CHG_AFT_CNT = '20' AND B.CHG_CD ='POC_CD' THEN '회사원'					
-                WHEN B.CHG_AFT_CNT = '30' AND B.CHG_CD ='POC_CD' THEN '공무원'				/* 변경코드가 POC_CD(직업코드)이고 */
-                WHEN B.CHG_AFT_CNT = '40' AND B.CHG_CD ='POC_CD' THEN '전문직'				/* 값이 10이면 학생, 20이면 회사원, 30이면 공무원 */
-                WHEN B.CHG_AFT_CNT = '50' AND B.CHG_CD ='POC_CD' THEN '군인'					/* 값이 40이면 전문직, 50이면 군인, 60이면 주부 */
-                WHEN B.CHG_AFT_CNT = '60' AND B.CHG_CD ='POC_CD' THEN '주부'					/* 값이 90이면 연예인, 99면 기타 */
-                WHEN B.CHG_AFT_CNT = '90' AND B.CHG_CD ='POC_CD' THEN '연예인'
-                WHEN B.CHG_AFT_CNT = '99' AND B.CHG_CD ='POC_CD' THEN '기타'
-                
-                WHEN B.CHG_AFT_CNT = 'H' AND B.CHG_CD ='PSMT_GRC_CD' THEN '자택'				/* 변경코드가 PSMT_GRC_CD(우편물수령코드)이고 */
-                WHEN B.CHG_AFT_CNT = 'O' AND B.CHG_CD ='PSMT_GRC_CD' THEN '직장'				/* 값이 H면 자택, O면 직장 */
-                
-                WHEN B.CHG_AFT_CNT = '10' AND B.CHG_CD ='CUST_SS_CD' THEN '정상'				/* 변경코드가 CUST_SS_CD(고객상태코드)이고 */
-                WHEN B.CHG_AFT_CNT = '80' AND B.CHG_CD ='CUST_SS_CD' THEN '중지'				/* 값이 10이면 정상, 80이면 중지, 90이면 해지 */
-                WHEN B.CHG_AFT_CNT = '90' AND B.CHG_CD ='CUST_SS_CD' THEN '해지'
-                
-                WHEN B.CHG_AFT_CNT = 'M' AND B.CHG_CD ='SEX_CD' THEN '남자'					/* 변경코드가 SEX_CD(성별코드)이고 */
-                WHEN B.CHG_AFT_CNT = 'F' AND B.CHG_CD ='SEX_CD' THEN '여자'					/* 값이 M이면 남자, F면 여자 */
-                
-                WHEN B.CHG_AFT_CNT = '0' AND B.CHG_CD ='SCAL_YN' THEN '양력'					/* 변경코드가 SCAL_YN(양음력구분)이고 */
-                WHEN B.CHG_AFT_CNT = '1' AND B.CHG_CD ='SCAL_YN' THEN '음력'					/* 값이 0이면 양력, 1이면 음력 */
-                
-                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '동의'				/* 변경코드가 EMAIL_RCV_YN(이메일수신동의여부)이고 */
-                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '미동의'			/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='DM_RCV_YN' THEN '동의'				/* 변경코드가 DM_RCV_YN(DM수신동의여부)이고 */
-                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='DM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='SMS_RCV_YN' THEN '동의'				/* 변경코드가 SMS_RCV_YN(SMS수신동의여부)이고 */
-                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='SMS_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='TM_RCV_YN' THEN '동의'				/* 변경코드가 TM_RCV_YN(TM수신동의여부)이고 */
-                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='TM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN REGEXP_LIKE(B.CHG_AFT_CNT, '^[A-Z][0-9]{7}$')							/* 변경후 내용이 매장코드라면(알파벳1자리, 숫자7자리) */
-                THEN (SELECT PRT_NM FROM MA_PRT_MT M WHERE M.PRT_CD = B.CHG_AFT_CNT) 		/* 매장코드를 매장명으로 변경 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 8	/* 변경후 내용이 날짜라면(8자리로 이루어진 숫자) */
-                THEN TO_CHAR(TO_DATE(B.CHG_AFT_CNT), 'YYYY-MM-DD')							/* YYYY-MM-DD 형식으로 변환 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 10	/* 변경후 내용이 핸드폰번호(중간번호 3자리) 라면 */
-                THEN SUBSTR(B.CHG_AFT_CNT,1,3) || '-' || SUBSTR(B.CHG_AFT_CNT,4,3) || '-' || SUBSTR(B.CHG_AFT_CNT,7) /* 000-000-0000 으로 변환 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 11	/* 변경후 내용이 핸드폰번호(중간번호 4자리) 라면 */
-                THEN SUBSTR(B.CHG_AFT_CNT,1,3) || '-' || SUBSTR(B.CHG_AFT_CNT,4,4) || '-' || SUBSTR(B.CHG_AFT_CNT,8) /* 000-0000-0000 으로 변환 */
-                
-                ELSE NVL(B.CHG_AFT_CNT, '-') 												/* 그 외에는 NULL이면 -, NULL이 아니면 내용을 그대로 출력한다 */
-                END AS CHG_AFT_CNT                                     						/* 변경 후 내용 끝 */
+     	 , FUNC_CD_TO_CNT(B.CHG_BF_CNT, B.CHG_CD) AS CHG_BF_CNT                             /* 변경 전 내용(함수사용) */
+         , FUNC_CD_TO_CNT(B.CHG_AFT_CNT, B.CHG_CD) AS CHG_AFT_CNT                           /* 변경 후 내용(함수사용) */
 	     , B.LST_UPD_ID || '/' ||                                                   		/* 최종수정자 ID / */
 	       (SELECT USER_NM FROM MA_USER_MT WHERE USER_ID = B.LST_UPD_ID)            		/* 최종수정자 이름 */
 	       AS LST_UPD_ID 
