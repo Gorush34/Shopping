@@ -52,9 +52,10 @@
 	<title>Home</title>
 </head>
 <body>
-	<h1>Hello world!<span id="module">안녕~</span></h1>
+	<h1>&nbsp;&nbsp;&nbsp;메인페이지입니다. 좋은 하루 되세요!</span></h1>
 	
 	<div id="boardContainer">
+	<!-- 
 		<table id="boardList">
 			<thead>
 				<tr>
@@ -80,16 +81,18 @@
 				</c:if>
 			</tbody>
 		</table>
+	 -->
 	</div>
-
+	<!--
 	<form  action="<%= ctxPath%>/write.dowell" method="post"> 	
 		<div id="button" style="margin-top:10px;">
 			<input id="write" class="btn btn-primary" style="border:none;" type="submit" value="글쓰기" />
 		</div>
 	</form>
+		 
 		<input type="text" id="parent"/>
 		<button type="button" class="btn btn-dark" onclick="testPopup()">팝업창 시험</button>
 		<button type="button" class="btn btn-warning" onclick="testModule()">모듈 시험</button>
-		
+	-->
 </body>
 </html>

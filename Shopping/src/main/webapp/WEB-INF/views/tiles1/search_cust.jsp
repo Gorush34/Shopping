@@ -224,6 +224,7 @@
 						html += "<tr>";
 						html += "<td colspan='5' id='no' style='width:810px;'>결과와 일치하는 고객이 없습니다.</td>";
 						html += "</tr>";
+						alert("조건을 만족하는 검색결과가 없습니다!");
 					}
 					
 					$("tbody#CUST_DISPLAY").html(html); 						// tbody의 id가 PRT_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
@@ -240,7 +241,7 @@
 			
 		} // end of function getPrtList(PRT_CD_NM)-------------------------
 		
-		// 고객이름 및 핸드폰번호 검색시 유효성 검사를 실행하는 함수
+ 		// 고객이름 및 핸드폰번호 검색시 유효성 검사를 실행하는 함수
 		function checkWord() {
 			
 			CUST_NM = $("input#CUST_NM").val();											// 검색란의 고객이름 값을 받아온다 
@@ -291,18 +292,7 @@
 		function closeTabClick() {
 			window.close();																// 팝업을 닫는다
         } // end of function closeTabClick()---------------------------
-		
-    	// 특수문자 입력 방지
-    	function characterCheck(obj){
-    	var regExp = /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi; 
-    	// 허용할 특수문자는 여기서 삭제하면 됨
-    	// 지금은 띄어쓰기도 특수문자 처리됨 참고하셈
-    	if( regExp.test(obj.value) ){
-    		alert("특수문자는 입력하실수 없습니다.");
-    		obj.value = obj.value.substring( 0 , obj.value.length - 1 ); // 입력한 특수문자 한자리 지움
-    		}
-    	} // end of function characterCheck(obj){}--------------------
-		
+
 	</script>
 
 <meta charset="UTF-8">
@@ -323,13 +313,13 @@
 					<tr>
 						<td class="pd_td pd_left" style="float:right;">고객이름&nbsp;&nbsp;&nbsp;&nbsp;</td>
 						<td>
-							<input type="text" id="CUST_NM" onkeyup="characterCheck(this)" onkeydown="characterCheck(this)" autofocus />&nbsp;
+							<input type="text" id="CUST_NM"autofocus />&nbsp;
 							<input type="hidden" id="CUST_NO" autofocus />&nbsp;
 						</td>
 						
 						<td class="pd_td pd_left" style="float:right;">핸드폰번호&nbsp;&nbsp;&nbsp;&nbsp;</td>
 						<td>
-							<input type="text" id="MBL_NO"  onkeyup="characterCheck(this)" onkeydown="characterCheck(this)" />&nbsp;
+							<input type="text" id="MBL_NO" />&nbsp;
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btn_custSearch" class="btn btn-secondary" >

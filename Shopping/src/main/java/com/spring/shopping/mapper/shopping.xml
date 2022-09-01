@@ -85,7 +85,7 @@
   	SELECT DISTINCT COUNT(PRT_CD) AS PRT_CNT												/* 중복된 값을 하나로 하는 매장코드의 총 개수를 얻어온다 */
     FROM MA_PRT_MT																			/* 거래처관리 테이블에서 */	 
     WHERE ( 
-                PRT_CD LIKE '%' || #{searchWord_prt} || '%'           						/* 매장검색란에 적힌 값과 매장코드가 부분일치 하는 값 */
+                UPPER(PRT_CD) LIKE '%' || UPPER(#{searchWord_prt}) || '%'           		/* 매장검색란에 적힌 값과 매장코드가 부분일치 하는 값 */
                 OR																			/* 또는 */
                 PRT_NM LIKE '%' || #{searchWord_prt} || '%'									/* 매장검색란에 적힌 값과 매장명이 부분일치 하는 값 */	
           )
@@ -101,7 +101,7 @@
   	SELECT COUNT(CUST_NO) AS CUST_CNT														/* 중복된 값을 하나로 하는 고객번호의 총 개수를 얻어온다 */
     FROM CS_CUST01_MT 																		/* 고객관리 테이블에서 */
     WHERE CUST_NO LIKE '%' || #{searchWord_cust} || '%'										/* 고객검색란에 적힌 값과 고객번호가 부분일치 하는 값 */
-       OR CUST_NM LIKE '%' || #{searchWord_cust} || '%'										/* 고객검색란에 적힌 값과 고객명이 부분일치 하는 값 */	
+       OR UPPER(CUST_NM) LIKE '%' || UPPER(#{searchWord_cust}) || '%'						/* 고객검색란에 적힌 값과 고객명이 부분일치 하는 값 */	
   	</select>
   	
   	
@@ -117,7 +117,7 @@
 		     , PRT_CD                     													/* 매장코드 */                                                        
 		FROM MA_PRT_MT                                    									/* 거래처관리 테이블에서 */
 		WHERE 	( 
-					PRT_CD LIKE '%' || #{searchWord_prt} || '%'           					/* 매장검색란에 적힌 값과 매장코드가 부분일치 하는 값 */
+					UPPER(PRT_CD) LIKE '%' || UPPER(#{searchWord_prt}) || '%'           	/* 매장검색란에 적힌 값과 매장코드가 부분일치 하는 값 */
 					OR																		/* 또는 */
 					PRT_NM LIKE '%' || #{searchWord_prt} || '%'								/* 매장검색란에 적힌 값과 매장명이 부분일치 하는 값 */	
 				)
@@ -135,7 +135,7 @@
 		     , CUST_NM																		/* 고객명 */
 		FROM CS_CUST01_MT                                    								/* 고객관리 테이블에서 */	
 		WHERE CUST_NO LIKE '%' || #{searchWord_cust} || '%'	                                /* 고객검색란에 적힌 값과 고객번호가 부분일치 하는 값 */
-		   OR CUST_NM LIKE '%' || #{searchWord_cust} || '%' 								/* 고객검색란에 적힌 값과 고객명과 부분일치 하는 값 */
+		   OR UPPER(CUST_NM) LIKE '%' || UPPER(#{searchWord_cust}) || '%' 					/* 고객검색란에 적힌 값과 고객명과 부분일치 하는 값 */
 		ORDER BY CUST_NO ASC																/* 고객번호 오름차순으로 정렬 */
 	</select>
   	
@@ -181,13 +181,14 @@
 				)	
 		<if test='PRT_CD_NM != "" '>                                  						/* 매장검색란이 공백이 아니라면(검색조건) */
 		AND ( 
-				A.JN_PRT_CD LIKE '%' || #{PRT_CD_NM} || '%'           						/* 매장검색란에 적힌 값과 매장코드가 부분일치 하는 값 */
+				UPPER(A.JN_PRT_CD) LIKE '%' || UPPER(#{PRT_CD_NM}) || '%'           		/* 매장검색란에 적힌 값과 매장코드가 부분일치 하는 값 */
 				OR																			/* 또는 */
 				B.PRT_NM LIKE '%' || #{PRT_CD_NM} || '%'									/* 매장검색란에 적힌 값과 매장명이 부분일치 하는 값 */	
 			)
 		</if>
 		<if test='IN_CUST_NO != ""'>                                                        /* 고객번호가 기본값이 아니라면 */
-		AND A.CUST_NO LIKE '%' || #{IN_CUST_NO} || '%'										/* 고객번호검색란에 적힌 값과 고객번호가 부분일치 하는 값 */
+		AND (A.CUST_NO LIKE '%' || #{IN_CUST_NO} || '%'										/* 고객검색란에 적힌 값과 고객번호가 부분일치 하는 값 */
+		OR UPPER(A.CUST_NM) LIKE '%' || UPPER(#{IN_CUST_NO}) || '%' )						/* 고객검색란에 적힌 값과 고객명이 부분일치 하는 값 */
 		</if>
 		<if test='CUST_SS_CD != ""'>                                                        /* 고객상태코드가 기본값이 아니라면 */
 		AND A.CUST_SS_CD = #{CUST_SS_CD}                                                    /* 고객상태코드가 일치하는 값 */
@@ -213,7 +214,7 @@
 	       END AS PRT_SS_CD
 	FROM MA_PRT_MT                                  									/* 거래처관리 테이블로부터 */
 	WHERE PRT_DT_CD = '2'                           									/* 거래처구분코드가 2이면서 */
-	  AND ( PRT_CD LIKE '%' || #{searchWord} || '%'             						/* 매장코드와 부분일치하거나 */
+	  AND ( UPPER(PRT_CD) LIKE '%' || UPPER(#{searchWord}) || '%'             			/* 매장코드와 부분일치하거나 */
 	   OR   PRT_NM LIKE '%' || #{searchWord} || '%' )           						/* 또는 매장코드와 부분일치한 데이터들을 */
 	ORDER BY PRT_CD ASC                             									/* 거래처코드의 오름차순을 기준으로 가져온다 */
   	</select>
@@ -240,10 +241,14 @@
 	FROM CS_CUST01_MT                                           							/* 고객관리 테이블로부터 */
 	WHERE 1=1
 	<if test=" SEARCHWORD_NM != '' ">														/* 고객이름 입력칸이 비어있지 않으면 */
-	AND   CUST_NM LIKE '%' || #{SEARCHWORD_NM} || '%'          								/* 고객번호가 일부포함되거나 */
+	AND   UPPER(CUST_NM) LIKE '%' || UPPER(#{SEARCHWORD_NM}) || '%'          				/* 고객번호가 일부포함되거나 */
 	</if>
 	<if test=' CUST_NO != "" '>																/* 고객번호 입력칸이 비어있지 않으면 */
-	AND   CUST_NO LIKE '%' || #{CUST_NO} || '%'                  							/* 고객번호가 일부포함되거나 */
+	AND ( 	
+			CUST_NO LIKE '%' || #{CUST_NO} || '%'											/* 고객검색란에 적힌 값과 고객번호가 부분일치 하는 값 */
+			OR 	  
+			UPPER(CUST_NM) LIKE '%' || UPPER(#{CUST_NO}) || '%'								/* 고객검색란에 적힌 값과 고객명이 부분일치 하는 값 */
+		)
 	</if>
 	<if test=' SEARCHWORD_MBL != "" '>	   													/* 핸드폰번호 입력칸이 비어있지 않으면 */
 	AND    MBL_NO = #{SEARCHWORD_MBL}							 							/* 핸드폰번호가 일치하면 */
@@ -262,7 +267,7 @@
 	SELECT CUST_NO                                                     						/* 고객번호 */
 	     , CUST_NM                                                     						/* 고객명 */ 
 	FROM CS_CUST01_MT                                            							/* 고객관리 테이블에서 */
-	WHERE CUST_NO = #{SEARCHWORD}                                                 			/* 고객번호가 일치하는 것만 */
+	WHERE CUST_NO = #{SEARCHWORD}                                             				/* 고객번호가 일치하는 것만 */
 	</select>
 	
 
@@ -300,8 +305,103 @@
 	                     WHEN 'DM_RCV_YN'       THEN 'DM수신동의여부'                  		/* DM_RCV_YN 이면 'DM수신동의여부' */
 	                     WHEN 'SMS_RCV_YN'      THEN 'SMS수신동의여부'                 		/* SMS_RCV_YN 이면 'SMS수신동의여부' */
 	                     END AS CHG_CD                                              		/* 변경항목 */
-     	 , FUNC_CD_TO_CNT(B.CHG_BF_CNT, B.CHG_CD) AS CHG_BF_CNT                             /* 변경 전 내용(함수사용) */
-         , FUNC_CD_TO_CNT(B.CHG_AFT_CNT, B.CHG_CD) AS CHG_AFT_CNT                           /* 변경 후 내용(함수사용) */
+	     , CASE WHEN B.CHG_BF_CNT = '10' AND B.CHG_CD ='POC_CD' THEN '학생'   				/* 변경 전 내용 시작 */
+                WHEN B.CHG_BF_CNT = '20' AND B.CHG_CD ='POC_CD' THEN '회사원'					
+                WHEN B.CHG_BF_CNT = '30' AND B.CHG_CD ='POC_CD' THEN '공무원'					/* 변경코드가 POC_CD(직업코드)이고 */
+                WHEN B.CHG_BF_CNT = '40' AND B.CHG_CD ='POC_CD' THEN '전문직'					/* 값이 10이면 학생, 20이면 회사원, 30이면 공무원 */
+                WHEN B.CHG_BF_CNT = '50' AND B.CHG_CD ='POC_CD' THEN '군인'					/* 값이 40이면 전문직, 50이면 군인, 60이면 주부 */
+                WHEN B.CHG_BF_CNT = '60' AND B.CHG_CD ='POC_CD' THEN '주부'					/* 값이 90이면 연예인, 99면 기타 */
+                WHEN B.CHG_BF_CNT = '90' AND B.CHG_CD ='POC_CD' THEN '연예인'
+                WHEN B.CHG_BF_CNT = '99' AND B.CHG_CD ='POC_CD' THEN '기타'
+                
+                WHEN B.CHG_BF_CNT = 'H' AND B.CHG_CD ='PSMT_GRC_CD' THEN '자택'				/* 변경코드가 PSMT_GRC_CD(우편물수령코드)이고 */
+                WHEN B.CHG_BF_CNT = 'O' AND B.CHG_CD ='PSMT_GRC_CD' THEN '직장'				/* 값이 H면 자택, O면 직장 */
+                
+                WHEN B.CHG_BF_CNT = '10' AND B.CHG_CD ='CUST_SS_CD' THEN '정상'				/* 변경코드가 CUST_SS_CD(고객상태코드)이고 */
+                WHEN B.CHG_BF_CNT = '80' AND B.CHG_CD ='CUST_SS_CD' THEN '중지'				/* 값이 10이면 정상, 80이면 중지, 90이면 해지 */
+                WHEN B.CHG_BF_CNT = '90' AND B.CHG_CD ='CUST_SS_CD' THEN '해지'
+                
+                WHEN B.CHG_BF_CNT = 'M' AND B.CHG_CD ='SEX_CD' THEN '남자'					/* 변경코드가 SEX_CD(성별코드)이고 */
+                WHEN B.CHG_BF_CNT = 'F' AND B.CHG_CD ='SEX_CD' THEN '여자'					/* 값이 M이면 남자, F면 여자 */
+                
+                WHEN B.CHG_BF_CNT = '0' AND B.CHG_CD ='SCAL_YN' THEN '양력'					/* 변경코드가 SCAL_YN(양음력구분)이고 */
+                WHEN B.CHG_BF_CNT = '1' AND B.CHG_CD ='SCAL_YN' THEN '음력'					/* 값이 0이면 양력, 1이면 음력 */
+                
+                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '동의'				/* 변경코드가 EMAIL_RCV_YN(이메일수신동의여부)이고 */
+                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '미동의'			/* 값이 Y면 동의, N이면 미동의 */
+                
+                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='DM_RCV_YN' THEN '동의'				/* 변경코드가 DM_RCV_YN(DM수신동의여부)이고 */
+                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='DM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
+                
+                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='SMS_RCV_YN' THEN '동의'				/* 변경코드가 SMS_RCV_YN(SMS수신동의여부)이고 */
+                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='SMS_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
+                
+                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='TM_RCV_YN' THEN '동의'				/* 변경코드가 TM_RCV_YN(TM수신동의여부)이고 */
+                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='TM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
+                
+                WHEN REGEXP_LIKE(B.CHG_BF_CNT, '^[A-Z][0-9]{7}$')							/* 변경전 내용이 매장코드라면(알파벳1자리, 숫자7자리) */
+                THEN (SELECT PRT_NM FROM MA_PRT_MT M WHERE M.PRT_CD = B.CHG_BF_CNT) 		/* 매장코드를 매장명으로 변경 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 8	/* 변경전 내용이 날짜라면(8자리로 이루어진 숫자) */
+                THEN TO_CHAR(TO_DATE(B.CHG_BF_CNT), 'YYYY-MM-DD')							/* YYYY-MM-DD 형식으로 변환 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 10	/* 변경전 내용이 핸드폰번호(중간번호 3자리) 라면 */
+                THEN SUBSTR(B.CHG_BF_CNT,1,3) || '-' || SUBSTR(B.CHG_BF_CNT,4,3) || '-' || SUBSTR(B.CHG_BF_CNT,7) /* 000-000-0000 으로 변환 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 11	/* 변경전 내용이 핸드폰번호(중간번호 4자리) 라면 */
+                THEN SUBSTR(B.CHG_BF_CNT,1,3) || '-' || SUBSTR(B.CHG_BF_CNT,4,4) || '-' || SUBSTR(B.CHG_BF_CNT,8) /* 000-0000-0000 으로 변환 */
+                
+                ELSE NVL(B.CHG_BF_CNT, '-') 												/* 그 외에는 NULL이면 -, NULL이 아니면 내용을 그대로 출력한다 */
+                END AS CHG_BF_CNT                                     						/* 변경 전 내용 끝 */
+                
+         , CASE WHEN B.CHG_AFT_CNT = '10' AND B.CHG_CD ='POC_CD' THEN '학생'   				/* 변경 후 내용 시작 */
+                WHEN B.CHG_AFT_CNT = '20' AND B.CHG_CD ='POC_CD' THEN '회사원'					
+                WHEN B.CHG_AFT_CNT = '30' AND B.CHG_CD ='POC_CD' THEN '공무원'				/* 변경코드가 POC_CD(직업코드)이고 */
+                WHEN B.CHG_AFT_CNT = '40' AND B.CHG_CD ='POC_CD' THEN '전문직'				/* 값이 10이면 학생, 20이면 회사원, 30이면 공무원 */
+                WHEN B.CHG_AFT_CNT = '50' AND B.CHG_CD ='POC_CD' THEN '군인'					/* 값이 40이면 전문직, 50이면 군인, 60이면 주부 */
+                WHEN B.CHG_AFT_CNT = '60' AND B.CHG_CD ='POC_CD' THEN '주부'					/* 값이 90이면 연예인, 99면 기타 */
+                WHEN B.CHG_AFT_CNT = '90' AND B.CHG_CD ='POC_CD' THEN '연예인'
+                WHEN B.CHG_AFT_CNT = '99' AND B.CHG_CD ='POC_CD' THEN '기타'
+                
+                WHEN B.CHG_AFT_CNT = 'H' AND B.CHG_CD ='PSMT_GRC_CD' THEN '자택'				/* 변경코드가 PSMT_GRC_CD(우편물수령코드)이고 */
+                WHEN B.CHG_AFT_CNT = 'O' AND B.CHG_CD ='PSMT_GRC_CD' THEN '직장'				/* 값이 H면 자택, O면 직장 */
+                
+                WHEN B.CHG_AFT_CNT = '10' AND B.CHG_CD ='CUST_SS_CD' THEN '정상'				/* 변경코드가 CUST_SS_CD(고객상태코드)이고 */
+                WHEN B.CHG_AFT_CNT = '80' AND B.CHG_CD ='CUST_SS_CD' THEN '중지'				/* 값이 10이면 정상, 80이면 중지, 90이면 해지 */
+                WHEN B.CHG_AFT_CNT = '90' AND B.CHG_CD ='CUST_SS_CD' THEN '해지'
+                
+                WHEN B.CHG_AFT_CNT = 'M' AND B.CHG_CD ='SEX_CD' THEN '남자'					/* 변경코드가 SEX_CD(성별코드)이고 */
+                WHEN B.CHG_AFT_CNT = 'F' AND B.CHG_CD ='SEX_CD' THEN '여자'					/* 값이 M이면 남자, F면 여자 */
+                
+                WHEN B.CHG_AFT_CNT = '0' AND B.CHG_CD ='SCAL_YN' THEN '양력'					/* 변경코드가 SCAL_YN(양음력구분)이고 */
+                WHEN B.CHG_AFT_CNT = '1' AND B.CHG_CD ='SCAL_YN' THEN '음력'					/* 값이 0이면 양력, 1이면 음력 */
+                
+                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '동의'				/* 변경코드가 EMAIL_RCV_YN(이메일수신동의여부)이고 */
+                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '미동의'			/* 값이 Y면 동의, N이면 미동의 */
+                
+                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='DM_RCV_YN' THEN '동의'				/* 변경코드가 DM_RCV_YN(DM수신동의여부)이고 */
+                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='DM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
+                
+                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='SMS_RCV_YN' THEN '동의'				/* 변경코드가 SMS_RCV_YN(SMS수신동의여부)이고 */
+                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='SMS_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
+                
+                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='TM_RCV_YN' THEN '동의'				/* 변경코드가 TM_RCV_YN(TM수신동의여부)이고 */
+                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='TM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
+                
+                WHEN REGEXP_LIKE(B.CHG_AFT_CNT, '^[A-Z][0-9]{7}$')							/* 변경후 내용이 매장코드라면(알파벳1자리, 숫자7자리) */
+                THEN (SELECT PRT_NM FROM MA_PRT_MT M WHERE M.PRT_CD = B.CHG_AFT_CNT) 		/* 매장코드를 매장명으로 변경 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 8	/* 변경후 내용이 날짜라면(8자리로 이루어진 숫자) */
+                THEN TO_CHAR(TO_DATE(B.CHG_AFT_CNT), 'YYYY-MM-DD')							/* YYYY-MM-DD 형식으로 변환 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 10	/* 변경후 내용이 핸드폰번호(중간번호 3자리) 라면 */
+                THEN SUBSTR(B.CHG_AFT_CNT,1,3) || '-' || SUBSTR(B.CHG_AFT_CNT,4,3) || '-' || SUBSTR(B.CHG_AFT_CNT,7) /* 000-000-0000 으로 변환 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 11	/* 변경후 내용이 핸드폰번호(중간번호 4자리) 라면 */
+                THEN SUBSTR(B.CHG_AFT_CNT,1,3) || '-' || SUBSTR(B.CHG_AFT_CNT,4,4) || '-' || SUBSTR(B.CHG_AFT_CNT,8) /* 000-0000-0000 으로 변환 */
+                
+                ELSE NVL(B.CHG_AFT_CNT, '-') 												/* 그 외에는 NULL이면 -, NULL이 아니면 내용을 그대로 출력한다 */
+                END AS CHG_AFT_CNT                                     						/* 변경 후 내용 끝 */
 	     , B.LST_UPD_ID || '/' ||                                                   		/* 최종수정자 ID / */
 	       (SELECT USER_NM FROM MA_USER_MT WHERE USER_ID = B.LST_UPD_ID)            		/* 최종수정자 이름 */
 	       AS LST_UPD_ID 

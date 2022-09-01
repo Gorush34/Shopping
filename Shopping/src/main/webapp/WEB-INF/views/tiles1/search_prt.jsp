@@ -125,7 +125,9 @@
 	    		    
 		    // 검색버튼 클릭시
 		    $("button#btn_prtSearch").click(function() {
-		    	getPrtList(PRT_CD_NM);										// PRT_CD_NM 를 검색조건으로 하는 매장목록 검색 함수 실행
+		    	if(checkWord($("input#PRT_CD_NM").val()) === true ) {	// 정규표현식(checkWord)에 위배되지 않는다면
+		    		getPrtList(PRT_CD_NM);								// PRT_CD_NM 를 검색조건으로 하는 매장목록 검색 함수 실행
+		    	}
 		    }); // end of $("button#btn_prtSearch").click(function() {}-----------------
 
 		    
@@ -182,17 +184,18 @@
 							
 							html += "<tr style='width: 100%;'>";  
 							html += "<td class='center'><input type='checkbox' name='chBox' class='chkBox' id='"+item.PRT_NM+"'/></td>";
-							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:170px; text-align:center;' id='PRT_CD'>"+item.PRT_CD+"</td>";
-							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:170px; text-align:center;' id='PRT_NM'>"+item.PRT_NM+"</td>";
-							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:170px; text-align:center;' id='PRT_SS_CD'>"+item.PRT_SS_CD+"</td>";
+							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:160px; text-align:center;' id='PRT_CD'>"+item.PRT_CD+"</td>";
+							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:160px; text-align:center;' id='PRT_NM'>"+item.PRT_NM+"</td>";
+							html += "<td class='' ondblclick='sendPopupToOpener_prt()' style='width:160px; text-align:center;' id='PRT_SS_CD'>"+item.PRT_SS_CD+"</td>";
 							html += "</tr>";
 							
 						});
 					}
 					else {
 						html += "<tr>";
-						html += "<td colspan='4' id='no' style='width:560px;'>검색조건에 맞는 매장이 존재하지 않습니다.</td>";
+						html += "<td colspan='4' id='no' style='width:530px;'>검색조건에 맞는 매장이 존재하지 않습니다.</td>";
 						html += "</tr>";
+						alert("조건을 만족하는 검색결과가 없습니다!");
 					}
 					
 					$("tbody#PRT_DISPLAY").html(html); 							// tbody의 id가 PRT_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
@@ -239,6 +242,27 @@
     		}
     	} // end of function characterCheck(obj){}--------------------
         
+    	// 검색시 유효성 검사를 실행하는 함수
+    	function checkWord(obj) {
+    		
+    		let search_length = obj.length;												// 고객이름의 길이를 알아온다
+    		
+    		var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);									// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
+    		var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);											// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
+    		
+    		if( (!regex.test(obj) && search_length != 0) || regex2.test(obj) ) { 		// 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
+    			alert("검색은 특수문자 및 공백을 제외한 최소 두글자 이상 한글 혹은 숫자로 입력하셔야 합니다.");
+    			return false;															// 함수 종료
+    		}
+    		else if(search_length == 0) {												// 공란이라면
+    			return true;
+    		}
+    		else {
+    			return true;
+    		}
+    		
+    	} // end of function checkWord() {})---------------------
+    	
 	</script>
 
 <meta charset="UTF-8">
@@ -259,7 +283,7 @@
 					<tr>
 						<td class="pd_td pd_left" style="float:right;">매장&nbsp;&nbsp;&nbsp;&nbsp;</td>
 						<td>
-							<input type="text" id="PRT_CD_NM" placeholder="매장코드 또는 매장명 검색" onkeyup="characterCheck(this)" onkeydown="characterCheck(this)" autofocus />&nbsp;
+							<input type="text" id="PRT_CD_NM" placeholder="매장코드 또는 매장명 검색" autofocus />&nbsp;
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btn_prtSearch" class="btn btn-secondary">
@@ -279,9 +303,9 @@
 					<thead id="custList_header" style="width: 100%;">
 						<tr>
 							<th class="center pd_td">선택</th>
-							<th class="center" style="width:170px;">매장코드</th>
-							<th class="center" style="width:170px;">매장명</th>
-							<th class="center" style="width:170px;">매장상태</th>
+							<th class="center" style="width:160px;">매장코드</th>
+							<th class="center" style="width:160px;">매장명</th>
+							<th class="center" style="width:160px;">매장상태</th>
 						</tr>
 					</thead>
 				

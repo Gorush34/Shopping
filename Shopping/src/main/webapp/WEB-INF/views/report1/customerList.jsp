@@ -16,6 +16,7 @@
 	var se_prt_cd = "";											// 세션에 저장된 매장코드를 받을 변수 선언
 	var se_prt_nm = "";											// 세션에 저장된 매장명을 받을 변수 선언
 	var se_user_dt_cd = "";										// 세션에 저장된 거래처구분코드를 받아올 변수 선언
+	var input_check = "";										// 검색창의 유효성을 검사하기 위한 변수 선언
 	
 	$(document).ready(function() {
 		
@@ -144,26 +145,38 @@
 		
 		$("input.enter_prt").keydown(function(event){					// 매장조건 입력란에서 키를 입력 후 
 			if(event.keyCode == 13) { 									// 엔터를 했을 경우
-				from_prt = true;										// 매장 입력에서 왔음을 표시
-				getTotalCount();										// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+				if(checkWord($("input#PRT_CD_NM").val()) === true ) {	// 정규표현식(checkWord)에 위배되지 않는다면
+					from_prt = true;									// 매장 입력에서 왔음을 표시
+					getTotalCount();									// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+				} 
 			}
 		}); // end of $("input#PRT_CD_NM").keydown(function(event){})-------------------------------
 		
 		$("input.enter_cust").keydown(function(event){					// 고객번호 입력란에서 키를 입력 후 
 			if(event.keyCode == 13) { 									// 엔터를 했을 경우
-				from_cust = true;										// 고객번호 입력에서 왔음을 표시
-				getTotalCount();										// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+				if(checkWord($("input#IN_CUST_NO").val()) === true ) {	// 정규표현식(checkWord)에 위배되지 않는다면
+					from_cust = true;									// 고객번호 입력에서 왔음을 표시
+					getTotalCount();									// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+				}
 			}
 		}); // end of $("input#IN_CUST_NO").keydown(function(event){})------------------------------
 
 		$("button#btn_search_prt").on("click", function (event) { 		// 매장 찾기 버튼을 클릭했을 때
-			from_prt = true;											// 매장 입력에서 왔음을 표시
-			getTotalCount();											// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+			
+			if(checkWord($("input#PRT_CD_NM").val()) === true ) {		// 정규표현식(checkWord)에 위배되지 않는다면
+				from_prt = true;										// 매장 입력에서 왔음을 표시
+				getTotalCount();										// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+			}
+		
 		}); // end of $("button#btnSearch_prt").on("click", function (event) {})---------------------
 		
 		$("button#btn_search_cust").on("click", function (event) { 		// 고객번호 찾기 버튼을 클릭했을 때\
-			from_cust = true;											// 고객번호 입력에서 왔음을 표시
-			getTotalCount();											// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+			
+			if(checkWord($("input#IN_CUST_NO").val()) === true ) {		// 정규표현식(checkWord)에 위배되지 않는다면
+				from_cust = true;										// 고객번호 입력에서 왔음을 표시
+				getTotalCount();										// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
+			}
+		
 		}); // end of $("button#btnSearch_cust").on("click", function (event) {})---------------------
 		
 
@@ -339,6 +352,7 @@
 					html += "<tr>";
 					html += "<td colspan='8' id='no' class='center'>검색조건에 맞는 고객이 존재하지 않습니다.</td>";
 					html += "</tr>";
+					alert("조건을 만족하는 검색결과가 없습니다!");
 				}
 				
 				$("tbody#CUST_DISPLAY").html(html); // tbody의 id가 CUST_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
@@ -384,16 +398,26 @@
 	    return v;											// 종료
 	} // end of function date_mask(objValue) {})------------------
 	
-	// 특수문자 입력 방지
-	function characterCheck(obj){
-	var regExp = /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi; 
-	// 허용할 특수문자는 여기서 삭제하면 됨
-	// 지금은 띄어쓰기도 특수문자 처리됨 참고하셈
-	if( regExp.test(obj.value) ){
-		alert("특수문자는 입력하실수 없습니다.");
-		obj.value = obj.value.substring( 0 , obj.value.length - 1 ); // 입력한 특수문자 한자리 지움
+	// 검색시 유효성 검사를 실행하는 함수
+	function checkWord(obj) {
+		
+		let search_length = obj.length;												// 고객이름의 길이를 알아온다
+		
+		var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);									// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
+		var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);											// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
+		
+		if( (!regex.test(obj) && search_length != 0) || regex2.test(obj) ) { 		// 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
+			alert("검색은 특수문자 및 공백을 제외한 최소 두글자 이상 한글 혹은 숫자로 입력하셔야 합니다.");
+			return false;															// 함수 종료
 		}
-	} // end of function characterCheck(obj){}--------------------
+		else if(search_length == 0) {												// 공란이라면
+			return true;
+		}
+		else {
+			return true;
+		}
+		
+	} // end of function checkWord() {})---------------------
 	
 </script>
 
@@ -425,7 +449,7 @@
 							<!-- 
 								<i class="fas fa-search fa-border"></i>&nbsp;
 							 -->
-							&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt" value="" onkeyup="characterCheck(this)" onkeydown="characterCheck(this)" autofocus />
+							&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt" value="" autofocus />
 						</td>
 						
 						<td class="pd_td" style="float:right;">고객번호</td>
@@ -434,7 +458,7 @@
 							<button type="button" id="btn_search_cust" class="btn btn-secondary" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" >
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
-							<input type="text" class="large enter_cust" name="IN_CUST_NO" id="IN_CUST_NO" value="" onkeyup="characterCheck(this)" onkeydown="characterCheck(this)" />
+							<input type="text" class="large enter_cust" name="IN_CUST_NO" id="IN_CUST_NO" value="" />
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="read_cust()">
