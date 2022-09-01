@@ -333,8 +333,19 @@
                 
                 WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='TM_RCV_YN' THEN '동의'				/* 변경코드가 TM_RCV_YN(TM수신동의여부)이고 */
                 WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='TM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 8	/* 변경전 내용이 날짜라면(8자리로 이루어진 숫자) */
+                THEN TO_CHAR(TO_DATE(B.CHG_BF_CNT), 'YYYY-MM-DD')							/* YYYY-MM-DD 형식으로 변환 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 10	/* 변경전 내용이 핸드폰번호(중간번호 3자리) 라면 */
+                THEN SUBSTR(B.CHG_BF_CNT,1,3) || '-' || SUBSTR(B.CHG_BF_CNT,4,3) || '-' || SUBSTR(B.CHG_BF_CNT,7) /* 000-000-0000 으로 변환 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 11	/* 변경전 내용이 핸드폰번호(중간번호 4자리) 라면 */
+                THEN SUBSTR(B.CHG_BF_CNT,1,3) || '-' || SUBSTR(B.CHG_BF_CNT,4,4) || '-' || SUBSTR(B.CHG_BF_CNT,8) /* 000-0000-0000 으로 변환 */
+                
                 ELSE NVL(B.CHG_BF_CNT, '-') 												/* 그 외에는 NULL이면 -, NULL이 아니면 내용을 그대로 출력한다 */
                 END AS CHG_BF_CNT                                     						/* 변경 전 내용 끝 */
+                
          , CASE WHEN B.CHG_AFT_CNT = '10' AND B.CHG_CD ='POC_CD' THEN '학생'   				/* 변경 후 내용 시작 */
                 WHEN B.CHG_AFT_CNT = '20' AND B.CHG_CD ='POC_CD' THEN '회사원'					
                 WHEN B.CHG_AFT_CNT = '30' AND B.CHG_CD ='POC_CD' THEN '공무원'				/* 변경코드가 POC_CD(직업코드)이고 */
@@ -368,6 +379,16 @@
                 
                 WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='TM_RCV_YN' THEN '동의'				/* 변경코드가 TM_RCV_YN(TM수신동의여부)이고 */
                 WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='TM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 8	/* 변경후 내용이 날짜라면(8자리로 이루어진 숫자) */
+                THEN TO_CHAR(TO_DATE(B.CHG_AFT_CNT), 'YYYY-MM-DD')							/* YYYY-MM-DD 형식으로 변환 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 10	/* 변경후 내용이 핸드폰번호(중간번호 3자리) 라면 */
+                THEN SUBSTR(B.CHG_AFT_CNT,1,3) || '-' || SUBSTR(B.CHG_AFT_CNT,4,3) || '-' || SUBSTR(B.CHG_AFT_CNT,7) /* 000-000-0000 으로 변환 */
+                
+                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 11	/* 변경후 내용이 핸드폰번호(중간번호 4자리) 라면 */
+                THEN SUBSTR(B.CHG_AFT_CNT,1,3) || '-' || SUBSTR(B.CHG_AFT_CNT,4,4) || '-' || SUBSTR(B.CHG_AFT_CNT,8) /* 000-0000-0000 으로 변환 */
+                
                 ELSE NVL(B.CHG_AFT_CNT, '-') 												/* 그 외에는 NULL이면 -, NULL이 아니면 내용을 그대로 출력한다 */
                 END AS CHG_AFT_CNT                                     						/* 변경 후 내용 끝 */
 	     , B.LST_UPD_ID || '/' ||                                                   		/* 최종수정자 ID / */
@@ -446,6 +467,7 @@
 	                              WHEN 'RTN' THEN NVL(TOT_SAL_QTY * (-1), 0)        /* 판매구분코드가 반품이면 -1을 곱해준다(음수) */
 	                              END AS TOT_SAL_TP_QTY                             /* 총 판매수량 */
 	        FROM CS_SAL01_MT                                                    	/* 고객판매상세 테이블에서 */
+	        WHERE TO_CHAR( TO_DATE(SAL_DT), 'YYYY-MM-DD') LIKE #{SAL_DT} || '%'     /* 날짜 파라미터 넣는 곳 */
 	        ORDER BY PRT_CD ASC, SAL_DT ASC, SAL_NO ASC
 	    ) S                                                                         
 	    GROUP BY S.PRT_CD                                                           /* 매장번호별로 묶음 */
@@ -485,7 +507,7 @@
 	     , NVL("31", 0) AS "D31"
 	     , WS.SUM AS SUM                                                            /* 합계 */
 	FROM 
-	(																				/* 뷰 V 시작 */
+	(																				/* 컬럼을 표시하기 위한 뷰 V 시작(최종) */
 	    WITH W1 AS                                                                  /* 판매, 반품을 구분하기 위한 WITH W1절 */
 	    (
 	        SELECT PRT_CD															/* 매장명 */
@@ -500,16 +522,16 @@
 	        ORDER BY PRT_CD ASC, SAL_DT ASC, SAL_NO ASC
 	    ), 
 	    W2 AS(                                                                      /* 일별 판매,반품의 합을 알아오기 위한 WITH W2절 */
-	    SELECT A.PRT_CD AS PRT_CD													/* 매장번호 */
-	         , (SELECT PRT_NM FROM MA_PRT_MT WHERE PRT_CD = A.PRT_CD) AS PRT_NM		/* 매장명 */
-	         , SUBSTR(A.SAL_DT, 7,2) AS DAY											/* 일자 */
-	         , SUM(B.TOT_SAL_TP_QTY) AS TOT_SAL_TP_QTY								/* 판매, 반품이 적용된 실수령합계 */
-	    FROM CS_SAL01_MT A INNER JOIN W1 B
-	    ON  A.PRT_CD = B.PRT_CD
-	    AND A.SAL_DT = B.SAL_DT
-	    AND A.SAL_NO = B.SAL_NO
-	    GROUP BY A.PRT_CD, A.SAL_DT
-	    ORDER BY PRT_CD ASC
+		    SELECT A.PRT_CD AS PRT_CD												/* 매장번호 */
+		         , (SELECT PRT_NM FROM MA_PRT_MT WHERE PRT_CD = A.PRT_CD) AS PRT_NM	/* 매장명 */
+		         , SUBSTR(A.SAL_DT, 7,2) AS DAY										/* 일자 */
+		         , SUM(B.TOT_SAL_TP_QTY) AS TOT_SAL_TP_QTY							/* 판매, 반품이 적용된 실수령합계 */
+		    FROM CS_SAL01_MT A INNER JOIN W1 B
+		    ON  A.PRT_CD = B.PRT_CD
+		    AND A.SAL_DT = B.SAL_DT
+		    AND A.SAL_NO = B.SAL_NO
+		    GROUP BY A.PRT_CD, A.SAL_DT
+		    ORDER BY PRT_CD ASC
 	    )
 	    SELECT * FROM W2
 	    PIVOT   (                                                                   /* 피벗을 실시 */
