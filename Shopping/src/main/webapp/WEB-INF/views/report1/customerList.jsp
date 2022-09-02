@@ -189,6 +189,7 @@
 	// 새로고침 아이콘 클릭시 실행되는 함수
 	function refresh() {
 		defaultSearch();										// 기본조건으로 세팅
+		$("tbody#CUST_DISPLAY").hide(); 						// tbody의 id가 CUST_DISPLAY인 부분을 숨겨준다
 	}
 	
 	// 기본 조건을 불러오는 함수
@@ -261,6 +262,7 @@
 				    "from_prt" : from_prt,
 				    "from_cust" : from_cust},
 			dataType:"JSON", 											// 데이터 타입을 JSON 형태로 전송
+			type:"POST",												// POST 방식을 적용
 			async:false,												// 동기로 처리(이게 끝나야 다른것을 진행하게끔)
 			success:function(json){ 									// return된 값이 존재한다면
 				
@@ -326,6 +328,7 @@
 			url:"<%= request.getContextPath()%>/readCust.dowell",
 			data: formData, 
 			dataType:"JSON", 										// 데이터 타입을 JSON 형태로 전송
+			type:"POST",											// POST 방식을 적용
 			success:function(json){ 								// return된 값이 존재한다면
 				
 				let html = "";										// html 태그를 담기위한 변수 생성
@@ -336,8 +339,8 @@
 						
 						// 결과값 한 행의 값들을 담는다
 						html += "<tr style='width: 100%;'>";  
-						html += "<td class='left'>"+(index+1)+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary' id='change_history' onclick='change_history("+item.CUST_NO+")' style='float:right;'>변경이력</button></td>";
-						html += "<td class='left'>"+item.CUST_NM+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary' id='user_detail'  onclick='user_detail("+item.CUST_NO+")' style='float:right;'>상세</button></td>";
+						html += "<td class='left'>"+(index+1)+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary btn_td' id='change_history' onclick='change_history("+item.CUST_NO+")' style='float:right;'>변경이력</button></td>";
+						html += "<td class='left'>"+item.CUST_NM+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary btn_td' id='user_detail'  onclick='user_detail("+item.CUST_NO+")' style='float:right;'>상세</button></td>";
 						html += "<td class='center'>"+item.MBL_NO+"</td>";
 						html += "<td class='center'>"+item.CUST_SS_CD+"</td>";
 						html += "<td class='center'>"+item.JS_DT+"</td>";
@@ -356,7 +359,7 @@
 				}
 				
 				$("tbody#CUST_DISPLAY").html(html); // tbody의 id가 CUST_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
-				
+				$("tbody#CUST_DISPLAY").show(); 	// tbody의 id가 CUST_DISPLAY인 부분을 보여준다
 			},
 			error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -449,7 +452,7 @@
 							<!-- 
 								<i class="fas fa-search fa-border"></i>&nbsp;
 							 -->
-							&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt" value="" autofocus />
+							&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt" value="" placeholder="매장코드 / 매장명" autofocus />
 						</td>
 						
 						<td class="pd_td" style="float:right;">고객번호</td>
@@ -458,7 +461,7 @@
 							<button type="button" id="btn_search_cust" class="btn btn-secondary" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" >
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
-							<input type="text" class="large enter_cust" name="IN_CUST_NO" id="IN_CUST_NO" value="" />
+							<input type="text" class="large enter_cust" name="IN_CUST_NO" id="IN_CUST_NO" value="" placeholder="고객번호 / 고객명"/>
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="read_cust()">
@@ -483,7 +486,7 @@
 							가입일자
 						</td>
 						<td>
-							<input type="text" class="medium datepicker requiredInfo" name="SDATE" id="SDATE" onkeyup="this.value = date_mask(this.value)" maxlength="10" />&nbsp;&nbsp;
+							<input type="text" class="medium datepicker requiredInfo" name="SDATE" id="SDATE" onkeyup="this.value = date_mask(this.value)" maxlength="10" />&nbsp;&nbsp;&nbsp;
 							<input type="text" class="medium datepicker requiredInfo" name="EDATE" id="EDATE" onkeyup="this.value = date_mask(this.value)" maxlength="10" />
 						</td>
 					</tr>
@@ -508,14 +511,14 @@
 		<table id="tbl_css"  class="scrolltable">
 			<thead id="tbl_css_header" style="width: 100%;">
 				<tr>
-					<th class="center pd_td">고객번호</th>
-					<th class="center">고객이름</th>
-					<th class="center">휴대폰번호</th>
-					<th class="center">고객상태</th>
-					<th class="center">가입일자</th>
-					<th class="center">가입매장</th>
-					<th class="center">등록자</th>
-					<th class="center">수정일자</th>
+					<th class="center pd_td title">고객번호</th>
+					<th class="center title">고객이름</th>
+					<th class="center title">휴대폰번호</th>
+					<th class="center title">고객상태</th>
+					<th class="center title">가입일자</th>
+					<th class="center title">가입매장</th>
+					<th class="center title">등록자</th>
+					<th class="center title">수정일자</th>
 				</tr>
 			</thead>
 		

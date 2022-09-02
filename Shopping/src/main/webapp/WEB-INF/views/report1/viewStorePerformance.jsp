@@ -53,7 +53,8 @@
 	// 새로고침 아이콘 클릭시 실행되는 함수
 	function refresh() {
 		defaultSearch();																// 기본 조건을 불러오는 함수 실행
-		// searchPerfomance();																// 월별 실적을 불러오는 함수 실행
+		$("tbody#PERFORM_DISPLAY").hide(); 												// tbody의 id가 CUST_DISPLAY인 부분을 숨겨준다
+		$("tfoot#TFOOT_SUM").hide();
 	}
 	
 	// 기본 조건을 불러오는 함수
@@ -113,6 +114,7 @@
 			data: { "searchWord_prt" : searchWord_prt,
 						  "from_prt" : from_prt			},					// 검색어를 Map 형태로 넣어준다.
 			dataType:"JSON", 												// 데이터 타입을 JSON 형태로 전송
+			type:"POST",													// POST 방식을 적용
 			async:false,													// 동기로 처리(이게 끝나야 다른것을 진행하게끔)
 			success:function(json){ 										// return된 값이 존재한다면
 				
@@ -164,6 +166,7 @@
 			url:"<%= request.getContextPath()%>/searchPerformance.dowell",
 			data: formData, 
 			dataType:"JSON", 																// 데이터 타입을 JSON 형태로 전송
+			type:"POST",															// POST 방식을 적용
 			async: false,
 			success:function(json){ 														// return된 값이 존재한다면
 				
@@ -223,7 +226,7 @@
 				}
 				
 				$("tbody#PERFORM_DISPLAY").html(html); 					// tbody의 id가 PERFORM_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
-				
+				$("tbody#PERFORM_DISPLAY").show(); 						// tbody의 id가 CUST_DISPLAY인 부분을 숨겨준다
 			},
 			error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -322,7 +325,7 @@
 							<button type="button" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" id="btn_search_prt" class="btn btn-secondary btn_not" onclick="search_popup('search_prt')">
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
-							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt not" value="" autofocus />
+							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt not" value="" placeholder="매장코드 / 매장명" autofocus />
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="searchPerfomance()">

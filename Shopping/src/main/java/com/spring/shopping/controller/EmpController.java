@@ -266,7 +266,7 @@ public class EmpController {
 	
 	// 조건에 맞는 매장 / 고객정보의 개수를 세어오기
 	@ResponseBody
-	@RequestMapping(value = "/getTotalCount.dowell", produces="text/plain;charset=UTF-8")
+	@RequestMapping(value = "/getTotalCount.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
 	public String getTotalCount(ModelAndView mav, @RequestParam Map<String, Object> map) {
 
 		
@@ -310,7 +310,7 @@ public class EmpController {
 		
 	// 고객조회 테이블 고객목록 불러오기
 	@ResponseBody
-	@RequestMapping(value = "/readCust.dowell", produces="text/plain;charset=UTF-8")
+	@RequestMapping(value = "/readCust.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
 	public String readCust(ModelAndView mav, @RequestParam Map<String, Object> map) {
 		
 		List<Map<String, String>> custList = empService.getCustList(map);
@@ -346,7 +346,7 @@ public class EmpController {
 	
 	// 매장조회 테이블 매장목록 불러오기(팝업)
 	@ResponseBody
-	@RequestMapping(value = "/getPrtList.dowell", produces="text/plain;charset=UTF-8")
+	@RequestMapping(value = "/getPrtList.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
 	public String getPrtList(ModelAndView mav, @RequestParam Map<String, Object> map) {
 		
 		List<Map<String, String>> prtList = empService.getPrtList(map);
@@ -379,7 +379,7 @@ public class EmpController {
 	
 	// 고객조회 테이블 고객목록 불러오기(팝업)
 	@ResponseBody
-	@RequestMapping(value = "/getPopUpCustList.dowell", produces="text/plain;charset=UTF-8")
+	@RequestMapping(value = "/getPopUpCustList.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
 	public String getPopUpCustList(ModelAndView mav, @RequestParam Map<String, Object> map) {
 		
 		List<Map<String, String>> popUpCustList = empService.getPopUpCustList(map);
@@ -431,7 +431,7 @@ public class EmpController {
 	
 	// 고객의 정보를 조회(팝업)
 	@ResponseBody
-	@RequestMapping(value = "/getCustInfoPopUp.dowell", produces="text/plain;charset=UTF-8")
+	@RequestMapping(value = "/getCustInfoPopUp.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
 	public String getCustInfoPopUp(ModelAndView mav, @RequestParam Map<String, Object> map) {
 	
 		Map<String, String> custInfo = empService.getCustInfoPopUp(map);
@@ -445,7 +445,7 @@ public class EmpController {
 	
 	// 고객의 변경이력을 조회 요청(팝업)
 	@ResponseBody
-	@RequestMapping(value = "/getCustHistoryPopUp.dowell", produces="text/plain;charset=UTF-8")
+	@RequestMapping(value = "/getCustHistoryPopUp.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
 	public String getCustHistoryPopUp(ModelAndView mav, @RequestParam Map<String, Object> map) {
 		
 		List<Map<String, String>> popUpHistoryList = empService.getPopUpHistoryList(map);

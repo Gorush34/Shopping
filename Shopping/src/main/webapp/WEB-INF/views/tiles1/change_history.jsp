@@ -132,6 +132,7 @@
     			url:"<%= request.getContextPath()%>/getCustInfoPopUp.dowell",
     			data: {"SEARCHWORD":cust_no}, 
     			dataType:"JSON", 														// 데이터 타입을 JSON 형태로 전송
+    			type:"POST",															// POST 방식을 적용
     			success:function(json){ 												// return된 값이 존재한다면
     				
     				let info = "";														// html 태그를 담기위한 변수 생성
@@ -160,6 +161,7 @@
     			url:"<%= request.getContextPath()%>/getCustHistoryPopUp.dowell",
     			data: {"SEARCHWORD":cust_no}, 
     			dataType:"JSON", 														// 데이터 타입을 JSON 형태로 전송
+    			type:"POST",															// POST 방식을 적용
     			success:function(json){ 												// return된 값이 존재한다면
     				
     				let html = "";														// html 태그를 담기위한 변수 생성

@@ -152,23 +152,25 @@
 		    
 		    // 체크박스를 클릭시
 			$("input.chkBox").click(function() {
+				// alert($("input:checkbox[name='chBox']").is(":checked"));
 			    $("input.chkBox").not(this).prop('checked', false); 			// 클릭하지 않은 다른 체크박스의 체크를 해제한다.
 			}); // end of $("input.chkBox").click(function() {})---------------------
 			
 		    // 적용버튼 클릭시
 		    $("button#apply").click(function(){	
 		    	
-		    	let is_checked = $('.chkBox').prop('checked');
-		    	
+		    	// let is_checked = $('.chkBox').prop('checked');
+		    	let is_checked = $("input:checkbox[name='chBox']").is(":checked");
 		    	if(!is_checked) {
 		    		alert("항목을 선택한 후 적용버튼을 눌러주세요!");
 		    		return false;
 		    	}
 		    	
-				var TO_CUST_NO = $("input[name='chBox']:checked").attr('id');	// name 이 chBox인 체크박스의 id(매장명)를 가져온다
+				var TO_CUST_NM = $("input[name='chBox']:checked").attr('id');									// name 이 chBox인 체크박스의 id(고객번호)를 가져온다
+				var TO_CUST_NO = $("input[name='chBox']:checked").parent().parent().children().eq(1).text();	// 체크한 위치를 기반으로 고객명을 가져온다
 		    	
-		    	$("#CUST_NO", opener.document).val(TO_CUST_NO); 	 			// 자식창에서 부모창으로 온전한 매장명 전달하기
-		    	$("#IN_CUST_NO", opener.document).val(TO_CUST_NO); 		 		// 자식창에서 부모창으로 온전한 매장번호 전달하기
+		    	$("#CUST_NO", opener.document).val(TO_CUST_NO); 	 			// 자식창에서 부모창으로 온전한 고객번호 전달하기
+		    	$("#IN_CUST_NO", opener.document).val(TO_CUST_NM); 		 		// 자식창에서 부모창으로 온전한 고객명 전달하기
 		    	closeTabClick(); 												// 팝업창 닫는 함수 실행
 		    	
 		    });
@@ -203,6 +205,8 @@
 					   "SEARCHWORD_NM":searchWord_nm,
 					   "SEARCHWORD_MBL":searchWord_mobile}, 
 				dataType:"JSON", 												// 데이터 타입을 JSON 형태로 전송
+				type:"POST",													// POST 방식을 적용
+				async: false,
 				success:function(json){ 										// return된 값이 존재한다면
 					
 					let html = "";												// html 태그를 담기위한 변수 생성
@@ -211,7 +215,7 @@
 						$.each(json, function(index, item){						// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
 							
 							html += "<tr style='width: 100%;'>";  
-							html += "<td class='center'><input type='checkbox' name='chBox' class='chkBox' id='"+item.CUST_NO+"'/></td>";
+							html += "<td class='center'><input type='checkbox' name='chBox' class='chkBox' id='"+item.CUST_NM+"'/></td>";
 							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:190px;' id='CUST_NO'>"+item.CUST_NO+"</td>";
 							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:190px;' id='CUST_NM'>"+item.CUST_NM+"</td>";
 							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:190px;' id='MBL_NO'>"+item.MBL_NO+"</td>";
@@ -280,18 +284,19 @@
 			var tr = $target.parent();													// 해당 위치의 부모(tr)의 위치를 담는다
 			var td = tr.children();														// tr의 자식(td)의 위치를 담는다.
 			
- 
-			var cst_no = td.eq(1).text();												// tr안에 있는 td에서 index가 1인 td의 text(매장명)를 담는다
-    		
-		    $("#IN_CUST_NO", opener.document).val(cst_no); 	 							// 자식창에서 부모창으로 온전한 매장명 전달하기
-	    	$("#CUST_NO", opener.document).val(cst_no); 								// 자식창에서 부모창으로 온전한 매장번호 전달하기
+			var cst_no = td.eq(1).text();												// tr안에 있는 td에서 index가 1인 td의 text(고객번호)를 담는다
+    		var cst_nm = td.eq(2).text();												// tr안에 있는 td에서 index가 2인 td의 text(고객명)를 담는다
+
+			$("#CUST_NO", opener.document).val(cst_no); 								// 자식창에서 부모창으로 온전한 고객번호 전달하기
+		    $("#IN_CUST_NO", opener.document).val(cst_nm); 	 							// 자식창에서 부모창으로 온전한 고객명 전달하기
+	    	
 	    	closeTabClick(); // 팝업창 닫는 함수 실행
 		} // end of function sendPopupToOpener_cust()---------------
 		
 		// 팝업창 닫기를 클릭했을때 실행되는 함수
 		function closeTabClick() {
 			window.close();																// 팝업을 닫는다
-        } // end of function closeTabClick()---------------------------
+		} // end of function closeTabClick()---------------------------
 
 	</script>
 
@@ -313,13 +318,13 @@
 					<tr>
 						<td class="pd_td pd_left" style="float:right;">고객이름&nbsp;&nbsp;&nbsp;&nbsp;</td>
 						<td>
-							<input type="text" id="CUST_NM"autofocus />&nbsp;
-							<input type="hidden" id="CUST_NO" autofocus />&nbsp;
+							<input type="text" id="CUST_NM" placeholder="고객번호 또는 고객명 입력" autofocus />&nbsp;
+							<input type="hidden" id="CUST_NO" />&nbsp;
 						</td>
 						
 						<td class="pd_td pd_left" style="float:right;">핸드폰번호&nbsp;&nbsp;&nbsp;&nbsp;</td>
 						<td>
-							<input type="text" id="MBL_NO" />&nbsp;
+							<input type="text" id="MBL_NO" placeholder="완전한 핸드폰번호를 입력"/>&nbsp;
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btn_custSearch" class="btn btn-secondary" >

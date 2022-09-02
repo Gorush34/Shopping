@@ -58,8 +58,9 @@
       <c:if test="${not empty sessionScope.loginuser}">
          <div style="float: right;">
          	<li class="nav-item dropdown login_dropdown">
-              <a class="nav-link text-info" href="#" id="navbarDropdown" data-toggle="dropdown"></a> 
-               
+              <a class="nav-link text-info" href="#" id="navbarDropdown" data-toggle="dropdown">
+              		<img src="<%= ctxPath%>/resources/images/mu.png" id="memberProfile" />
+              </a> 
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <a class="dropdown-item" href="<%=ctxPath%>/logout.dowell">로그아웃</a>
               </div>

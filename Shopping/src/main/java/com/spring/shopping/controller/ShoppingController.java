@@ -101,7 +101,7 @@ public class ShoppingController {
 	
 	// 고객정보조회 페이지 요청
 	@RequestMapping(value="/viewCustomer.dowell")
-	public ModelAndView viewCustomer(ModelAndView mav, @ModelAttribute("scri") SearchCriteria scri) throws Exception {
+	public ModelAndView requiredLogin_viewCustomer(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @ModelAttribute("scri") SearchCriteria scri) throws Exception {
 		
 		
 		mav.setViewName("viewCustomer.report1"); // viewCustomer.dowell(tiles : report1 레이아웃 적용된)으로 주소 지정
@@ -112,7 +112,7 @@ public class ShoppingController {
 	
 	// 매장월별실적조회 페이지 요청
 	@RequestMapping(value="/viewStorePerformance.dowell")
-	public ModelAndView viewStorePerformance(ModelAndView mav, @ModelAttribute("scri") SearchCriteria scri) throws Exception {
+	public ModelAndView requiredLogin_viewStorePerformance(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @ModelAttribute("scri") SearchCriteria scri) throws Exception {
 		
 		
 		mav.setViewName("viewStorePerformance.report1"); // viewCustomer.dowell(tiles : report1 레이아웃 적용된)으로 주소 지정
@@ -123,7 +123,7 @@ public class ShoppingController {
 	
 	// 매장별 월별실적 불러오기
 	@ResponseBody
-	@RequestMapping(value = "/searchPerformance.dowell", produces="text/plain;charset=UTF-8")
+	@RequestMapping(value = "/searchPerformance.dowell", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
 	public String searchPerfomance(ModelAndView mav, @RequestParam Map<String, Object> map) {
 		
 		List<Map<String, String>> performList = service.getPerformanceList(map);

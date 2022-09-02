@@ -135,12 +135,11 @@
 			$("input.chkBox").click(function() {
 			    $("input.chkBox").not(this).prop('checked', false); // 클릭하지 않은 다른 체크박스의 체크를 해제한다.
 			});
-			
+
 		    // 적용버튼 클릭시
 		    $("button#apply").click(function(){	
 		    	
-		    	let is_checked = $('.chkBox').prop('checked');
-		    	
+		    	let is_checked = $("input:checkbox[name='chBox']").is(":checked");
 		    	if(!is_checked) {
 		    		alert("항목을 선택한 후 적용버튼을 눌러주세요!");
 		    		return false;
@@ -154,7 +153,7 @@
 		    	closeTabClick(); 																			// 팝업창 닫는 함수 실행
 		    	
 		    }); // end of $("button#apply").click(function(){}---------------
-		
+
 		});	// end of $(document).ready(function(){})----------
 	
 		
@@ -174,6 +173,7 @@
 				url:"<%= request.getContextPath()%>/getPrtList.dowell",
 				data: {"searchWord":PRT_CD_NM}, 
 				dataType:"JSON", 												// 데이터 타입을 JSON 형태로 전송
+				type:"POST",													// POST 방식을 적용
 				async: false,
 				success:function(json){ 										// return된 값이 존재한다면
 					

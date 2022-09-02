@@ -285,7 +285,7 @@ body {
 }
 
 th.border {
-	border: solid 1px gray;
+	border: solid 1px gray !important;
 	background-color: #b3b3b3;
 }
 
@@ -293,3 +293,22 @@ td.border_td {
 	border: solid 1px gray !important;
 }
 
+img {
+    margin-left: 12px;
+}
+
+button.btn_td {
+	width: 80px;
+	height: 34px;
+	font-size: 14px;
+}
+
+button#user_detail {
+	width: 60px;
+	height: 34px;
+	font-size: 14px;
+}
+
+th.title {
+	font-size: 18px;
+}
