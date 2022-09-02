@@ -184,6 +184,7 @@
 			
 			CUST_NO = $("input#CUST_NO").val();									// 매장명 값을 담는다
 			
+			
 			if(CUST_NO == undefined) {											// 비어있다면
 				CUST_NO = "";													// 공백처리
 			} 
@@ -196,6 +197,9 @@
 				searchWord_mobile = $("input#MBL_NO").val();					// 핸드폰번호 검색칸의 값을 담는다
 				if(searchWord_mobile == undefined) {							// 비어있다면
 					searchWord_mobile = "";										// 공백처리
+				}
+				else {
+					searchWord_mobile = searchWord_mobile.replace(/-/g, "");	// 입력받은 핸드폰번호의 하이픈을 제거한다
 				}
 			} // end of if(flag) {}--------------------------------
 			
@@ -256,6 +260,7 @@
 			var pattern = /\s/g;														// " "공백(스페이스)이 있는지 체크하는 정규표현식
 			
 			var mobile = $("input#MBL_NO").val();										// 검색란의 핸드폰번호 값을 받아온다 
+			mobile = mobile.replace(/-/g, "");
 			let mobile_length = mobile.length;											// 핸드폰번호의 길이를 알아온다
 			
 			var mofmt = RegExp(/[0-9]{10,11}$/);										// 핸드폰번호는 10-11자리 숫자만 들어가게끔 정규표현식을 선언한다
@@ -303,6 +308,33 @@
 			window.close();																// 팝업을 닫는다
 		} // end of function closeTabClick()---------------------------
 
+		// 핸드폰 번호 하이픈 자동완성
+		function autoHypen(obj) {
+		   var number = obj.value.replace(/[^0-9]/g, "");
+		   var phone = "";
+		   
+		  if(number.length < 4) {
+		     return number;
+		  } else if(number.length < 7) {
+		     phone += number.substr(0, 3);
+		     phone += "-";
+		     phone += number.substr(3);
+		  } else if(number.length < 11) {
+		     phone += number.substr(0, 3);
+		     phone += "-";
+		     phone += number.substr(3, 3);
+		     phone += "-";
+		     phone += number.substr(6);
+		  } else {
+		     phone += number.substr(0, 3);
+		     phone += "-";
+		     phone += number.substr(3, 4);
+		     phone += "-";
+		     phone += number.substr(7);
+		  }
+		 obj.value = phone;
+		} // end of function autoHypen(obj) {}--------------------------------	
+		
 	</script>
 
 <meta charset="UTF-8">
@@ -329,7 +361,7 @@
 						
 						<td class="pd_td pd_left" style="float:right;">핸드폰번호&nbsp;&nbsp;&nbsp;&nbsp;</td>
 						<td>
-							<input type="text" id="MBL_NO" placeholder="완전한 핸드폰번호를 입력"/>&nbsp;
+							<input type="text" id="MBL_NO" onkeyup="autoHypen(this)" placeholder="완전한 핸드폰번호를 입력"/>&nbsp;
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btn_custSearch" class="btn btn-secondary" >
