@@ -77,6 +77,10 @@
 			$("input#JN_PRT_CD").val(se_prt_cd);										// 매장코드의 value값을 로그인유저의 매장코드로 적용한다
 			$("input#PRT_CD_NM").val(se_prt_nm);										// 매장검색란의 value값을 로그인유저의 매장명으로 적용한다
 		} 
+		else if( se_user_dt_cd == 1 ) {													// 거래처구분코드가 1(본사)라면
+			$("input#JN_PRT_CD").val("");												// 매장코드의 value값을 비운다
+			$("input#PRT_CD_NM").val("");												// 매장검색란의 value값을 비운다
+		}
 		
 		if(se_user_dt_cd == 2) { 														// 거래처구분코드가 2(매장)라면
 			$(".not").attr("readonly", true);											// 매장검색버튼을 비활성화한다.
