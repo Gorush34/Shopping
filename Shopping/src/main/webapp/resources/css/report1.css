@@ -251,7 +251,7 @@ body {
   position: relative;
   overflow: auto;
   white-space: nowrap;
-  height: 480px;
+  height: 600px;
 }
 
 .sticky-col {

@@ -27,6 +27,14 @@
 		
 		$("tfoot#TFOOT_SUM").hide();
 		
+		$("input.blank_key").keyup(function(event){						// 매장조건 입력란에서 키보드를 입력할 때
+			if(event.keyCode == 8) { 									// 백스페이스를 입력했을 경우
+				if( $("input#PRT_CD_NM").val() == "" ) {				// 매장검색란의 내용이 아무것도 없다면
+					$("input#JN_PRT_CD").val("");						// 매장코드를 비운다
+				} 
+			}
+		}); // end of $("input.blank_key").keyup(function(event){})------------- 
+		
 		$("input.enter_prt").keydown(function(event){					// 매장조건 입력란에서 키를 입력 후 
 			if(event.keyCode == 13) { 									// 엔터를 했을 경우
 				if(checkWord($("input#PRT_CD_NM").val()) === true ) {	// 정규표현식(checkWord)에 위배되지 않는다면
@@ -157,6 +165,10 @@
 		}
 		// 필수입력사항 검사 끝
 		
+		if(checkWord($("input#PRT_CD_NM").val()) === false ) {
+			// 매장검색란과 고객검색란의 검색어가 정규표현식에 맞지 않으면
+			return false;											// 함수 종료
+		}
 		
 		$.trim("input#PRT_CD_NM");															// 매장 검색창의 공백 제거
 		var formData = $("form[name=searchFrm]").serialize();								// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
@@ -250,14 +262,18 @@
         for( let i = 0; i < 32; i++ ) { 													// 1일부터 31일 + 총 합계만큼 반복
         	
         	sum = 0;																		// 일자별로 합을 넣은 후 다음 작업을 위한 초기화
+        	
         	for(let j=0; j< rows.length; j++) {												// tr의 개수만큼 반복(조회된 매장의 수만큼)
         		
         		var cells = rows[j].getElementsByTagName("td");								// row의 j번째 인덱스에 있는 td의 위치를 담는다
         		
-        		var cell_val = parseInt( cells[(i+2)].firstChild.data );					// j번째 row에 위치한 i+2번째 td의 값을 담는 변수 생성 
-        		sum += cell_val;															// 그 값을 sum에 더해준다
+        		var cell_val = cells[(i+2)].firstChild.data;								// j번째 row에 위치한 i+2번째 td의 값을 담는 변수 생성 
+        		cell_val = cell_val.replace(/[^\d]+/g, "");									// 콤마를 제거
+        		
+        		sum += parseInt(cell_val);													// 숫자로 변환 후 그 값을 sum에 더해준다
         	}
         	
+        	sum = addComma(sum);															// 합쳐진 sum을 다시 콤마처리
         	sum_array.push(sum);															// 배열의 i번째 인덱스에 sum값을 넣는다(일별 총계)
         	
         	// tfoot(모든 매장의 일별 합계를 보여주는 곳)의 첫번째 row(tr)의 i+1번째 td값을 변경한다
@@ -274,14 +290,19 @@
 		
 		let search_length = obj.length;												// 고객이름의 길이를 알아온다
 		
-		var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);									// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
+		var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);								// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
 		var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);											// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
+		var pattern = /\s/g;														// " "공백(스페이스)이 있는지 체크하는 정규표현식
 		
 		if( (!regex.test(obj) && search_length != 0) || regex2.test(obj) ) { 		// 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
 			alert("검색은 특수문자 및 공백을 제외한 최소 두글자 이상 한글 혹은 숫자로 입력하셔야 합니다.");
 			return false;															// 함수 종료
 		}
-		else if(search_length == 0) {												// 공란이라면
+		else if( obj.match(pattern) ){												// 공백이 있다면
+			alert("검색시 공백은 허용하지 않습니다.");
+			return false;															// 함수 종료
+		}
+		else if(search_length == 0) {												// 아무것도 적지 않았다면
 			return true;
 		}
 		else {
@@ -289,6 +310,13 @@
 		}
 		
 	} // end of function checkWord() {})---------------------
+	
+	//천단위 콤마 펑션
+   function addComma(value){
+        value = value.toString();
+		value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return value; 
+    }
 	
 </script>
 
@@ -325,7 +353,7 @@
 							<button type="button" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" id="btn_search_prt" class="btn btn-secondary btn_not" onclick="search_popup('search_prt')">
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
-							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt not" value="" placeholder="매장코드 / 매장명" autofocus />
+							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt not blank_key" value="" placeholder="매장코드 / 매장명" autofocus />
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="searchPerfomance()">

@@ -110,8 +110,8 @@
 		var td = "";														// 값을 부모창에게 전달하기 위해 위치 파악하는 변수 생성
 	
 		$(document).ready(function(){
-			var PRT_CD_NM = opener.$("input#PRT_CD_NM").val(); 				//부모창에서 id가 PRT_CD_NM인 태그의 val()
-			$("input#PRT_CD_NM").val(PRT_CD_NM); 							//자식창에서 id가 PRT_CD_NM인 val에 id를 넣기
+			var PRT_CD_NM = opener.$("input#PRT_CD_NM").val(); 				// 부모창에서 id가 PRT_CD_NM인 태그의 val()
+			$("input#PRT_CD_NM").val(PRT_CD_NM); 							// 자식창에서 id가 PRT_CD_NM인 val에 id를 넣기
 			
 			getPrtList(PRT_CD_NM); 											// 검색어로 거래처목록을 가져오는 함수 실행 
 
@@ -247,14 +247,19 @@
     		
     		let search_length = obj.length;												// 고객이름의 길이를 알아온다
     		
-    		var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);									// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
+    		var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);								// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
     		var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);											// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
+    		var pattern = /\s/g;														// " "공백(스페이스)이 있는지 체크하는 정규표현식
     		
     		if( (!regex.test(obj) && search_length != 0) || regex2.test(obj) ) { 		// 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
     			alert("검색은 특수문자 및 공백을 제외한 최소 두글자 이상 한글 혹은 숫자로 입력하셔야 합니다.");
     			return false;															// 함수 종료
     		}
-    		else if(search_length == 0) {												// 공란이라면
+    		else if( obj.match(pattern) ){
+    			alert("검색시 공백은 허용하지 않습니다.");
+    			return false;
+    		}
+    		else if(search_length == 0) {												// 아무것도 적지 않았다면
     			return true;
     		}
     		else {

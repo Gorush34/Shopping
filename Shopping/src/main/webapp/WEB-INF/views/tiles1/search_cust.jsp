@@ -253,6 +253,7 @@
 			
 			var regex = RegExp(/[가-힣a-zA-Z]{2,20}$/);									// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
 			var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);											// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
+			var pattern = /\s/g;														// " "공백(스페이스)이 있는지 체크하는 정규표현식
 			
 			var mobile = $("input#MBL_NO").val();										// 검색란의 핸드폰번호 값을 받아온다 
 			let mobile_length = mobile.length;											// 핸드폰번호의 길이를 알아온다
@@ -260,13 +261,17 @@
 			var mofmt = RegExp(/[0-9]{10,11}$/);										// 핸드폰번호는 10-11자리 숫자만 들어가게끔 정규표현식을 선언한다
 			
 			if( (!regex.test(CUST_NM) && search_length != 0) || regex2.test(CUST_NM)) { // 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
-				alert("고객이름은 최소 두글자 이상 한글 혹은 영어로 입력하셔야 합니다.");
+				alert("고객이름은 공백없이 최소 두글자 이상 한글 혹은 영어로 입력하셔야 합니다.");
 				return false;															// 함수 종료
+			}
+			else if( CUST_NM.match(pattern) || mobile.match(pattern) ){
+				alert("검색시 공백은 허용하지 않습니다.");
+				return false;
 			}
 			else {																		// 공란이거나 고객이름 정규표현식에 맞다면
 				
 				if(!mofmt.test(mobile) && mobile_length != 0){							// 핸드폰번호가 공란이 아니거나 정규표현식에 맞지 않다면
-					alert("핸드폰번호는 정확히 입력하셔야 합니다!");
+					alert("핸드폰번호는 공백없이 정확히 입력하셔야 합니다!");
 					return false;														// 함수 종료
 				}
 				else{																	// 공란이거나 핸드폰번호 정규표현식에 맞다면

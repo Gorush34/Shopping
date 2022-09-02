@@ -139,17 +139,28 @@
 		});
 		
 		// ====================================== 가입일자 관련 기능 끝 ======================================
+		
+		$("input.blank_key").keyup(function(event){						// 매장조건 입력란에서 키보드를 입력할 때
+			if(event.keyCode == 8) { 									// 백스페이스를 입력했을 경우
+				if( $("input#PRT_CD_NM").val() == "" ) {				// 매장검색란의 내용이 아무것도 없다면
+					$("input#JN_PRT_CD").val("");						// 매장코드를 비운다
+				} 
 			
-			
-		// read_cust(); 												// 고객조건을 조회하는 함수 실행
+				if($("input#IN_CUST_NO").val() == "") {					// 고객검색란의 내용이 아무것도 없다면
+					$("input#CUST_NO").val("");							// 고객번호를 지운다
+				}
+			}
+		}); // end of $("input.blank_key").keyup(function(event){})------------- 
 		
 		$("input.enter_prt").keydown(function(event){					// 매장조건 입력란에서 키를 입력 후 
+			
 			if(event.keyCode == 13) { 									// 엔터를 했을 경우
 				if(checkWord($("input#PRT_CD_NM").val()) === true ) {	// 정규표현식(checkWord)에 위배되지 않는다면
 					from_prt = true;									// 매장 입력에서 왔음을 표시
 					getTotalCount();									// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
 				} 
 			}
+			
 		}); // end of $("input#PRT_CD_NM").keydown(function(event){})-------------------------------
 		
 		$("input.enter_cust").keydown(function(event){					// 고객번호 입력란에서 키를 입력 후 
@@ -245,6 +256,7 @@
 		
 		$.trim("input#PRT_CD_NM");										// 매장검색란의 공백을 제거
 		var searchWord_prt = $("input#PRT_CD_NM").val();				// 매장검색란의 값을 가져옴
+		
 		$.trim("input#IN_CUST_NO");										// 고객검색란의 공백을 제거
 		var searchWord_cust = $("input#IN_CUST_NO").val();				// 고객검색란의 값을 가져옴
 		
@@ -319,6 +331,11 @@
 		// 필수입력사항 검사 끝
 		*/
 		
+		if(checkWord($("input#PRT_CD_NM").val()) === false || checkWord($("input#IN_CUST_NO").val()) === false ) {
+			// 매장검색란과 고객검색란의 검색어가 정규표현식에 맞지 않으면
+			return false;											// 함수 종료
+		}
+		
 		$.trim("input#PRT_CD_NM");									// 검색란의 공백을 제거한다.
 		$.trim("input#IN_CUST_NO");									// 검색란의 공백을 제거한다.
 		var formData = $("form[name=searchFrm]").serialize(); 		// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
@@ -339,8 +356,8 @@
 						
 						// 결과값 한 행의 값들을 담는다
 						html += "<tr style='width: 100%;'>";  
-						html += "<td class='left'>"+(index+1)+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary btn_td' id='change_history' onclick='change_history("+item.CUST_NO+")' style='float:right;'>변경이력</button></td>";
-						html += "<td class='left'>"+item.CUST_NM+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary btn_td' id='user_detail'  onclick='user_detail("+item.CUST_NO+")' style='float:right;'>상세</button></td>";
+						html += "<td class='left' style='width:200px;'>"+item.CUST_NO+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary btn_td' id='change_history' onclick='change_history("+item.CUST_NO+")' style='float:right;'>변경이력</button></td>";
+						html += "<td class='left' style='width:170px;'>"+item.CUST_NM+"&nbsp;&nbsp;<button type='button' class='btn btn-secondary btn_td' id='user_detail'  onclick='user_detail("+item.CUST_NO+")' style='float:right;'>상세</button></td>";
 						html += "<td class='center'>"+item.MBL_NO+"</td>";
 						html += "<td class='center'>"+item.CUST_SS_CD+"</td>";
 						html += "<td class='center'>"+item.JS_DT+"</td>";
@@ -406,14 +423,19 @@
 		
 		let search_length = obj.length;												// 고객이름의 길이를 알아온다
 		
-		var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);									// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
+		var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);								// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
 		var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);											// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
+		var pattern = /\s/g;														// " "공백(스페이스)이 있는지 체크하는 정규표현식
 		
 		if( (!regex.test(obj) && search_length != 0) || regex2.test(obj) ) { 		// 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
 			alert("검색은 특수문자 및 공백을 제외한 최소 두글자 이상 한글 혹은 숫자로 입력하셔야 합니다.");
 			return false;															// 함수 종료
 		}
-		else if(search_length == 0) {												// 공란이라면
+		else if( obj.match(pattern) ){
+			alert("검색시 공백은 허용하지 않습니다.");
+			return false;
+		}
+		else if(search_length == 0) {												// 아무것도 적지 않았다면
 			return true;
 		}
 		else {
@@ -452,7 +474,7 @@
 							<!-- 
 								<i class="fas fa-search fa-border"></i>&nbsp;
 							 -->
-							&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt" value="" placeholder="매장코드 / 매장명" autofocus />
+							&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt blank_key" value="" placeholder="매장코드 / 매장명" autofocus />
 						</td>
 						
 						<td class="pd_td" style="float:right;">고객번호</td>
@@ -461,7 +483,7 @@
 							<button type="button" id="btn_search_cust" class="btn btn-secondary" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" >
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
-							<input type="text" class="large enter_cust" name="IN_CUST_NO" id="IN_CUST_NO" value="" placeholder="고객번호 / 고객명"/>
+							<input type="text" class="large enter_cust blank_key" name="IN_CUST_NO" id="IN_CUST_NO" value="" placeholder="고객번호 / 고객명"/>
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="read_cust()">
@@ -511,8 +533,8 @@
 		<table id="tbl_css"  class="scrolltable">
 			<thead id="tbl_css_header" style="width: 100%;">
 				<tr>
-					<th class="center pd_td title">고객번호</th>
-					<th class="center title">고객이름</th>
+					<th class="center pd_td title" style="width: 200px;">고객번호</th>
+					<th class="center title" style="width: 170px;">고객이름</th>
 					<th class="center title">휴대폰번호</th>
 					<th class="center title">고객상태</th>
 					<th class="center title">가입일자</th>

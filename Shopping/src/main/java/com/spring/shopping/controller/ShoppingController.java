@@ -132,13 +132,15 @@ public class ShoppingController {
 		JSONArray jsonArr = new JSONArray();
 		// 결과값을 화면에 출력하기 위해 JSON타입인 jsonArr 생성
 		
-		if(performList != null && performList.size() > 0) {
+		if(performList != null && performList.size() > 0) {	
+		// 받아온 값이 있다면
 			
 			for(Map<String, String> performMap : performList) {
 				// 반복대상 : performList ( 데이터 타입 : List<Map<String, String>> )
 				// 반복할 값의 데이터 타입 : Map<String, String>
 				// 반복할 값을 담을 변수명 : performMap
 				
+				// 매장별로 일별 판매수량 및 매장의 해당월 총합계를 담아준다
 				JSONObject jsonObj = new JSONObject();
 				jsonObj.put("PRT_CD", performMap.get("PRT_CD"));
 				jsonObj.put("PRT_NM", performMap.get("PRT_NM"));

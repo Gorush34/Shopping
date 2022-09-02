@@ -271,40 +271,40 @@ public class EmpController {
 
 		
 		Map<String, String> totalCount = new HashMap<>();
-		if( "true".equals(map.get("from_prt")) ) {
+		if( "true".equals(map.get("from_prt")) ) {					// 매장검색을 실행했다면
 			// 매장을 조건으로 검색한 결과의 개수 가져오기
-			totalCount = empService.getTotalCountPrt(map);
-			map.put("CUST_NO", "");
-			map.put("CUST_NM", "");
+			totalCount = empService.getTotalCountPrt(map);			// map에 담은 조건에 맞는 매장의 개수를 조회한 뒤 totalCount에 담는다
+			map.put("CUST_NO", "");									// 고객번호를 공백으로 설정하여 담는다
+			map.put("CUST_NM", "");									// 고객명을 공백으로 설정하여 담는다
 		}
-		else if("true".equals(map.get("from_cust"))) {
+		else if("true".equals(map.get("from_cust"))) {				// 고객검색을 실행했다면
 			// 고객을 조건으로 검색한 결과의 개수 가져오기
-			totalCount = empService.getTotalCountCust(map);
-			map.put("PRT_NM", "");
-			map.put("PRT_CD", "");
+			totalCount = empService.getTotalCountCust(map);			// map에 담은 조건에 맞는 고객의 개수를 조회한 뒤 totalCount에 담는다
+			map.put("PRT_NM", "");									// 매장코드를 공백으로 설정하여 담는다
+			map.put("PRT_CD", "");									// 매장명을 공백으로 설정하여 담는다
 		}
 		
 		
-		Map<String, String> result = new HashMap<>();
+		Map<String, String> result = new HashMap<>();				// 결과가 하나라면 결과에 대한 정보를 담을 Map<String, String> result를 선언
 		
-		JSONObject jsonObj = new JSONObject();
+		JSONObject jsonObj = new JSONObject();						// JSON형태로 보내기 위한 jsonObj 객체 생성
 		
-		if( "1".equals(totalCount.get("PRT_CNT")) && "true".equals(map.get("from_prt")) ) {
-			// 결과가 하나인 것에 대한 정보 가져오기
-			result = empService.getResultPrt(map);
-			jsonObj.put("PRT_NM", result.get("PRT_NM"));
-			jsonObj.put("PRT_CD", result.get("PRT_CD"));
-			jsonObj.put("status", "1");
+		if( "1".equals(totalCount.get("PRT_CNT")) && "true".equals(map.get("from_prt")) ) {	// totalCount가 1이고, 매장검색이었다면
+			
+			result = empService.getResultPrt(map);					// 결과가 하나인 것에 대한 정보 가져오기
+			jsonObj.put("PRT_NM", result.get("PRT_NM"));			// 매장명을 jsonObj에 담는다
+			jsonObj.put("PRT_CD", result.get("PRT_CD"));			// 매장코드를 jsonObj에 담는다
+			jsonObj.put("status", "1");								// 결과가 하나인지 아닌지 구분할 수 있는 Key status에 value "1"을 담는다
 		}
-		else if( "1".equals(totalCount.get("CUST_CNT")) && "true".equals(map.get("from_cust"))  ) {
-			// 결과가 하나인 것에 대한 정보 가져오기
-			result = empService.getResultCust(map);
-			jsonObj.put("CUST_NO", result.get("CUST_NO"));
-			jsonObj.put("CUST_NM", result.get("CUST_NM"));	
-			jsonObj.put("status", "1");
+		else if( "1".equals(totalCount.get("CUST_CNT")) && "true".equals(map.get("from_cust"))  ) {	// totalCount가 1이고, 고객검색이었다면
+			
+			result = empService.getResultCust(map);					// 결과가 하나인 것에 대한 정보 가져오기
+			jsonObj.put("CUST_NO", result.get("CUST_NO"));			// 고객번호를 jsonObj에 담는다
+			jsonObj.put("CUST_NM", result.get("CUST_NM"));			// 고객명을 jsonObj에 담는다	
+			jsonObj.put("status", "1");								// 결과가 하나인지 아닌지 구분할 수 있는 Key status에 value "1"을 담는다
 		}
 		
-		return jsonObj.toString();
+		return jsonObj.toString();									// jsonObj를 화면단으로 return;
 		
 	} // end of public String getTotalCount(ModelAndView mav, @RequestParam Map<String, Object> map)--------------
 		
@@ -434,11 +434,11 @@ public class EmpController {
 	@RequestMapping(value = "/getCustInfoPopUp.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
 	public String getCustInfoPopUp(ModelAndView mav, @RequestParam Map<String, Object> map) {
 	
-		Map<String, String> custInfo = empService.getCustInfoPopUp(map);
+		Map<String, String> custInfo = empService.getCustInfoPopUp(map);		// 고객의 정보를 담을 Map 생성과 동시에 Service 실행
 		
 		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("CUST_NO", custInfo.get("CUST_NO"));
-		jsonObj.put("CUST_NM", custInfo.get("CUST_NM"));
+		jsonObj.put("CUST_NO", custInfo.get("CUST_NO"));						// 고객번호를 담는다
+		jsonObj.put("CUST_NM", custInfo.get("CUST_NM"));						// 고객명을 담는다
 		
 		return jsonObj.toString();
 	} // end of public String getCustInfoPopUp(ModelAndView mav, @RequestParam Map<String, Object> map)--------------
