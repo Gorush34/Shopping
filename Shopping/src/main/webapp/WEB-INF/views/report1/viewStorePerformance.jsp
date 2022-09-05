@@ -174,11 +174,12 @@
 			$("input#JN_PRT_CD").val("");					// 공백처리
 		}
 		
+		/*
 		if(checkWord($("input#PRT_CD_NM").val()) === false ) {
 			// 매장검색란과 고객검색란의 검색어가 정규표현식에 맞지 않으면
 			return false;											// 함수 종료
 		}
-		
+		*/
 		$.trim("input#PRT_CD_NM");															// 매장 검색창의 공백 제거
 		var formData = $("form[name=searchFrm]").serialize();								// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
 		
@@ -198,7 +199,7 @@
 					
 					$.each(json, function(index, item){										// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
 						
-						html += "<tr style='width: 100%; max-height:30px;'>";  
+						html += "<tr style='width: 100%; max-height:30px; min-height:30px;'>";  
 						html += "<td class='sticky-col first-col'>"+item.PRT_CD+"</td>";
 						html += "<td class='sticky-col second-col'>"+item.PRT_NM+"</td>";
 						html += "<td class='right border_td'>"+item.D01+"</td>";

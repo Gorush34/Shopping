@@ -291,7 +291,14 @@ th.border {
 
 td.border_td {
 	border: solid 1px gray !important;
+
+}
+
+tbody#PERFORM_DISPLAY > tr, tbody#PERFORM_DISPLAY > tr > td, tfoot#TFOOT_SUM > tr, tfoot#TFOOT_SUM > tr > td   {
+	min-height: 30px !important;
 	max-height: 30px !important;
+	font-size: 14px;
+	padding: 0.5rem;
 }
 
 img {

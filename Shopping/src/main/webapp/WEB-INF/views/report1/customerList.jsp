@@ -314,7 +314,6 @@
 	// 고객조회 목록을 불러오는 함수
 	function read_cust() {
 		
-		/*
 		// 필수입력사항 검사 시작
 		let b_FlagRequiredInfo = false;
 		
@@ -332,13 +331,15 @@
 			console.log("b_FlagRequiredInfo : " + b_FlagRequiredInfo);
 			return;
 		}
-		// 필수입력사항 검사 끝
-		*/
 		
+		// 필수입력사항 검사 끝
+		
+		/*
 		if(checkWord($("input#PRT_CD_NM").val()) === false || checkWord($("input#IN_CUST_NO").val()) === false ) {
 			// 매장검색란과 고객검색란의 검색어가 정규표현식에 맞지 않으면
 			return false;											// 함수 종료
 		}
+		*/
 		
 		$.trim("input#PRT_CD_NM");									// 검색란의 공백을 제거한다.
 		$.trim("input#IN_CUST_NO");									// 검색란의 공백을 제거한다.
@@ -501,10 +502,10 @@
 							고객상태
 						</td>
 						<td>
-							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="" id="default" checked="checked"/>&nbsp;&nbsp;전체&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="10" />&nbsp;&nbsp;정상&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="80" />&nbsp;&nbsp;중지&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" name="CUST_SS_CD" class ="requiredInfo" value="90" />&nbsp;&nbsp;해지&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="CUST_SS_CD" value="" id="default" checked="checked"/>&nbsp;&nbsp;전체&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="CUST_SS_CD" value="10" />&nbsp;&nbsp;정상&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="CUST_SS_CD" value="80" />&nbsp;&nbsp;중지&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="CUST_SS_CD" value="90" />&nbsp;&nbsp;해지&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</td>
 						
 						<td class="pd_td" style="float:right;">
