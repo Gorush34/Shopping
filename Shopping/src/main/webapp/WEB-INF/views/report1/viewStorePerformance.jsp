@@ -198,7 +198,7 @@
 					
 					$.each(json, function(index, item){										// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
 						
-						html += "<tr style='width: 100%;'>";  
+						html += "<tr style='width: 100%; max-height:30px;'>";  
 						html += "<td class='sticky-col first-col'>"+item.PRT_CD+"</td>";
 						html += "<td class='sticky-col second-col'>"+item.PRT_NM+"</td>";
 						html += "<td class='right border_td'>"+item.D01+"</td>";
@@ -277,7 +277,7 @@
         		var cells = rows[j].getElementsByTagName("td");								// row의 j번째 인덱스에 있는 td의 위치를 담는다
         		
         		var cell_val = cells[(i+2)].firstChild.data;								// j번째 row에 위치한 i+2번째 td의 값을 담는 변수 생성 
-        		cell_val = cell_val.replace(/[^\d]+/g, "");									// 콤마를 제거
+        		cell_val = cell_val.split(',').join("");									// 콤마를 제거
         		
         		sum += parseInt(cell_val);													// 숫자로 변환 후 그 값을 sum에 더해준다
         	}
