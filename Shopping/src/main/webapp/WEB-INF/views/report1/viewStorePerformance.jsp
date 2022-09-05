@@ -16,19 +16,19 @@
 	let from_prt = false;												// 매장을 검색하는지 알아오는 변수
 	let is_exist = false;												// 일자별 총 합계를 구하기 위해 결과가 있는지 알아오는 변수
 	
-	$(document).ready(function() {
+	$(document).ready(function() {										// 페이지가 로딩될 때 시작하는 부분
 		
 		prt_nm = $("input#PRT_CD_NM").val();							// 매장검색란의 value값을 받아온다
 		se_prt_cd = $("input#SE_PRT_CD").val();							// 로그인유저의 매장코드를 받아온다
 		se_prt_nm = $("input#SE_PRT_NM").val();							// 로그인유저의 매장명을 받아온다
 		se_user_dt_cd = $("input#SE_USER_DT_CD").val();					// 로그인유저의 거래처구분코드를 받아온다
 		
-		defaultSearch();
+		defaultSearch();												// 기본조건을 설정하는 함수 실행
 		
-		$("tfoot#TFOOT_SUM").hide();
+		$("tfoot#TFOOT_SUM").hide();									// 결과값을 보여주는 tr을 숨김처리
 		
 		$("input.blank_key").keyup(function(event){						// 매장조건 입력란에서 키보드를 입력할 때
-			if(event.keyCode == 8) { 									// 백스페이스를 입력했을 경우
+			if(event.keyCode == 8 || event.keyCode == 46) { 			// 백스페이스(8) 또는 Delete(46)키를 입력했을 경우
 				if( $("input#PRT_CD_NM").val() == "" ) {				// 매장검색란의 내용이 아무것도 없다면
 					$("input#JN_PRT_CD").val("");						// 매장코드를 비운다
 				} 
@@ -60,35 +60,39 @@
 	
 	// 새로고침 아이콘 클릭시 실행되는 함수
 	function refresh() {
-		defaultSearch();																// 기본 조건을 불러오는 함수 실행
-		$("tbody#PERFORM_DISPLAY").hide(); 												// tbody의 id가 CUST_DISPLAY인 부분을 숨겨준다
-		$("tfoot#TFOOT_SUM").hide();													// tfoot의 id가 TFOOT_SUM인 부분을 숨겨준다 
+		defaultSearch();												// 기본 조건을 불러오는 함수 실행
+		$("tbody#PERFORM_DISPLAY").hide(); 								// tbody의 id가 CUST_DISPLAY인 부분을 숨겨준다
+		$("tfoot#TFOOT_SUM").hide();									// tfoot의 id가 TFOOT_SUM인 부분을 숨겨준다 
+		
+		if( se_user_dt_cd == 1 ) {										// 로그인유저가 본사라면
+			$("input#PRT_CD_NM").focus();								// 커서의 위치를 매장검색란으로 위치시킨다
+		}
 	}
 	
 	// 기본 조건을 불러오는 함수
 	function defaultSearch() {
-		$("input#JN_PRT_CD").val("");													// disabled 처리된 고객번호 input 태그의 값을 비운다
-		$("input#PRT_CD_NM").val("");													// 고객번호 input 태그의 값을 비운다
-		var today = new Date().toISOString().slice(0, 7);								// 현재연도와 월을 알아온다
-		document.getElementById('SAL_DT').value= today;									// SAL_DT에 기본값을 담는다		
-		$("#SAL_DT").attr("max", today);												// 선택할 수 있는 최대값을 현재달로 설정한다ㅅ
+		$("input#JN_PRT_CD").val("");									// disabled 처리된 고객번호 input 태그의 값을 비운다
+		$("input#PRT_CD_NM").val("");									// 고객번호 input 태그의 값을 비운다
+		var today = new Date().toISOString().slice(0, 7);				// 현재연도와 월을 알아온다
+		document.getElementById('SAL_DT').value= today;					// SAL_DT에 기본값을 담는다		
+		$("#SAL_DT").attr("max", today);								// 선택할 수 있는 최대값을 현재달로 설정한다ㅅ
 		
-		if( se_user_dt_cd == 2 ) {														// 거래처구분코드가 2(매장)라면
-			$("input#JN_PRT_CD").val(se_prt_cd);										// 매장코드의 value값을 로그인유저의 매장코드로 적용한다
-			$("input#PRT_CD_NM").val(se_prt_nm);										// 매장검색란의 value값을 로그인유저의 매장명으로 적용한다
+		if( se_user_dt_cd == 2 ) {										// 거래처구분코드가 2(매장)라면
+			$("input#JN_PRT_CD").val(se_prt_cd);						// 매장코드의 value값을 로그인유저의 매장코드로 적용한다
+			$("input#PRT_CD_NM").val(se_prt_nm);						// 매장검색란의 value값을 로그인유저의 매장명으로 적용한다
 		} 
-		else if( se_user_dt_cd == 1 ) {													// 거래처구분코드가 1(본사)라면
-			$("input#JN_PRT_CD").val("");												// 매장코드의 value값을 비운다
-			$("input#PRT_CD_NM").val("");												// 매장검색란의 value값을 비운다
+		else if( se_user_dt_cd == 1 ) {									// 거래처구분코드가 1(본사)라면
+			$("input#JN_PRT_CD").val("");								// 매장코드의 value값을 비운다
+			$("input#PRT_CD_NM").val("");								// 매장검색란의 value값을 비운다
 		}
 		
-		if(se_user_dt_cd == 2) { 														// 거래처구분코드가 2(매장)라면
-			$(".not").attr("readonly", true);											// 매장검색버튼을 비활성화한다.
-																						// disabled시 form 안넘어감!
-			$(".btn_not").attr("disabled", true);										// 버튼 disabled;
+		if(se_user_dt_cd == 2) { 										// 거래처구분코드가 2(매장)라면
+			$(".not").attr("readonly", true);							// 매장검색버튼을 비활성화한다.
+																		// disabled시 form 안넘어감!
+			$(".btn_not").attr("disabled", true);						// 버튼 disabled;
 		}		
 		
-	}
+	} // end of function defaultSearch() {}-------------------
 	
 	// 버튼을 누르거나 검색어 입력시 값을 출력하거나 팝업창을 띄워주는 함수
 	function search_popup(location) {
@@ -169,7 +173,7 @@
 		}
 		// 필수입력사항 검사 끝
 		
-		var jn = $("input#JN_PRT_CD").val();
+		var jn = $("input#JN_PRT_CD").val();				// 매장검색란의 값을 받아온다
 		if(jn == undefined) {								// 비어있다면
 			$("input#JN_PRT_CD").val("");					// 공백처리
 		}
@@ -180,6 +184,7 @@
 			return false;											// 함수 종료
 		}
 		*/
+		
 		$.trim("input#PRT_CD_NM");															// 매장 검색창의 공백 제거
 		var formData = $("form[name=searchFrm]").serialize();								// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
 		
@@ -202,38 +207,38 @@
 						html += "<tr style='width: 100%; max-height:30px; min-height:30px;'>";  
 						html += "<td class='sticky-col first-col'>"+item.PRT_CD+"</td>";
 						html += "<td class='sticky-col second-col'>"+item.PRT_NM+"</td>";
-						html += "<td class='right border_td'>"+item.D01+"</td>";
-						html += "<td class='right border_td'>"+item.D02+"</td>";
-						html += "<td class='right border_td'>"+item.D03+"</td>";
-						html += "<td class='right border_td'>"+item.D04+"</td>";
-						html += "<td class='right border_td'>"+item.D05+"</td>";
-						html += "<td class='right border_td'>"+item.D06+"</td>";
-						html += "<td class='right border_td'>"+item.D07+"</td>";
-						html += "<td class='right border_td'>"+item.D08+"</td>";
-						html += "<td class='right border_td'>"+item.D09+"</td>";
-						html += "<td class='right border_td'>"+item.D10+"</td>";
-						html += "<td class='right border_td'>"+item.D11+"</td>";
-						html += "<td class='right border_td'>"+item.D12+"</td>";
-						html += "<td class='right border_td'>"+item.D13+"</td>";
-						html += "<td class='right border_td'>"+item.D14+"</td>";
-						html += "<td class='right border_td'>"+item.D15+"</td>";
-						html += "<td class='right border_td'>"+item.D16+"</td>";
-						html += "<td class='right border_td'>"+item.D17+"</td>";
-						html += "<td class='right border_td'>"+item.D18+"</td>";
-						html += "<td class='right border_td'>"+item.D19+"</td>";
-						html += "<td class='right border_td'>"+item.D20+"</td>";
-						html += "<td class='right border_td'>"+item.D21+"</td>";
-						html += "<td class='right border_td'>"+item.D22+"</td>";
-						html += "<td class='right border_td'>"+item.D23+"</td>";
-						html += "<td class='right border_td'>"+item.D24+"</td>";
-						html += "<td class='right border_td'>"+item.D25+"</td>";
-						html += "<td class='right border_td'>"+item.D26+"</td>";
-						html += "<td class='right border_td'>"+item.D27+"</td>";
-						html += "<td class='right border_td'>"+item.D28+"</td>";
-						html += "<td class='right border_td'>"+item.D29+"</td>";
-						html += "<td class='right border_td'>"+item.D30+"</td>";
-						html += "<td class='right border_td'>"+item.D31+"</td>";
-						html += "<td class='sticky-col last-col border_td' style='text-align: right;'>"+item.SUM+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D01)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D02)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D03)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D04)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D05)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D06)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D07)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D08)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D09)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D10)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D11)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D12)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D13)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D14)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D15)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D16)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D17)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D18)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D19)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D20)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D21)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D22)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D23)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D24)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D25)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D26)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D27)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D28)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D29)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D30)+"</td>";
+						html += "<td class='right border_td'>"+addComma(item.D31)+"</td>";
+						html += "<td class='sticky-col last-col border_td' style='text-align: right;'>"+addComma(item.SUM)+"</td>";
 						html += "</tr>";
 					}); // end of $.each----------------
 					
@@ -256,8 +261,8 @@
 		}); // end of $.ajax()-----------------------
 
 		
-		if(is_exist) {
-			getTotalQty();											// 각 열의 합계를 구하는 함수 실행
+		if(is_exist) {													// 출력할 값이 있다면
+			getTotalQty();												// 각 열의 합계를 구하는 함수 실행
 		}
 		
 	}// end of function searchPerfomance(){}--------------------------	
@@ -277,7 +282,7 @@
         		
         		var cells = rows[j].getElementsByTagName("td");								// row의 j번째 인덱스에 있는 td의 위치를 담는다
         		
-        		var cell_val = cells[(i+2)].firstChild.data;								// j번째 row에 위치한 i+2번째 td의 값을 담는 변수 생성 
+        		var cell_val = cells[(i+2)].firstChild.data;								// j번째 row에 위치한 i+2번째(2번째부터 1일차) td의 값을 담는 변수 생성 
         		cell_val = cell_val.split(',').join("");									// 콤마를 제거
         		
         		sum += parseInt(cell_val);													// 숫자로 변환 후 그 값을 sum에 더해준다
@@ -291,28 +296,28 @@
         }
 
 		is_exist = false;																	// flag 초기화
-		$("tfoot#TFOOT_SUM").show();
+		$("tfoot#TFOOT_SUM").show();														// tfoot을 보여준다
 		
 	} // end of function getTotalQty() {}------------------
 	
 	// 검색시 유효성 검사를 실행하는 함수
 	function checkWord(obj) {
 		
-		let search_length = obj.length;												// 고객이름의 길이를 알아온다
+		let search_length = obj.length;														// 고객이름의 길이를 알아온다
 		
-		var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);								// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
-		var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);											// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
-		var pattern = /\s/g;														// " "공백(스페이스)이 있는지 체크하는 정규표현식
+		var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);										// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
+		var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);													// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
+		var pattern = /\s/g;																// " "공백(스페이스)이 있는지 체크하는 정규표현식
 		
-		if( (!regex.test(obj) && search_length != 0) || regex2.test(obj) ) { 		// 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
+		if( (!regex.test(obj) && search_length != 0) || regex2.test(obj) ) { 				// 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
 			alert("검색은 특수문자 및 공백을 제외한 최소 두글자 이상 한글 혹은 숫자로 입력하셔야 합니다.");
-			return false;															// 함수 종료
+			return false;																	// 함수 종료
 		}
-		else if( obj.match(pattern) ){												// 공백이 있다면
+		else if( obj.match(pattern) ){														// 공백이 있다면
 			alert("검색시 공백은 허용하지 않습니다.");
-			return false;															// 함수 종료
+			return false;																	// 함수 종료
 		}
-		else if(search_length == 0) {												// 아무것도 적지 않았다면
+		else if(search_length == 0) {														// 아무것도 적지 않았다면
 			return true;
 		}
 		else {
@@ -323,9 +328,9 @@
 	
 	//천단위 콤마 펑션
    function addComma(value){
-        value = value.toString();
-		value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        return value; 
+        value = value.toString();															// 값을 문자열형태로 받아온다
+		value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");								// 3자리마다 ,를 추가해준다
+        return value; 																		// 변환한 값을 return
     }
 	
 </script>

@@ -125,24 +125,24 @@
 	    		    
 		    // 검색버튼 클릭시
 		    $("button#btn_prtSearch").click(function() {
-		    	if(checkWord($("input#PRT_CD_NM").val()) === true ) {	// 정규표현식(checkWord)에 위배되지 않는다면
-		    		getPrtList(PRT_CD_NM);								// PRT_CD_NM 를 검색조건으로 하는 매장목록 검색 함수 실행
+		    	if(checkWord($("input#PRT_CD_NM").val()) === true ) {		// 정규표현식(checkWord)에 위배되지 않는다면
+		    		getPrtList(PRT_CD_NM);									// PRT_CD_NM 를 검색조건으로 하는 매장목록 검색 함수 실행
 		    	}
 		    }); // end of $("button#btn_prtSearch").click(function() {}-----------------
 
 		    
 			// 체크박스를 클릭시
 			$("input.chkBox").click(function() {
-			    $("input.chkBox").not(this).prop('checked', false); // 클릭하지 않은 다른 체크박스의 체크를 해제한다.
+			    $("input.chkBox").not(this).prop('checked', false); 		// 클릭하지 않은 다른 체크박스의 체크를 해제한다.
 			});
 
 		    // 적용버튼 클릭시
 		    $("button#apply").click(function(){	
 		    	
-		    	let is_checked = $("input:checkbox[name='chBox']").is(":checked");
-		    	if(!is_checked) {
+		    	let is_checked = $("input:checkbox[name='chBox']").is(":checked");							// name이 chBox인 체크박스가 체크되었는지 확인
+		    	if(!is_checked) {																			// 체크된 것이 하나도 없다면
 		    		alert("항목을 선택한 후 적용버튼을 눌러주세요!");
-		    		return false;
+		    		return false;																			// 종료
 		    	}
 		    	
 				var PRT_CD_NM = $("input[name='chBox']:checked").attr('id');								// name 이 chBox인 체크박스의 id(매장명)를 가져온다
@@ -212,33 +212,33 @@
 		// 팝업창의 값을 부모 페이지로 전달하는 함수
 		function sendPopupToOpener_prt() {
 			
-			const $target = $(event.target);									// 더블클릭이 된 해당 위치를 담는다
-			var tr = $target.parent();											// 해당 위치의 부모(tr)의 위치를 담는다
-			var td = tr.children();												// tr의 자식(td)의 위치를 담는다.
+			const $target = $(event.target);											// 더블클릭이 된 해당 위치를 담는다
+			var tr = $target.parent();													// 해당 위치의 부모(tr)의 위치를 담는다
+			var td = tr.children();														// tr의 자식(td)의 위치를 담는다.
 			
  
-			var prt_cd = td.eq(1).text();										// tr안에 있는 td에서 index가 1인 td의 text(매장명)를 담는다
-    		var prt_cd_nm = td.eq(2).text();									// tr안에 있는 td에서 index가 2인 td의 text(매장번호)를 담는다  	
+			var prt_cd = td.eq(1).text();												// tr안에 있는 td에서 index가 1인 td의 text(매장명)를 담는다
+    		var prt_cd_nm = td.eq(2).text();											// tr안에 있는 td에서 index가 2인 td의 text(매장번호)를 담는다  	
 		    
-		    $("#PRT_CD_NM", opener.document).val(prt_cd_nm); 	 				// 자식창에서 부모창으로 온전한 매장명 전달하기
-	    	$("#JN_PRT_CD", opener.document).val(prt_cd); 		 				// 자식창에서 부모창으로 온전한 매장번호 전달하기
-	    	closeTabClick(); 													// 팝업창 닫는 함수 실행
+		    $("#PRT_CD_NM", opener.document).val(prt_cd_nm); 	 						// 자식창에서 부모창으로 온전한 매장명 전달하기
+	    	$("#JN_PRT_CD", opener.document).val(prt_cd); 		 						// 자식창에서 부모창으로 온전한 매장번호 전달하기
+	    	closeTabClick(); 															// 팝업창 닫는 함수 실행
 	    	
 		} // end of function sendPopupToOpener() {})-------------------------
 		
 		// 팝업창 닫기를 클릭했을때 실행되는 함수
 		function closeTabClick() {
-			window.close();														// 팝업을 닫는다
+			window.close();																// 팝업을 닫는다
         } // end of function closeTabClick()---------------------------
 		
-     	// 특수문자 입력 방지
+     	// 특수문자 입력 방지(현재 미사용)
     	function characterCheck(obj){
     	var regExp = /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi; 
     	// 허용할 특수문자는 여기서 삭제하면 됨
-    	// 지금은 띄어쓰기도 특수문자 처리됨 참고하셈
-    	if( regExp.test(obj.value) ){
+    	// 지금은 띄어쓰기도 특수문자 처리됨
+    	if( regExp.test(obj.value) ){									
     		alert("특수문자는 입력하실수 없습니다.");
-    		obj.value = obj.value.substring( 0 , obj.value.length - 1 ); // 입력한 특수문자 한자리 지움
+    		obj.value = obj.value.substring( 0 , obj.value.length - 1 ); 				// 입력한 특수문자 한자리 지움
     		}
     	} // end of function characterCheck(obj){}--------------------
         
@@ -253,17 +253,17 @@
     		
     		if( (!regex.test(obj) && search_length != 0) || regex2.test(obj) ) { 		// 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
     			alert("검색은 특수문자 및 공백을 제외한 최소 두글자 이상 한글 혹은 숫자로 입력하셔야 합니다.");
-    			return false;															// 함수 종료
+    			return false;															// false를 반환
     		}
-    		else if( obj.match(pattern) ){
+    		else if( obj.match(pattern) ){												// 공백이 체크되었다면
     			alert("검색시 공백은 허용하지 않습니다.");
-    			return false;
+    			return false;															// false를 반환
     		}
     		else if(search_length == 0) {												// 아무것도 적지 않았다면
-    			return true;
+    			return true;															// true를 반환
     		}
-    		else {
-    			return true;
+    		else {																		// 위의 경우들을 제외한 나머지
+    			return true;															// true를 반환
     		}
     		
     	} // end of function checkWord() {})---------------------

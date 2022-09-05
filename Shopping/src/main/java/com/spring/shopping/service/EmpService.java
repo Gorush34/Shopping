@@ -99,6 +99,13 @@ public class EmpService implements InterEmpService {
 		return empDAO.getCustInfoPopUp(map);
 	}
 
+	// 고객상태 목록을 불러오기
+	@Override
+	public List<Map<String, String>> getCustStatusList() {
+		
+		return empDAO.getCustStatusList();
+	}
+
 
 	
 }

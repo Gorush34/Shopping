@@ -85,6 +85,13 @@ public class EmpDAO implements InterEmpDAO {
 		return sqlsession.selectOne("shopping.getCustInfoPopUp", map);
 	}
 
+	// 고객상태 목록을 불러오기
+	@Override
+	public List<Map<String, String>> getCustStatusList() {
+		
+		return sqlsession.selectList("shopping.getCustStatusList");
+	}
+
 
 
 	

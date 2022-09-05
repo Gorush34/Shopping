@@ -18,7 +18,7 @@
 	var se_user_dt_cd = "";										// 세션에 저장된 거래처구분코드를 받아올 변수 선언
 	var input_check = "";										// 검색창의 유효성을 검사하기 위한 변수 선언
 	
-	$(document).ready(function() {
+	$(document).ready(function() {								// 페이지가 로딩되었을 때 시작하는 부분
 		
 		prt_nm = $("input#PRT_CD_NM").val();					// 매장검색란의 value값을 받아온다
 		se_prt_cd = $("input#SE_PRT_CD").val();					// 로그인유저의 매장코드를 받아온다
@@ -66,14 +66,14 @@
 	
 	    $.datepicker.setDefaults($.datepicker.regional['ko']);
 	
-	    $('#SDATE').datepicker();
+	    $('#SDATE').datepicker();													// 시작일자 datepicker 활성화
 	    $('#SDATE').datepicker('setDate', '-7D'); 									// (-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
         $('#SDATE').datepicker("option", "maxDate", 'today');						// 시작일자의 최댓값을 오늘로 설정
 	    $('#SDATE').datepicker("option", "onClose", function ( selectedDate ) { 	// onClose 옵션을 주어야, 종료일이 시작일보다 뒤로 갈수 없고, 시작일이 종료일보다 앞으로 갈 수 없음
 	        $("#EDATE").datepicker( "option", "minDate", selectedDate );
 	    });
 	
-	    $('#EDATE').datepicker();
+	    $('#EDATE').datepicker();													// 종료일자 datepicker 활성화
 	    $('#EDATE').datepicker('setDate', 'today'); 								//(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
 	    $('#EDATE').datepicker("option", "minDate", $("#SDATE").val());				// 종료일자의 최소값을 시작일자로 설정
 	    $('#EDATE').datepicker("option", "maxDate", 'today');						// 종료일자의 최댓값을 오늘로 설정
@@ -92,6 +92,14 @@
 			var endDate = $('#EDATE').val(); 											// 종료일자를 변수에 담는다.
 			var regex = RegExp(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/); 	// 날짜 정규표현식
 			
+			var str02 = startDate.substr(5,2) + startDate.substr(8,2);					// 월일을 받아온다
+			
+			if( str02.substr(0,2) == "02" && parseInt(str02.substr(3,2)) >= 30 ) {		// 2월이면서 30일 이상의 일을 입력했다면
+				alert("날짜 형식에 맞지 않습니다. 다시 입력해주세요!");	
+				$('#SDATE').datepicker('setDate', '-7D');								// 시작일자를 현재보다 1주 전 또는 종료일자로 초기화한다
+				return false;  															// 종료
+			}
+			
 			if(!regex.test(startDate)){													// 시작일자가 정규표현식에 맞지 않다면
 				alert("날짜 형식에 맞지 않습니다. 다시 입력해주세요!");	
 				$('#SDATE').datepicker('setDate', '-7D');								// 시작일자를 현재보다 1주 전 또는 종료일자로 초기화한다.
@@ -100,8 +108,8 @@
 			
 			var startArray = startDate.split('-');         								// 배열에 담겨있는 연,월,일을 사용해서 Date 객체 생성   
 			var endArray = endDate.split('-');            								// 배열에 담겨있는 연,월,일을 사용해서 Date 객체 생성         
-			var start_date = new Date(startArray[0], startArray[1], startArray[2]);     //날짜를 숫자형태의 날짜 정보로 변환하여 비교한다	   
-			var end_date = new Date(endArray[0], endArray[1], endArray[2]);             //날짜를 숫자형태의 날짜 정보로 변환하여 비교한다
+			var start_date = new Date(startArray[0], startArray[1], startArray[2]);     // 날짜를 숫자형태의 날짜 정보로 변환하여 비교한다	   
+			var end_date = new Date(endArray[0], endArray[1], endArray[2]);             // 날짜를 숫자형태의 날짜 정보로 변환하여 비교한다
 			
 			if(start_date.getTime() > end_date.getTime()) {             				// 시작일자가 종료일자보다 크다면
 				alert("종료날짜보다 시작날짜가 작아야합니다.");  
@@ -116,6 +124,13 @@
 			
 			var startDate = $('#SDATE').val();											// 시작일자를 변수에 담는다.        
 			var endDate = $('#EDATE').val(); 											// 종료일자를 변수에 담는다.
+			
+			var end02 = endDate.substr(5,2) + endDate.substr(8,2);						// 월일을 받아온다
+			if( end02.substr(0,2) == "02" && parseInt(end02.substr(2,2)) >= 30 ) {		// 2월이면서 30일 이상의 일을 입력했다면
+				alert("날짜 형식에 맞지 않습니다. 다시 입력해주세요!");	
+				$('#EDATE').datepicker('setDate', 'today');								// 종료일자를 현재일자로 초기화한다
+				return false;  															// 종료
+			}
 			
 			var regex = RegExp(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/); 	// 날짜 정규표현식
 			
@@ -141,7 +156,7 @@
 		// ====================================== 가입일자 관련 기능 끝 ======================================
 		
 		$("input.blank_key").keyup(function(event){						// 매장조건 입력란에서 키보드를 입력할 때
-			if(event.keyCode == 8) { 									// 백스페이스를 입력했을 경우
+			if(event.keyCode == 8 || event.keyCode == 46) { 			// 백스페이스(8) 또는 Delete(46)키를 입력했을 경우
 				if( $("input#PRT_CD_NM").val() == "" ) {				// 매장검색란의 내용이 아무것도 없다면
 					$("input#JN_PRT_CD").val("");						// 매장코드를 비운다
 				} 
@@ -228,8 +243,7 @@
 			$("div#adminContainer").hide();						// 신규등록이 포함된 div를 숨긴다
 		}
 		
-		
-	}
+	} // end of function defaultSearch() {}-------------------
 	
 	// 버튼을 누르거나 검색어 입력시 값을 출력하거나 팝업창을 띄워주는 함수
 	function search_popup(location) {
@@ -275,7 +289,7 @@
 		$.ajax({
 			url:"<%= request.getContextPath()%>/getTotalCount.dowell",
 			data: { "searchWord_prt" : searchWord_prt,					// 검색어를 Map 형태로 넣어준다.
-				    "searchWord_cust" : searchWord_cust,
+				    "searchWord_cust" : searchWord_cust,				// 검색조건 : 매장코드 / 고객번호 / 어떤 버튼을 눌렀는지(매장 or 고객)
 				    "from_prt" : from_prt,
 				    "from_cust" : from_cust},
 			dataType:"JSON", 											// 데이터 타입을 JSON 형태로 전송
@@ -291,11 +305,11 @@
 						search_popup("search_cust");					// 고객정보 팝업을 실행
 					}
 				}
-				else if(from_prt) { 									// 결과가 1이고 매장검색란에서 함수를 실행했다면
+				else if(from_prt) { 									// 결과가 1이고 매장검색란에서 함수를 실행했다면(결과가 하나일 때)
 					$("input#JN_PRT_CD").val(json.PRT_CD);				// 매장코드를 넣는다
 					$("input#PRT_CD_NM").val(json.PRT_NM);				// 매장명을 넣는다
 				}
-				else if(from_cust) {									// 결과가 1이고 고객검색란에서 함수를 실행했다면
+				else if(from_cust) {									// 결과가 1이고 고객검색란에서 함수를 실행했다면(결과가 하나일 때)
 					$("input#CUST_NO").val(json.CUST_NO);				// 고객번호를 넣는다
 					$("input#IN_CUST_NO").val(json.CUST_NM);			// 고객명을 넣는다
 				} 
@@ -318,19 +332,19 @@
 		// 필수입력사항 검사 시작
 		let b_FlagRequiredInfo = false;
 		
-		$("input.requiredInfo").each(function(index, item) {
-			const data = $(item).val().trim();
-			if(data == ""){
+		$("input.requiredInfo").each(function(index, item) {			// 태그의 class가 필수입력항목인 것에 대해서 각각 실행
+			const data = $(item).val().trim();							// 공백을 제거한 값이
+			if(data == ""){												// 비었다면
 				console.log("item : " + data);
 				alert("*표시된 필수입력사항은 모두 입력하셔야 합니다.");
-				b_FlagRequiredInfo = true;
-				return false; 
+				b_FlagRequiredInfo = true;								// flag에 true를 담는다
+				return false; 											// 종료
 			}
 		});
 		
-		if(b_FlagRequiredInfo) {
+		if(b_FlagRequiredInfo) {										// flag가 true라면
 			console.log("b_FlagRequiredInfo : " + b_FlagRequiredInfo);
-			return;
+			return;														// read_cust 함수 종료
 		}
 		
 		// 필수입력사항 검사 끝
@@ -338,27 +352,27 @@
 		/*
 		if(checkWord($("input#PRT_CD_NM").val()) === false || checkWord($("input#IN_CUST_NO").val()) === false ) {
 			// 매장검색란과 고객검색란의 검색어가 정규표현식에 맞지 않으면
-			return false;											// 함수 종료
+			return false;												// 함수 종료
 		}
 		*/
 		
-		$.trim("input#PRT_CD_NM");									// 검색란의 공백을 제거한다.
-		$.trim("input#IN_CUST_NO");									// 검색란의 공백을 제거한다.
-		var formData = $("form[name=searchFrm]").serialize(); 		// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
+		$.trim("input#PRT_CD_NM");										// 검색란의 공백을 제거한다.
+		$.trim("input#IN_CUST_NO");										// 검색란의 공백을 제거한다.
+		var formData = $("form[name=searchFrm]").serialize(); 			// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
 		
 		
 		$.ajax({
 			url:"<%= request.getContextPath()%>/readCust.dowell",
 			data: formData, 
-			dataType:"JSON", 										// 데이터 타입을 JSON 형태로 전송
-			type:"POST",											// POST 방식을 적용
-			success:function(json){ 								// return된 값이 존재한다면
+			dataType:"JSON", 											// 데이터 타입을 JSON 형태로 전송
+			type:"POST",												// POST 방식을 적용
+			success:function(json){ 									// return된 값이 존재한다면
 				
-				let html = "";										// html 태그를 담기위한 변수 생성
+				let html = "";											// html 태그를 담기위한 변수 생성
 				
 				if(json.length > 0) { 
 					
-					$.each(json, function(index, item){				// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
+					$.each(json, function(index, item){					// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
 						
 						// 결과값 한 행의 값들을 담는다
 						html += "<tr style='width: 100%;'>";  
@@ -374,15 +388,15 @@
 					
 					});
 				}
-				else {												// 검색조건에 맞는 결과가 없다면
+				else {													// 검색조건에 맞는 결과가 없다면
 					html += "<tr>";
 					html += "<td colspan='8' id='no' class='center'>검색조건에 맞는 고객이 존재하지 않습니다.</td>";
 					html += "</tr>";
 					alert("조건을 만족하는 검색결과가 없습니다!");
 				}
 				
-				$("tbody#CUST_DISPLAY").html(html); // tbody의 id가 CUST_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
-				$("tbody#CUST_DISPLAY").show(); 	// tbody의 id가 CUST_DISPLAY인 부분을 보여준다
+				$("tbody#CUST_DISPLAY").html(html); 					// tbody의 id가 CUST_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
+				$("tbody#CUST_DISPLAY").show(); 						// tbody의 id가 CUST_DISPLAY인 부분을 보여준다
 			},
 			error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -413,15 +427,15 @@
 	
 	// 날짜를 yyyy-mm-dd 형식으로 만들어 줌.
 	function date_mask(objValue) {
-	 	var v = objValue.replace("--", "-");				// -- 가 이어지면 -로 교체
+	 	var v = objValue.replace("--", "-");										// -- 가 이어지면 -로 교체
 	
-	    if (v.match(/^\d{4}$/) !== null) {					// 앞의 년도가 yyyy형식으로 채워지면
-	        v = v + '-';									// yyyy-로 바꿔준다
-	    } else if (v.match(/^\d{4}\-\d{2}$/) !== null) {	// yyyy-mm형식으로 채워지면
-	        v = v + '-';									// yyyy-mm-로 바꿔준다
+	    if (v.match(/^\d{4}$/) !== null) {											// 앞의 년도가 yyyy형식으로 채워지면
+	        v = v + '-';															// yyyy-로 바꿔준다
+	    } else if (v.match(/^\d{4}\-\d{2}$/) !== null) {							// yyyy-mm형식으로 채워지면
+	        v = v + '-';															// yyyy-mm-로 바꿔준다
 	    }
 	 
-	    return v;											// 종료
+	    return v;																	// 종료
 	} // end of function date_mask(objValue) {})------------------
 	
 	// 검색시 유효성 검사를 실행하는 함수
@@ -435,17 +449,17 @@
 		
 		if( (!regex.test(obj) && search_length != 0) || regex2.test(obj) ) { 		// 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
 			alert("검색은 특수문자 및 공백을 제외한 최소 두글자 이상 한글 혹은 숫자로 입력하셔야 합니다.");
-			return false;															// 함수 종료
+			return false;															// false를 반환
 		}
 		else if( obj.match(pattern) ){
 			alert("검색시 공백은 허용하지 않습니다.");
-			return false;
+			return false;															// false를 반환
 		}
 		else if(search_length == 0) {												// 아무것도 적지 않았다면
-			return true;
+			return true;															// true를 반환
 		}
 		else {
-			return true;
+			return true;															// true를 반환
 		}
 		
 	} // end of function checkWord() {})---------------------
@@ -504,9 +518,14 @@
 						</td>
 						<td>
 							<input type="radio" name="CUST_SS_CD" value="" id="default" checked="checked"/>&nbsp;&nbsp;전체&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<!-- 
 							<input type="radio" name="CUST_SS_CD" value="10" />&nbsp;&nbsp;정상&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<input type="radio" name="CUST_SS_CD" value="80" />&nbsp;&nbsp;중지&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<input type="radio" name="CUST_SS_CD" value="90" />&nbsp;&nbsp;해지&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							 -->
+							<c:forEach var="ssList" items="${requestScope.prtCustList}">
+								<input type="radio" name="CUST_SS_CD" value="${ssList.DTL_CD}" />&nbsp;&nbsp;${ssList.DTL_CD_NM}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							</c:forEach>
 						</td>
 						
 						<td class="pd_td" style="float:right;">

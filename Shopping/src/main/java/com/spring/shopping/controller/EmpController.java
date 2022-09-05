@@ -258,6 +258,9 @@ public class EmpController {
 	@RequestMapping(value="/customerList.dowell")
 	public ModelAndView requiredLogin_customerList(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @ModelAttribute("scri") SearchCriteria scri) throws Exception {
 		
+		List<Map<String, String>> prtCustList = empService.getCustStatusList();	// 고객상태 목록을 불러오기
+		
+		mav.addObject("prtCustList", prtCustList);
 		mav.setViewName("customerList.report1"); // viewCustomer.dowell(tiles : report1 레이아웃 적용된)으로 주소 지정
 		
 		return mav;

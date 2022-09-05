@@ -182,7 +182,7 @@
     				}
     				else {
     					html += "<tr>";
-    					html += "<td colspan='6' class='center' id='no' style='width:830px;'>변경된 고객이력이 존재하지 않습니다.</td>";
+    					html += "<td colspan='6' class='center' id='no' style='width:830px;'>변경된 이력이 존재하지 않습니다.</td>";
     					html += "</tr>";
     				}
     				

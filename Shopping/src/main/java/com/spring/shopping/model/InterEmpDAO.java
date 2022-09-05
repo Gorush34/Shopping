@@ -34,5 +34,8 @@ public interface InterEmpDAO {
 
 	// 고객의 정보를 조회(팝업)
 	Map<String, String> getCustInfoPopUp(Map<String, Object> map);
+
+	// 고객상태 목록을 불러오기
+	List<Map<String, String>> getCustStatusList();
 	
 }

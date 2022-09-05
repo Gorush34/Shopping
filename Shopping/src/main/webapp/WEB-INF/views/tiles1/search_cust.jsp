@@ -166,7 +166,7 @@
 		    		return false;
 		    	}
 		    	
-				var TO_CUST_NM = $("input[name='chBox']:checked").attr('id');									// name 이 chBox인 체크박스의 id(고객번호)를 가져온다
+				var TO_CUST_NM = $("input[name='chBox']:checked").attr('id');	// name 이 chBox인 체크박스의 id(고객번호)를 가져온다
 				var TO_CUST_NO = $("input[name='chBox']:checked").parent().parent().children().eq(1).text();	// 체크한 위치를 기반으로 고객명을 가져온다
 		    	
 		    	$("#CUST_NO", opener.document).val(TO_CUST_NO); 	 			// 자식창에서 부모창으로 온전한 고객번호 전달하기
@@ -310,23 +310,23 @@
 
 		// 핸드폰 번호 하이픈 자동완성
 		function autoHypen(obj) {
-			  var number = obj.value.replace(/[^0-9]/g, "");
+			  var number = obj.value.replace(/[^0-9]/g, "");							
 			  var phone = "";
 			   
-			  if(number.length < 4) {
+			  if(number.length < 4) {													// 첫 3자리 입력
 			     	return number;
-			  } else if(number.length < 7) {
-				    phone += number.substr(0, 3);
+			  } else if(number.length < 7) {											// 7자리 미만까지는
+				    phone += number.substr(0, 3);										// xxx-xxx형태로 저장
 				    phone += "-";
 				    phone += number.substr(3);
-			  } else if(number.length < 11) {
-				    phone += number.substr(0, 3);
+			  } else if(number.length < 11) {											// 11자리 미만일때는
+				    phone += number.substr(0, 3);										// xxx-xxx-xxxx 형태로 저장
 				    phone += "-";
 				    phone += number.substr(3, 3);
 				    phone += "-";
 				    phone += number.substr(6);
-			  } else {
-				    phone += number.substr(0, 3);
+			  } else {																	// 11자리일때는
+				    phone += number.substr(0, 3);										// xxx-xxxx-xxxx 형태로 저장
 				    phone += "-";
 				    phone += number.substr(3, 4);
 				    phone += "-";

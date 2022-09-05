@@ -168,7 +168,7 @@
 		     , TO_CHAR(TO_DATE(A.JS_DT), 'YYYY-MM-DD') AS JS_DT                             /* 가입일자 */
 		     , B.PRT_NM AS PRT_NM                                                           /* 가입매장 */
 		     , A.FST_USER_ID || '/' || C.USER_NM AS USER_NM  								/* 등록자 아이디 / 등록자 */
-		     , TO_CHAR(TO_DATE(A.LST_UPD_DT), 'YYYY-MM-DD HH24:MI:SS') AS LST_UPD_DT        /* 수정일자 */
+		     , TO_CHAR(A.LST_UPD_DT, 'YYYY-MM-DD HH24MISS') AS LST_UPD_DT        			/* 수정일자 */
 		FROM CS_CUST01_MT A INNER JOIN MA_PRT_MT B                                          /* 고객관리테이블과 거래처관리 테이블 JOIN */
 		ON A.JN_PRT_CD = B.PRT_CD                                                           /* 가입매장코드 = 거래처코드 */
 		INNER JOIN MA_USER_MT C                                                             /* 고객관리테이블과 사용자 테이블 JOIN */
@@ -574,17 +574,31 @@
 	                                    '29' AS "29",
 	                                    '30' AS "30",
 	                                    '31' AS "31"
-	                                )
+	                           )
 	                
-	            )
+	            )																		/* 피벗 끝 */
 	    ORDER BY PRT_CD ASC											
 	) V INNER JOIN WS																	/* 뷰 V 끝 */	
 	ON V.PRT_CD = WS.PRT_CD																/* WITH WS절과 INNER JOIN(매장코드가 같은 것에 대해) */
-	<if test='JN_PRT_CD != "" '>													/* 세션에 저장된 사용자구분코드가 2라면 */
-	WHERE V.PRT_CD LIKE '%' || #{JN_PRT_CD} || '%' 														/* 매장이름이 부분일치 하는 것 */
+	<if test='JN_PRT_CD != "" '>														/* 세션에 저장된 사용자구분코드가 2라면 */
+	WHERE V.PRT_CD LIKE '%' || #{JN_PRT_CD} || '%' 										/* 매장이름이 부분일치 하는 것 */
  	</if>
  	</select>
  
+ 
+ 	<!-- 고객상태 목록을 불러오기 -->
+ 	<resultMap type="HashMap" id="CustSSMap">
+	   <result property="DTL_CD" 		column="DTL_CD" 		javaType="String" />
+	   <result property="DTL_CD_NM" 	column="DTL_CD_NM" 		javaType="String" />
+	</resultMap>
+ 	
+ 	<select id="getCustStatusList" resultMap="CustSSMap">
+ 		SELECT DTL_CD																	/* 세부코드 */
+		     , DTL_CD_NM																/* 세부코드명 */
+		FROM MA_CODE_DT
+		WHERE CODE_CD = 'CUST_SS_CD'													/* 코드가 고객상태인 것 */
+		AND USE_YN = 'Y'																/* 사용여부가 사용중인 것 */
+ 	</select>
   	
   	<!-- 검색기능을 위한 동적SQL -->
 	<sql id="search">
