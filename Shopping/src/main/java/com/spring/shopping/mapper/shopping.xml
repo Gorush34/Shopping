@@ -404,7 +404,7 @@
 	FROM CS_CUST01_MT A INNER JOIN SD_CUST01_HT B                                   		/* 고객관리 테이블과 고객이력 테이블을 INNER JOIN */
 	ON A.CUST_NO = B.CUST_NO                                                        		/* 고객번호가 같은 항목들에 대해 */
 	WHERE A.CUST_NO = #{SEARCHWORD}                                                 		/* 고객번호가 일치하는 것들만 */
-	ORDER BY CHG_DT DESC                                                            		/* 변경일자의 내림차순으로 정렬 */
+	ORDER BY CHG_DT DESC, B.LST_UPD_DT DESC                                                 /* 변경일자의 내림차순, 최종수정일시 내림차순으로 정렬 */
   	</select> 
   	
   	<!-- 매장 월별실적 가져오기 -->

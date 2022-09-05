@@ -201,6 +201,7 @@
 	function refresh() {
 		defaultSearch();										// 기본조건으로 세팅
 		$("tbody#CUST_DISPLAY").hide(); 						// tbody의 id가 CUST_DISPLAY인 부분을 숨겨준다
+		$("input#PRT_CD_NM").focus();							// 커서의 위치를 매장검색란으로 위치시킨다
 	}
 	
 	// 기본 조건을 불러오는 함수
@@ -479,7 +480,7 @@
 							<!-- 
 								<i class="fas fa-search fa-border"></i>&nbsp;
 							 -->
-							&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt blank_key" value="" placeholder="매장코드 / 매장명" autofocus />
+							&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt blank_key" value="" placeholder="매장코드 / 매장명" spellcheck="false" autofocus />
 						</td>
 						
 						<td class="pd_td" style="float:right;">고객번호</td>
@@ -488,7 +489,7 @@
 							<button type="button" id="btn_search_cust" class="btn btn-secondary" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" >
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
-							<input type="text" class="large enter_cust blank_key" name="IN_CUST_NO" id="IN_CUST_NO" value="" placeholder="고객번호 / 고객명"/>
+							<input type="text" class="large enter_cust blank_key" name="IN_CUST_NO" id="IN_CUST_NO" value="" placeholder="고객번호 / 고객명" spellcheck="false" />
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="read_cust()">

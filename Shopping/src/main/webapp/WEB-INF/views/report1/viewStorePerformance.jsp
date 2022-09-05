@@ -62,7 +62,7 @@
 	function refresh() {
 		defaultSearch();																// 기본 조건을 불러오는 함수 실행
 		$("tbody#PERFORM_DISPLAY").hide(); 												// tbody의 id가 CUST_DISPLAY인 부분을 숨겨준다
-		$("tfoot#TFOOT_SUM").hide();
+		$("tfoot#TFOOT_SUM").hide();													// tfoot의 id가 TFOOT_SUM인 부분을 숨겨준다 
 	}
 	
 	// 기본 조건을 불러오는 함수
@@ -363,7 +363,7 @@
 							<button type="button" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" id="btn_search_prt" class="btn btn-secondary btn_not" onclick="search_popup('search_prt')">
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
-							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt blank_key btn_not" value="" placeholder="매장코드 / 매장명" autofocus />
+							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt blank_key btn_not" value="" placeholder="매장코드 / 매장명" spellcheck="false" autofocus />
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="searchPerfomance()">
