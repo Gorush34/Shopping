@@ -471,7 +471,7 @@
 					<tr>
 						<td class="pd_td pd_left" style="float:right; padding-right: 28px; padding-bottom: 20px;">매장</td>
 						<td>
-							<input type="text" class="dark medium" name="JN_PRT_CD" id="JN_PRT_CD" disabled />&nbsp;
+							<input type="text" class="dark medium" name="JN_PRT_CD" id="JN_PRT_CD" readonly />&nbsp;
 							<button type="button" id="btn_search_prt" class="btn btn-secondary" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" >
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
@@ -483,7 +483,7 @@
 						
 						<td class="pd_td" style="float:right;">고객번호</td>
 						<td>
-							<input type="text" class="dark medium" name="CUST_NO" id="CUST_NO" value="" disabled />
+							<input type="text" class="dark medium" name="CUST_NO" id="CUST_NO" value="" readonly />
 							<button type="button" id="btn_search_cust" class="btn btn-secondary" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" >
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>

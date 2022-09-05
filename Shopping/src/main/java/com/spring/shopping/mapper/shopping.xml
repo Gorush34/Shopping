@@ -179,16 +179,11 @@
                     AND 	
                 	TO_DATE(A.JS_DT, 'YYYY-MM-DD') <![CDATA[<=]]> TO_DATE(#{EDATE}, 'YYYY-MM-DD')   /* 종료일자 사이 */
 				)	
-		<if test='PRT_CD_NM != "" '>                                  						/* 매장검색란이 공백이 아니라면(검색조건) */
-		AND ( 
-				UPPER(A.JN_PRT_CD) LIKE '%' || UPPER(#{PRT_CD_NM}) || '%'           		/* 매장검색란에 적힌 값과 매장코드가 부분일치 하는 값 */
-				OR																			/* 또는 */
-				B.PRT_NM LIKE '%' || #{PRT_CD_NM} || '%'									/* 매장검색란에 적힌 값과 매장명이 부분일치 하는 값 */	
-			)
+		<if test='JN_PRT_CD != "" '>                                  						/* 매장검색란이 공백이 아니라면(검색조건) */
+		AND UPPER(A.JN_PRT_CD) LIKE '%' || UPPER(#{JN_PRT_CD}) || '%'           			/* 매장코드란에 적힌 값과 매장코드가 일치 하는 값 */
 		</if>
-		<if test='IN_CUST_NO != ""'>                                                        /* 고객번호가 기본값이 아니라면 */
-		AND (A.CUST_NO LIKE '%' || #{IN_CUST_NO} || '%'										/* 고객검색란에 적힌 값과 고객번호가 부분일치 하는 값 */
-		OR UPPER(A.CUST_NM) LIKE '%' || UPPER(#{IN_CUST_NO}) || '%' )						/* 고객검색란에 적힌 값과 고객명이 부분일치 하는 값 */
+		<if test='CUST_NO != ""'>                                                        	/* 고객번호가 기본값이 아니라면 */
+		AND A.CUST_NO = #{CUST_NO} 															/* 고객번호란에 적힌 값과 고객번호가 일치 하는 값 */
 		</if>
 		<if test='CUST_SS_CD != ""'>                                                        /* 고객상태코드가 기본값이 아니라면 */
 		AND A.CUST_SS_CD = #{CUST_SS_CD}                                                    /* 고객상태코드가 일치하는 값 */
@@ -573,10 +568,10 @@
 	                                    '23' AS "23",
 	                                    '24' AS "24",
 	                                    '25' AS "25",
-	                                    '22' AS "26",
-	                                    '23' AS "27",
-	                                    '24' AS "28",
-	                                    '25' AS "29",
+	                                    '26' AS "26",
+	                                    '27' AS "27",
+	                                    '28' AS "28",
+	                                    '29' AS "29",
 	                                    '30' AS "30",
 	                                    '31' AS "31"
 	                                )
@@ -585,8 +580,8 @@
 	    ORDER BY PRT_CD ASC											
 	) V INNER JOIN WS																	/* 뷰 V 끝 */	
 	ON V.PRT_CD = WS.PRT_CD																/* WITH WS절과 INNER JOIN(매장코드가 같은 것에 대해) */
-	<if test=' SE_USER_DT_CD = "2" '>													/* 세션에 저장된 사용자구분코드가 2라면 */
-	WHERE V.PRT_NM LIKE '%' || #{PRT_CD_NM} || '%'										/* 매장이름이 부분일치 하는 것 */
+	<if test='JN_PRT_CD != "" '>													/* 세션에 저장된 사용자구분코드가 2라면 */
+	WHERE V.PRT_CD LIKE '%' || #{JN_PRT_CD} || '%' 														/* 매장이름이 부분일치 하는 것 */
  	</if>
  	</select>
  

@@ -312,3 +312,8 @@ button#user_detail {
 th.title {
 	font-size: 18px;
 }
+
+
+td, th {
+	word-break: break-all !important;
+}

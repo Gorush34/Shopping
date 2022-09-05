@@ -169,6 +169,11 @@
 		}
 		// 필수입력사항 검사 끝
 		
+		var jn = $("input#JN_PRT_CD").val();
+		if(jn == undefined) {								// 비어있다면
+			$("input#JN_PRT_CD").val("");					// 공백처리
+		}
+		
 		if(checkWord($("input#PRT_CD_NM").val()) === false ) {
 			// 매장검색란과 고객검색란의 검색어가 정규표현식에 맞지 않으면
 			return false;											// 함수 종료
@@ -227,7 +232,7 @@
 						html += "<td class='right border_td'>"+item.D29+"</td>";
 						html += "<td class='right border_td'>"+item.D30+"</td>";
 						html += "<td class='right border_td'>"+item.D31+"</td>";
-						html += "<td class='sticky-col last-col border_td'>"+item.SUM+"</td>";
+						html += "<td class='sticky-col last-col border_td' style='text-align: right;'>"+item.SUM+"</td>";
 						html += "</tr>";
 					}); // end of $.each----------------
 					
@@ -353,11 +358,11 @@
 						</td>
 						<td class="pd_td" style="float: left; padding-top: 20px; ">
 							매장
-							<input type="text" class="dark medium not" name="JN_PRT_CD" id="JN_PRT_CD" disabled />&nbsp;
+							<input type="text" class="dark medium" name="JN_PRT_CD" id="JN_PRT_CD" value="" readonly />&nbsp;
 							<button type="button" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" id="btn_search_prt" class="btn btn-secondary btn_not" onclick="search_popup('search_prt')">
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
-							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt not blank_key" value="" placeholder="매장코드 / 매장명" autofocus />
+							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt blank_key btn_not" value="" placeholder="매장코드 / 매장명" autofocus />
 						</td>
 						<td style="float:right; padding-right: 20px;">
 							<button type="button" style="margin: 5px 0; width: 50px; height: 50px; padding: 0 0 0 7px;" id="btnSearch" class="btn btn-secondary" onclick="searchPerfomance()">
@@ -381,8 +386,8 @@
 		    <table id="tbl_css_header" class="table">
 		      <thead>
 		        <tr>
-			          <th class="sticky-col first-col border">매장코드</th>
-			          <th class="sticky-col second-col border">매장명</th>
+			          <th class="sticky-col first-col border" style="text-align: center;">매장코드</th>
+			          <th class="sticky-col second-col border" style="text-align: center;">매장명</th>
 			          <th class="border" id="sum_1">1일</th>
 			          <th class="border" id="sum_2">2일</th>
 			          <th class="border" id="sum_3">3일</th>
@@ -414,7 +419,7 @@
 			          <th class="border" id="sum_29">29일</th>
 			          <th class="border" id="sum_30">30일</th>
 			          <th class="border" id="sum_31">31일</th>
-			          <th class="sticky-col last-col border" id="sum_32">합계</th>
+			          <th class="sticky-col last-col border" id="sum_32" style='text-align: right;'>합계</th>
 		        </tr>
 		      </thead>
 		      <tbody id="PERFORM_DISPLAY"></tbody>
@@ -452,7 +457,7 @@
 			          <td class="border_td" style="text-align: right;"></td>
 			          <td class="border_td" style="text-align: right;"></td>
 			          <td class="border_td" style="text-align: right;"></td>
-			          <td class="sticky-col last-col border_td"></td>
+			          <td class="sticky-col last-col border_td"  style='text-align: right;'></td>
 		       		</tr>
 		      </tfoot>
 		    </table>
