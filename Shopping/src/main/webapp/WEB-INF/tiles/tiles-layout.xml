@@ -68,20 +68,6 @@
 		<put-attribute name="content" value="/WEB-INF/views/report1/{1}/{2}/{3}.jsp"/>
 	</definition>
 
-	<!-- ==== 과제2(팝업)를 위한 타일 설정 시작 ==== -->
-	<definition name="layout-report2"  template="/WEB-INF/tiles/layout/layout-report2.jsp">
-		<put-attribute name="content" value="" />
-	</definition>
-	
-	<definition name="*.report2" extends="layout-report2">
-		<put-attribute name="content" value="/WEB-INF/views/tiles1/{1}.jsp"/>
-	</definition>
-	<definition name="*/*.report2" extends="layout-report2">
-		<put-attribute name="content" value="/WEB-INF/views/tiles1/{1}/{2}.jsp"/>
-	</definition>
-	<definition name="*/*/*.report2" extends="layout-report2">
-		<put-attribute name="content" value="/WEB-INF/views/tiles1/{1}/{2}/{3}.jsp"/>
-	</definition>
 
 </tiles-definitions> 
 
