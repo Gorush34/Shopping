@@ -60,9 +60,6 @@
 
 <body>
 	<div id="mycontainer">
-		<div id="myheader">
-			<tiles:insertAttribute name="header" />
-		</div>
 		
 		<div id="mycontent">
 			<tiles:insertAttribute name="content" />

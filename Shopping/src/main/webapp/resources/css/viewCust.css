@@ -1,0 +1,78 @@
+@charset "UTF-8";
+
+
+
+/* viewCustomer.jsp(고객정보조회) 시작 */
+div.title {
+	margin: auto 0; 
+	padding: 10px 15px 5px 0;
+}
+
+div.title > span {font-weight: bold;}
+
+table#tbl_baseInfo, table#tbl_receiveYN, table#tbl_purchase, table#tbl_point {
+	width: 100%;
+	border: solid 1px gray;
+}
+
+table#tbl_baseInfo {
+	min-height: 300px;
+	background-color: #e6f2ff;
+}
+
+table#tbl_receiveYN, #tbl_purchase, #tbl_point  {
+	min-height: 60px;
+	background-color: #e6f2ff;
+}
+
+td.f_left {float: left;}
+td.f_right {float: right;}
+
+input.sm { max-width: 80px; }
+input.med { max-width: 120px; }
+input.lg { max-width: 140px; }
+
+td.item_name {
+	padding : 9px 8px 0 5px;
+	font-weight: bold;
+	width: 130px;
+	text-align: right;
+}
+
+#tbl_baseInfo > tbody > tr > td {
+	max-width: 400px;
+}
+
+td.item_value {
+	width: 450px;
+}
+
+td.item_name_only {
+	padding : 15px 8px 0 5px;
+	font-weight: bold;
+	width: 150px;
+	text-align: right;
+}
+
+td.item_val_only {
+	width:400px;
+}
+
+
+td.yn_name {
+	padding : 0 8px 0 5px;
+	font-weight: bold;
+	min-width: 150px;
+	max-width: 150px;
+	width: 150px;
+	text-align: right;
+	font-size: 17px;
+}
+
+button.btn_check {
+	width: 65px;
+    height: 30px;
+    font-size: 14px;
+    padding: 0 !important;
+}
+/* viewCustomer.jsp(고객정보조회) 끝 */

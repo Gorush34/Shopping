@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 @import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
-#myheader      { display: flex; min-height:100px; position: relative; top: 60px; }
+#myheader      { display: flex; min-height:60px; position: relative; top: 60px; }
 #mycontainer   { padding:20px; }
 
 body {
@@ -327,3 +327,50 @@ th.title {
 td, th {
 	word-break: break-all !important;
 }
+
+
+/* viewCustomer.jsp(고객정보조회) 시작 */
+div.title {
+	margin: auto 0; 
+	padding: 20px 15px 5px 0;
+}
+
+div.title > span {font-weight: bold;}
+
+table#tbl_baseInfo, table#tbl_receiveYN {
+	width: 100%;
+	border: solid 1px gray;
+}
+
+table#tbl_baseInfo {
+	min-height: 350px;
+	background-color: #e6f2ff;
+}
+
+table#tbl_receiveYN {
+	min-height: 100px;
+	background-color: #e6f2ff;
+}
+
+td.f_left {float: left;}
+td.f_right {float: right;}
+
+input.sm { max-width: 80px; }
+input.med { max-width: 120px; }
+input.lg { max-width: 140px; }
+
+td.item_name {
+	padding : 15px 8px 0 5px;
+	font-weight: bold;
+}
+
+td.yn_name {
+	padding : 0 8px 0 5px;
+	font-weight: bold;
+	min-width: 150px;
+	max-width: 150px;
+	width: 150px;
+	text-align: right;
+	font-size: 17px;
+}
+/* viewCustomer.jsp(고객정보조회) 끝 */

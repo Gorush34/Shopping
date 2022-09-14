@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.shopping.common.MyUtil;
 import com.spring.shopping.common.SearchCriteria;
 import com.spring.shopping.common.Sha256;
+import com.spring.shopping.model.CustVO;
 import com.spring.shopping.model.EmpVO;
 import com.spring.shopping.service.InterEmpService;
 
@@ -261,7 +262,7 @@ public class EmpController {
 		List<Map<String, String>> prtCustList = empService.getCustStatusList();	// 고객상태 목록을 불러오기
 		
 		mav.addObject("prtCustList", prtCustList);
-		mav.setViewName("customerList.report1"); // viewCustomer.dowell(tiles : report1 레이아웃 적용된)으로 주소 지정
+		mav.setViewName("customerList.report1"); // customerList.dowell(tiles : report1 레이아웃 적용된)으로 주소 지정
 		
 		return mav;
 	}
@@ -346,6 +347,7 @@ public class EmpController {
 		
 		return jsonArr.toString(); // 배열 형태인 jsonArr을 String 형태로 변환하여 return 한다.
 	} // end of public String readCust(ModelAndView mav, @RequestParam Map<String, Object> map) {}-------------
+	
 	
 	// 매장조회 테이블 매장목록 불러오기(팝업)
 	@ResponseBody
@@ -509,6 +511,70 @@ public class EmpController {
 	}
 	*/
 	
+	/* ================================ 과제2 시작 ================================== */
+	
+	// 고객정보조회 페이지 요청
+	@RequestMapping(value="/viewCustomer.dowell")
+	public ModelAndView requiredLogin_viewCustomer(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		String viewCust = request.getParameter("viewCust");									// form 안에 있는 데이터(고객번호)를 가져온다
+		if(viewCust == null) {																// 고객번호가 비었다면
+			viewCust = "";																	// 공란처리
+		}
+		else if(viewCust != null) {															// 고객번호가 비어있지 않다면
+			CustVO custInfo = empService.readCustInfo(viewCust);							// 고객번호를 parameter로 고객정보를 조회
+			if(custInfo != null) {															// 조회된 결과가 비어있지 않다면
+				mav.addObject("custInfo", custInfo);										// mav에 담는다
+			}
+		}
+		
+		// 공통테이블 코드목록 조회
+		List<Map<String, String>> codeList = empService.getCodeList();						// 코드목록을 가져온다
+		
+		if(codeList != null && codeList.size() > 0) {										// 가져온 결과가 존재한다면		
+			for(Map<String, String> code : codeList) {										// code의 개수만큼 반복한다	
+				List<Map<String, String>> codeDetailList = empService.getcodeDetailList(code); // 세부코드의 목록을 가져온다
+				mav.addObject(code.get("CODE_CD"), codeDetailList);							// mav에 key, value형태로 담는다
+			}
+		}
+		
+		mav.setViewName("viewCustomer.report1"); // viewCustomer.dowell(tiles : report1 레이아웃 적용된)으로 주소 지정
+		
+		return mav;
+	} // end of public ModelAndView requiredLogin_viewCustomer(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {}-----
+	
+	// 고객정보조회 페이지 요청
+	@RequestMapping(value="/register_cust.dowell")
+	public ModelAndView requiredLogin_register_cust(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		// 공통테이블 코드목록 조회
+		List<Map<String, String>> codeList = empService.getCodeList();						// 코드목록을 가져온다
+		
+		if(codeList != null && codeList.size() > 0) {										// 가져온 결과가 존재한다면		
+			for(Map<String, String> code : codeList) {										// code의 개수만큼 반복한다	
+				List<Map<String, String>> codeDetailList = empService.getcodeDetailList(code); // 세부코드의 목록을 가져온다
+				mav.addObject(code.get("CODE_CD"), codeDetailList);							// mav에 key, value형태로 담는다
+			}
+		}
+		
+		mav.setViewName("tiles1/register_cust");
+		
+		return mav;
+	} // end of public requiredLogin_search_cust(ModelAndView mav, HttpServletRequest request)-----------
+	
+	// DB를 통해 비교하여 중복검사를 실행하는 함수
+	@ResponseBody
+	@RequestMapping(value = "/compareItem.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String compareItem(ModelAndView mav, @RequestParam Map<String, Object> map) {
+		
+		String result = empService.compareItem(map);		// DB에 중복된 값이 존재하는지 확인
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("result", result);						// 결과를 담는다
+		
+		return jsonObj.toString();
+	} // end of public String getCustHistoryPopUp(ModelAndView mav, @RequestParam Map<String, Object> map)------------------------	
+		
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	

@@ -98,18 +98,6 @@ public class ShoppingController {
 		return mav;
 	} // end of public update(ModelAndView mav, HttpServletRequest request)-----------
 	
-	
-	// 고객정보조회 페이지 요청
-	@RequestMapping(value="/viewCustomer.dowell")
-	public ModelAndView requiredLogin_viewCustomer(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @ModelAttribute("scri") SearchCriteria scri) throws Exception {
-		
-		
-		mav.setViewName("viewCustomer.report1"); // viewCustomer.dowell(tiles : report1 레이아웃 적용된)으로 주소 지정
-		
-		return mav;
-	}
-	
-	
 	// 매장월별실적조회 페이지 요청
 	@RequestMapping(value="/viewStorePerformance.dowell")
 	public ModelAndView requiredLogin_viewStorePerformance(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @ModelAttribute("scri") SearchCriteria scri) throws Exception {

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.shopping.common.AES256;
+import com.spring.shopping.model.CustVO;
 import com.spring.shopping.model.EmpVO;
 import com.spring.shopping.model.InterEmpDAO;
 
@@ -104,6 +105,34 @@ public class EmpService implements InterEmpService {
 	public List<Map<String, String>> getCustStatusList() {
 		
 		return empDAO.getCustStatusList();
+	}
+
+	// 공통테이블 코드목록 조회
+	@Override
+	public List<Map<String, String>> getCodeList() {
+		
+		return empDAO.getCodeList();
+	}
+
+	// 코드별 세부코드 목록 가져오기
+	@Override
+	public List<Map<String, String>> getcodeDetailList(Map<String, String> code) {
+		
+		return empDAO.getcodeDetailList(code);
+	}
+
+	// 고객정보 조회
+	@Override
+	public CustVO readCustInfo(String viewCust) {
+		
+		return empDAO.readCustInfo(viewCust);
+	}
+
+	// DB를 통해 비교하여 중복검사를 실행하는 함수
+	@Override
+	public String compareItem(Map<String, Object> map) {
+		
+		return empDAO.compareItem(map);
 	}
 
 

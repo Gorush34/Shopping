@@ -92,6 +92,34 @@ public class EmpDAO implements InterEmpDAO {
 		return sqlsession.selectList("shopping.getCustStatusList");
 	}
 
+	// 공통테이블 코드목록 조회
+	@Override
+	public List<Map<String, String>> getCodeList() {
+		
+		return sqlsession.selectList("menu.getCodeList");
+	}
+
+	// 코드별 세부코드 목록 가져오기
+	@Override
+	public List<Map<String, String>> getcodeDetailList(Map<String, String> code) {
+		
+		return sqlsession.selectList("menu.getCodeDetailList", code);
+	}
+
+	// 고객정보 조회
+	@Override
+	public CustVO readCustInfo(String viewCust) {
+		
+		return sqlsession.selectOne("shopping.readCustInfo", viewCust);
+	}
+
+	// DB를 통해 비교하여 중복검사를 실행하는 함수
+	@Override
+	public String compareItem(Map<String, Object> map) {
+		
+		return sqlsession.selectOne("shopping.compareItem", map);
+	}
+
 
 
 	

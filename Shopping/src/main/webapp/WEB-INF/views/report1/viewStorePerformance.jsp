@@ -103,8 +103,8 @@
 		// 팝업창을 띄울 주소를 설정한다.
 		const url = "<%= ctxPath%>/"+loc+".dowell"; 
 		
-		// 너비 800, 높이 600 인 팝업창을 화면 가운데 위치시키기
-		const pop_width = 800;
+		// 너비 900, 높이 600 인 팝업창을 화면 가운데 위치시키기
+		const pop_width = 900;
 		const pop_height = 600;
 		const pop_left = Math.ceil( ((window.screen.width)-pop_width)/2 ) ; <%-- 정수로 만든다 --%>
 		const pop_top = Math.ceil( ((window.screen.height)-pop_height)/2 ) ;
@@ -365,7 +365,7 @@
 						<td class="pd_td" style="float: left; padding-top: 20px; ">
 							매장
 							<input type="text" class="dark medium" name="JN_PRT_CD" id="JN_PRT_CD" value="" readonly />&nbsp;
-							<button type="button" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" id="btn_search_prt" class="btn btn-secondary btn_not" onclick="search_popup('search_prt')">
+							<button type="button" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" id="btn_search_prt" class="btn btn-secondary btn_not" onclick="">
 								<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 							</button>
 							<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="large enter_prt blank_key btn_not" value="" placeholder="매장코드 / 매장명" spellcheck="false" autofocus />

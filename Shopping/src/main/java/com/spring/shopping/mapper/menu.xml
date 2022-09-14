@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ==== #29. mapper 기본설정 ==== -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ==== #29. 루트 엘리먼트 & 네임스페이스 설정(프로젝트 전체내에서 유일해야 한다.) ==== -->
+<mapper namespace="menu">
+
+	<!-- 고객상태 목록을 불러오기 -->
+ 	<resultMap type="HashMap" id="codeMap">
+	   <result property="CODE_CD" 		column="CODE_CD" 		javaType="String" />
+	</resultMap>
+	<select id="getCodeList" resultMap="codeMap">
+		SELECT CODE_CD
+		FROM MA_CODE_MT
+	</select>
+
+
+ 	<!-- 공통테이블코드 세부사항 목록을 불러오기 -->
+ 	<resultMap type="HashMap" id="codeDetailMap">
+	   <result property="DTL_CD" 		column="DTL_CD" 		javaType="String" />
+	   <result property="DTL_CD_NM" 	column="DTL_CD_NM" 		javaType="String" />
+	</resultMap>
+ 	
+ 	<select id="getCodeDetailList" parameterType="HashMap" resultMap="codeDetailMap">
+ 		SELECT B.DTL_CD																	/* 세부코드 */
+		     , B.DTL_CD_NM																/* 세부코드명 */
+		FROM MA_CODE_MT A 
+		JOIN MA_CODE_DT B
+		ON A.CODE_CD = B.CODE_CD
+		WHERE B.CODE_CD = #{CODE_CD}													/* 코드가 고객상태인 것 */
+		AND B.USE_YN = 'Y'	
+ 	</select>
+
+</mapper>

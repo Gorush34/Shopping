@@ -37,5 +37,17 @@ public interface InterEmpDAO {
 
 	// 고객상태 목록을 불러오기
 	List<Map<String, String>> getCustStatusList();
+
+	// 공통테이블 코드목록 조회
+	List<Map<String, String>> getCodeList();
+
+	// 코드별 세부코드 목록 가져오기
+	List<Map<String, String>> getcodeDetailList(Map<String, String> code);
+
+	// 고객정보 조회
+	CustVO readCustInfo(String viewCust);
+
+	// DB를 통해 비교하여 중복검사를 실행하는 함수
+	String compareItem(Map<String, Object> map);
 	
 }

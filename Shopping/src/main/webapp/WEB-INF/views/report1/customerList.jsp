@@ -6,7 +6,7 @@
 <%
 	String ctxPath = request.getContextPath();
 %>    
-
+	
 <script type="text/javascript">
 
 	let from_cust = false;										// 고객번호를 검색하는지 알아오는 변수
@@ -205,9 +205,6 @@
 		
 		}); // end of $("button#btnSearch_cust").on("click", function (event) {})---------------------
 		
-
-		
-			
 	}); // end of $(document).ready(function() {})--------------------------
 	
 	// 함수 정의
@@ -246,22 +243,20 @@
 	} // end of function defaultSearch() {}-------------------
 	
 	// 버튼을 누르거나 검색어 입력시 값을 출력하거나 팝업창을 띄워주는 함수
-	function search_popup(location) {
+	function search_popup(location, width, height) {
 
 		// 버튼마다의 주소값을 받는다.
-		var loc = location; 
-
+		var loc = location;
 		// 팝업창을 띄울 주소를 설정한다.
 		const url = "<%= ctxPath%>/"+loc+".dowell"; 
 		
-		// 너비 900, 높이 600 인 팝업창을 화면 가운데 위치시키기
-		const pop_width = 900;
-		const pop_height = 600;
+		const pop_width = width;
+		const pop_height = height;
 		const pop_left = Math.ceil( ((window.screen.width)-pop_width)/2 ) ; 		// 값을 정수로 만든다
 		const pop_top = Math.ceil( ((window.screen.height)-pop_height)/2 ) ;
 		
-		window.open( url, 
-					 "memberEdit"
+		window.open( url
+					 , "팝업설정"
 					 , "left="+pop_left+
 					 ", top="+pop_top+
 					 ", width="+pop_width+
@@ -299,10 +294,10 @@
 				
 				if(json.status != "1"){									// json으로 받아온 status의 값이 1이 아니라면(결과가 1이 아니라면)
 					if(from_prt) { 										// 매장코드 검색했을 때
-						search_popup("search_prt");						// 매장검색 팝업을 실행
+						search_popup("search_prt", "900", "600");						// 매장검색 팝업을 실행
 					}
 					else if(from_cust) {								// 고객정보 검색했을 때 
-						search_popup("search_cust");					// 고객정보 팝업을 실행
+						search_popup("search_cust", "900", "600");					// 고객정보 팝업을 실행
 					}
 				}
 				else if(from_prt) { 									// 결과가 1이고 매장검색란에서 함수를 실행했다면(결과가 하나일 때)
@@ -409,10 +404,9 @@
 	function change_history(CUST_NO) {
 		
 		var his_cust_no = CUST_NO;										// 버튼으로부터 고객번호를 받아온다
-		// alert(his_cust_no);
 		$("input#HIS_CUST_NO").val(his_cust_no);						// input 태그(hidden)에 값을 저장(예비용)
 		
-		search_popup("change_history"); 								// 이력변경사항 팝업을 실행
+		search_popup("change_history", "900", "600"); 								// 이력변경사항 팝업을 실행
 		
 	} // end of function change_history(CUST_NO)--------------------
 	
@@ -420,8 +414,12 @@
 	// 상세 버튼 클릭시 고객상세정보 팝업을 불러오는 함수
 	function user_detail(CUST_NO) {
 		
-		alert("나는 상세정보다!" + CUST_NO);
+		$("input#viewCust").val(CUST_NO);								// input 태그에 클릭한 행의 고객번호를 담는다
 		
+		const frm = document.viewCustFrm;								// 클릭한 버튼에서 전달한 정보가 담긴 form 변수 선언
+	    frm.method = "POST";											// 전송방식 POST 설정
+	    frm.action = "<%= ctxPath%>/viewCustomer.dowell";				// 경로 지정
+	    frm.submit();													// 제출
 		
 	} // end of function userDetail(CUST_NO)--------------------
 	
@@ -550,7 +548,13 @@
 		
 		<!--  신규등록 버튼 부분 시작 -->
 		<div id="adminContainer">
-			<button type="button" class="btn-secondary">신규등록</button>
+			<!-- 
+			<button type="button" class="btn-secondary" onclick="createPopup('register_cust','1000','600')">신규등록</button>
+			 -->
+			<!-- 
+			<button type="button" class="btn-secondary" id="register" onclick="createPopup('register_cust','1000','700')">신규등록</button>
+			-->
+			<button type="button" class="btn-secondary" id="register" onclick="search_popup('register_cust', '1100', '700')">신규등록</button>
 		</div>
 		<!--  신규등록 버튼 부분 끝 -->
 		
@@ -574,6 +578,11 @@
 		</table>
 		<!--  조건에 부합하는 결과물을 보여주는 부분 끝 -->
 		
+		<!-- 상세정보 클릭시 고객번호를 담아주는 form 시작 -->
+		<form name="viewCustFrm">
+			<input type="hidden" id="viewCust" name="viewCust" value=""/>
+		</form>
+		<!-- 상세정보 클릭시 고객번호를 담아주는 form 끝 -->
 	</div>
 
 </div>

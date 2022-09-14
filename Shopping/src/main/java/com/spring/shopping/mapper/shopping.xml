@@ -191,7 +191,7 @@
 		ORDER BY CUST_NO																	/* 고객번호의 오름차순으로 정렬 */
 	</select>
 	
-	<!-- 매장조회 목록 가져오기 -->
+	<!-- 매장조회 목록 가져오기(팝업) -->
 	<resultMap type="HashMap" id="prtListMap">
 	   <result property="PRT_CD" 		column="PRT_CD" 		javaType="String" />
 	   <result property="PRT_NM" 		column="PRT_NM" 		javaType="String" />
@@ -214,7 +214,7 @@
 	ORDER BY PRT_CD ASC                             									/* 거래처코드의 오름차순을 기준으로 가져온다 */
   	</select>
 
-	<!-- 고객조회 목록 가져오기 -->
+	<!-- 고객조회 목록 가져오기(팝업) -->
 	<resultMap type="HashMap" id="popUpListMap">
 	   <result property="CUST_NO" 		column="CUST_NO" 		javaType="String" />
 	   <result property="CUST_NM" 		column="CUST_NM" 		javaType="String" />
@@ -235,19 +235,20 @@
 	       END AS CUST_SS_CD
 	FROM CS_CUST01_MT                                           							/* 고객관리 테이블로부터 */
 	WHERE 1=1
-	<if test=" SEARCHWORD_NM != '' ">														/* 고객이름 입력칸이 비어있지 않으면 */
+	<if test=" SEARCHWORD_NM != '' ">														/* 고객이름 입력칸이 비어있지 않으면(팝업검색조건) */
 	AND   UPPER(CUST_NM) LIKE '%' || UPPER(#{SEARCHWORD_NM}) || '%'          				/* 고객번호가 일부포함되거나 */
 	</if>
-	<if test=' CUST_NO != "" '>																/* 고객번호 입력칸이 비어있지 않으면 */
+		<if test=' SEARCHWORD_MBL != "" '>	   												/* 핸드폰번호 입력칸이 비어있지 않으면(팝업검색조건) */
+	AND    MBL_NO = #{SEARCHWORD_MBL}							 							/* 핸드폰번호가 일치하면 */
+	</if>
+	<if test=' CUST_NO != "" '>																/* 고객번호 입력칸이 비어있지 않으면(부모창검색조건) */
 	AND ( 	
 			CUST_NO LIKE '%' || #{CUST_NO} || '%'											/* 고객검색란에 적힌 값과 고객번호가 부분일치 하는 값 */
 			OR 	  
 			UPPER(CUST_NM) LIKE '%' || UPPER(#{CUST_NO}) || '%'								/* 고객검색란에 적힌 값과 고객명이 부분일치 하는 값 */
 		)
 	</if>
-	<if test=' SEARCHWORD_MBL != "" '>	   													/* 핸드폰번호 입력칸이 비어있지 않으면 */
-	AND    MBL_NO = #{SEARCHWORD_MBL}							 							/* 핸드폰번호가 일치하면 */
-	</if>
+
 	ORDER BY CUST_NO ASC																	/* 고객번호의 오름차순으로 정렬 */
   	</select>  	
 
@@ -277,134 +278,35 @@
 	</resultMap>
 	
 	<select id="getPopUpHistoryList" resultMap="hisListMap" parameterType="HashMap">
-	SELECT A.CUST_NO AS CUST_NO                                                     		/* 고객번호(추후 삭제고려) */
-	     , A.CUST_NM AS CUST_NM                                                     		/* 고객명(추후 삭제고려) */ 
-	     , TO_CHAR(TO_DATE(B.CHG_DT), 'YYYY-MM-DD') AS CHG_DT                       		/* 변경일자 */
-	     , CASE B.CHG_CD WHEN 'CUST_NM'         THEN '고객명'                        			/* 변경코드가 CUST_NM 이면 '고객명' */
-	                     WHEN 'JN_PRT_CD'       THEN '가입매장코드'                   			/* JN_PRT_CD 이면 '가입매장코드' */
-	                     WHEN 'EMAIL'           THEN '이메일'                        			/* EMAIL 이면 '이메일' */
-	                     WHEN 'SCAL_YN'         THEN '양음력구분'                     			/* SCAL_YN 이면 '양음력구분' */
-	                     WHEN 'BRDY_DT'         THEN '생년월일'                       		/* BRDY_DT 이면 '생년월일' */
-	                     WHEN 'SEX_CD'          THEN '성별코드'                       		/* SEX_CD 이면 '성별코드' */
-	                     WHEN 'MRRG_DT'         THEN '결혼기념일'                     			/* MRRG_DT 이면 '결혼기념일' */
-	                     WHEN 'PSMT_GRC_CD'     THEN '우편물수령코드'                  			/* PSMT_GRC_CD 이면 '우편물수령코드' */
-	                     WHEN 'ADDR'            THEN '주소'                          		/* ADDR 이면 '주소' */
-	                     WHEN 'ADDR_DTL'        THEN '상세주소'                       		/* ADDR_DTL 이면 '상세주소' */
-	                     WHEN 'STP_DT'          THEN '중지일자'                       		/* STP_DT 이면 '중지일자' */
-	                     WHEN 'POC_CD'          THEN '직업코드'                       		/* POC_CD 이면 '직업코드' */
-	                     WHEN 'MBL_NO'          THEN '휴대폰번호'                     			/* MBL_NO 이면 '휴대폰번호' */
-	                     WHEN 'CUST_SS_CD'      THEN '고객상태코드'                    		/* CUST_SS_CD 이면 '고객상태코드' */
-	                     WHEN 'CNCL_DT'         THEN '해지일자'                       		/* CNCL_DT 이면 '해지일자' */
-	                     WHEN 'CNCL_CNTS'       THEN '해지사유내용'                    		/* CNCL_CNTS 이면 '해지사유내용' */
-	                     WHEN 'EMAIL_RCV_YN'    THEN '이메일수신동의여부'               			/* EMAIL_RCV_YN 이면 '이메일수신동의여부' */
-	                     WHEN 'DM_RCV_YN'       THEN 'DM수신동의여부'                  		/* DM_RCV_YN 이면 'DM수신동의여부' */
-	                     WHEN 'SMS_RCV_YN'      THEN 'SMS수신동의여부'                 		/* SMS_RCV_YN 이면 'SMS수신동의여부' */
-	                     END AS CHG_CD                                              		/* 변경항목 */
-	     , CASE WHEN B.CHG_BF_CNT = '10' AND B.CHG_CD ='POC_CD' THEN '학생'   				/* 변경 전 내용 시작 */
-                WHEN B.CHG_BF_CNT = '20' AND B.CHG_CD ='POC_CD' THEN '회사원'					
-                WHEN B.CHG_BF_CNT = '30' AND B.CHG_CD ='POC_CD' THEN '공무원'					/* 변경코드가 POC_CD(직업코드)이고 */
-                WHEN B.CHG_BF_CNT = '40' AND B.CHG_CD ='POC_CD' THEN '전문직'					/* 값이 10이면 학생, 20이면 회사원, 30이면 공무원 */
-                WHEN B.CHG_BF_CNT = '50' AND B.CHG_CD ='POC_CD' THEN '군인'					/* 값이 40이면 전문직, 50이면 군인, 60이면 주부 */
-                WHEN B.CHG_BF_CNT = '60' AND B.CHG_CD ='POC_CD' THEN '주부'					/* 값이 90이면 연예인, 99면 기타 */
-                WHEN B.CHG_BF_CNT = '90' AND B.CHG_CD ='POC_CD' THEN '연예인'
-                WHEN B.CHG_BF_CNT = '99' AND B.CHG_CD ='POC_CD' THEN '기타'
-                
-                WHEN B.CHG_BF_CNT = 'H' AND B.CHG_CD ='PSMT_GRC_CD' THEN '자택'				/* 변경코드가 PSMT_GRC_CD(우편물수령코드)이고 */
-                WHEN B.CHG_BF_CNT = 'O' AND B.CHG_CD ='PSMT_GRC_CD' THEN '직장'				/* 값이 H면 자택, O면 직장 */
-                
-                WHEN B.CHG_BF_CNT = '10' AND B.CHG_CD ='CUST_SS_CD' THEN '정상'				/* 변경코드가 CUST_SS_CD(고객상태코드)이고 */
-                WHEN B.CHG_BF_CNT = '80' AND B.CHG_CD ='CUST_SS_CD' THEN '중지'				/* 값이 10이면 정상, 80이면 중지, 90이면 해지 */
-                WHEN B.CHG_BF_CNT = '90' AND B.CHG_CD ='CUST_SS_CD' THEN '해지'
-                
-                WHEN B.CHG_BF_CNT = 'M' AND B.CHG_CD ='SEX_CD' THEN '남자'					/* 변경코드가 SEX_CD(성별코드)이고 */
-                WHEN B.CHG_BF_CNT = 'F' AND B.CHG_CD ='SEX_CD' THEN '여자'					/* 값이 M이면 남자, F면 여자 */
-                
-                WHEN B.CHG_BF_CNT = '0' AND B.CHG_CD ='SCAL_YN' THEN '양력'					/* 변경코드가 SCAL_YN(양음력구분)이고 */
-                WHEN B.CHG_BF_CNT = '1' AND B.CHG_CD ='SCAL_YN' THEN '음력'					/* 값이 0이면 양력, 1이면 음력 */
-                
-                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '동의'				/* 변경코드가 EMAIL_RCV_YN(이메일수신동의여부)이고 */
-                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '미동의'			/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='DM_RCV_YN' THEN '동의'				/* 변경코드가 DM_RCV_YN(DM수신동의여부)이고 */
-                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='DM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='SMS_RCV_YN' THEN '동의'				/* 변경코드가 SMS_RCV_YN(SMS수신동의여부)이고 */
-                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='SMS_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_BF_CNT = 'Y' AND B.CHG_CD ='TM_RCV_YN' THEN '동의'				/* 변경코드가 TM_RCV_YN(TM수신동의여부)이고 */
-                WHEN B.CHG_BF_CNT = 'N' AND B.CHG_CD ='TM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN REGEXP_LIKE(B.CHG_BF_CNT, '^[A-Z][0-9]{7}$')							/* 변경전 내용이 매장코드라면(알파벳1자리, 숫자7자리) */
-                THEN (SELECT PRT_NM FROM MA_PRT_MT M WHERE M.PRT_CD = B.CHG_BF_CNT) 		/* 매장코드를 매장명으로 변경 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 8	/* 변경전 내용이 날짜라면(8자리로 이루어진 숫자) */
-                THEN TO_CHAR(TO_DATE(B.CHG_BF_CNT), 'YYYY-MM-DD')							/* YYYY-MM-DD 형식으로 변환 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 10	/* 변경전 내용이 핸드폰번호(중간번호 3자리) 라면 */
-                THEN SUBSTR(B.CHG_BF_CNT,1,3) || '-' || SUBSTR(B.CHG_BF_CNT,4,3) || '-' || SUBSTR(B.CHG_BF_CNT,7) /* 000-000-0000 으로 변환 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_BF_CNT, '[^0-9]') AND LENGTH(B.CHG_BF_CNT) = 11	/* 변경전 내용이 핸드폰번호(중간번호 4자리) 라면 */
-                THEN SUBSTR(B.CHG_BF_CNT,1,3) || '-' || SUBSTR(B.CHG_BF_CNT,4,4) || '-' || SUBSTR(B.CHG_BF_CNT,8) /* 000-0000-0000 으로 변환 */
-                
-                ELSE NVL(B.CHG_BF_CNT, '-') 												/* 그 외에는 NULL이면 -, NULL이 아니면 내용을 그대로 출력한다 */
-                END AS CHG_BF_CNT                                     						/* 변경 전 내용 끝 */
-                
-         , CASE WHEN B.CHG_AFT_CNT = '10' AND B.CHG_CD ='POC_CD' THEN '학생'   				/* 변경 후 내용 시작 */
-                WHEN B.CHG_AFT_CNT = '20' AND B.CHG_CD ='POC_CD' THEN '회사원'					
-                WHEN B.CHG_AFT_CNT = '30' AND B.CHG_CD ='POC_CD' THEN '공무원'				/* 변경코드가 POC_CD(직업코드)이고 */
-                WHEN B.CHG_AFT_CNT = '40' AND B.CHG_CD ='POC_CD' THEN '전문직'				/* 값이 10이면 학생, 20이면 회사원, 30이면 공무원 */
-                WHEN B.CHG_AFT_CNT = '50' AND B.CHG_CD ='POC_CD' THEN '군인'					/* 값이 40이면 전문직, 50이면 군인, 60이면 주부 */
-                WHEN B.CHG_AFT_CNT = '60' AND B.CHG_CD ='POC_CD' THEN '주부'					/* 값이 90이면 연예인, 99면 기타 */
-                WHEN B.CHG_AFT_CNT = '90' AND B.CHG_CD ='POC_CD' THEN '연예인'
-                WHEN B.CHG_AFT_CNT = '99' AND B.CHG_CD ='POC_CD' THEN '기타'
-                
-                WHEN B.CHG_AFT_CNT = 'H' AND B.CHG_CD ='PSMT_GRC_CD' THEN '자택'				/* 변경코드가 PSMT_GRC_CD(우편물수령코드)이고 */
-                WHEN B.CHG_AFT_CNT = 'O' AND B.CHG_CD ='PSMT_GRC_CD' THEN '직장'				/* 값이 H면 자택, O면 직장 */
-                
-                WHEN B.CHG_AFT_CNT = '10' AND B.CHG_CD ='CUST_SS_CD' THEN '정상'				/* 변경코드가 CUST_SS_CD(고객상태코드)이고 */
-                WHEN B.CHG_AFT_CNT = '80' AND B.CHG_CD ='CUST_SS_CD' THEN '중지'				/* 값이 10이면 정상, 80이면 중지, 90이면 해지 */
-                WHEN B.CHG_AFT_CNT = '90' AND B.CHG_CD ='CUST_SS_CD' THEN '해지'
-                
-                WHEN B.CHG_AFT_CNT = 'M' AND B.CHG_CD ='SEX_CD' THEN '남자'					/* 변경코드가 SEX_CD(성별코드)이고 */
-                WHEN B.CHG_AFT_CNT = 'F' AND B.CHG_CD ='SEX_CD' THEN '여자'					/* 값이 M이면 남자, F면 여자 */
-                
-                WHEN B.CHG_AFT_CNT = '0' AND B.CHG_CD ='SCAL_YN' THEN '양력'					/* 변경코드가 SCAL_YN(양음력구분)이고 */
-                WHEN B.CHG_AFT_CNT = '1' AND B.CHG_CD ='SCAL_YN' THEN '음력'					/* 값이 0이면 양력, 1이면 음력 */
-                
-                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '동의'				/* 변경코드가 EMAIL_RCV_YN(이메일수신동의여부)이고 */
-                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='EMAIL_RCV_YN' THEN '미동의'			/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='DM_RCV_YN' THEN '동의'				/* 변경코드가 DM_RCV_YN(DM수신동의여부)이고 */
-                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='DM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='SMS_RCV_YN' THEN '동의'				/* 변경코드가 SMS_RCV_YN(SMS수신동의여부)이고 */
-                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='SMS_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN B.CHG_AFT_CNT = 'Y' AND B.CHG_CD ='TM_RCV_YN' THEN '동의'				/* 변경코드가 TM_RCV_YN(TM수신동의여부)이고 */
-                WHEN B.CHG_AFT_CNT = 'N' AND B.CHG_CD ='TM_RCV_YN' THEN '미동의'				/* 값이 Y면 동의, N이면 미동의 */
-                
-                WHEN REGEXP_LIKE(B.CHG_AFT_CNT, '^[A-Z][0-9]{7}$')							/* 변경후 내용이 매장코드라면(알파벳1자리, 숫자7자리) */
-                THEN (SELECT PRT_NM FROM MA_PRT_MT M WHERE M.PRT_CD = B.CHG_AFT_CNT) 		/* 매장코드를 매장명으로 변경 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 8	/* 변경후 내용이 날짜라면(8자리로 이루어진 숫자) */
-                THEN TO_CHAR(TO_DATE(B.CHG_AFT_CNT), 'YYYY-MM-DD')							/* YYYY-MM-DD 형식으로 변환 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 10	/* 변경후 내용이 핸드폰번호(중간번호 3자리) 라면 */
-                THEN SUBSTR(B.CHG_AFT_CNT,1,3) || '-' || SUBSTR(B.CHG_AFT_CNT,4,3) || '-' || SUBSTR(B.CHG_AFT_CNT,7) /* 000-000-0000 으로 변환 */
-                
-                WHEN NOT REGEXP_LIKE(B.CHG_AFT_CNT, '[^0-9]') AND LENGTH(B.CHG_AFT_CNT) = 11	/* 변경후 내용이 핸드폰번호(중간번호 4자리) 라면 */
-                THEN SUBSTR(B.CHG_AFT_CNT,1,3) || '-' || SUBSTR(B.CHG_AFT_CNT,4,4) || '-' || SUBSTR(B.CHG_AFT_CNT,8) /* 000-0000-0000 으로 변환 */
-                
-                ELSE NVL(B.CHG_AFT_CNT, '-') 												/* 그 외에는 NULL이면 -, NULL이 아니면 내용을 그대로 출력한다 */
-                END AS CHG_AFT_CNT                                     						/* 변경 후 내용 끝 */
-	     , B.LST_UPD_ID || '/' ||                                                   		/* 최종수정자 ID / */
-	       (SELECT USER_NM FROM MA_USER_MT WHERE USER_ID = B.LST_UPD_ID)            		/* 최종수정자 이름 */
-	       AS LST_UPD_ID 
-	     , TO_CHAR(B.LST_UPD_DT, 'YYYY-MM-DD HH24:MI:SS') AS LST_UPD_DT             		/* 최종수정일시 */
-	FROM CS_CUST01_MT A INNER JOIN SD_CUST01_HT B                                   		/* 고객관리 테이블과 고객이력 테이블을 INNER JOIN */
-	ON A.CUST_NO = B.CUST_NO                                                        		/* 고객번호가 같은 항목들에 대해 */
-	WHERE A.CUST_NO = #{SEARCHWORD}                                                 		/* 고객번호가 일치하는 것들만 */
-	ORDER BY CHG_DT DESC, B.LST_UPD_DT DESC                                                 /* 변경일자의 내림차순, 최종수정일시 내림차순으로 정렬 */
+	SELECT B.CUST_NO AS CUST_NO                                                     		/* 고객번호 */
+	     , B.CUST_NM AS CUST_NM                                                     		/* 고객명 */ 
+	     , TO_CHAR(TO_DATE(A.CHG_DT), 'YYYY-MM-DD') AS CHG_DT                       		/* 변경일자 */
+	     , CASE WHEN A.CHG_CD = CMT.CODE_CD THEN NVL(CMT.CODE_NM, '-') ELSE NVL(A.CHG_CD, '-') END AS CHG_CD
+	     , CASE WHEN A.CHG_CD = BDT.CODE_CD THEN BDT.DTL_CD_NM 
+	            WHEN A.CHG_CD = 'JN_PRT_CD' THEN ( SELECT P.PRT_NM FROM MA_PRT_MT P WHERE P.PRT_CD = A.CHG_BF_CNT )
+	            ELSE 
+	                    CASE WHEN A.CHG_CD LIKE '%' || '_DT' AND NOT REGEXP_LIKE(A.CHG_BF_CNT, '[^0-9]') THEN TO_CHAR(TO_DATE(A.CHG_BF_CNT), 'YYYY-MM-DD')   /* 일자가 입력된 곳은 YYYY-MM-DD형식으로 변경 */
+	                         WHEN A.CHG_CD = 'MBL_NO' AND LENGTH(A.CHG_BF_CNT) = 10 THEN SUBSTR(A.CHG_BF_CNT,1,3) || '-' || SUBSTR(A.CHG_BF_CNT,4,3) || '-' || SUBSTR(A.CHG_BF_CNT,7) /* 데이터에 숫자가 아닌 것이 하나라도 포함되면 제외: 숫자 */
+	                         WHEN A.CHG_CD = 'MBL_NO' AND LENGTH(A.CHG_BF_CNT) = 11 THEN SUBSTR(A.CHG_BF_CNT,1,3) || '-' || SUBSTR(A.CHG_BF_CNT,4,4) || '-' || SUBSTR(A.CHG_BF_CNT,8) /* 중간자리 양옆에 - 추가 */
+	                         ELSE NVL(A.CHG_BF_CNT, '-') END   /* NULL인 것은 '-'로 대체하고 그 외엔 내용 그대로 표시 */
+            	END AS CHG_BF_CNT
+     	 , CASE WHEN A.CHG_CD = ADT.CODE_CD THEN ADT.DTL_CD_NM 
+	            WHEN A.CHG_CD = 'JN_PRT_CD' THEN ( SELECT P.PRT_NM FROM MA_PRT_MT P WHERE P.PRT_CD = A.CHG_AFT_CNT )
+	            ELSE 
+	                    CASE WHEN A.CHG_CD LIKE '%' || '_DT' AND NOT REGEXP_LIKE(A.CHG_AFT_CNT, '[^0-9]') THEN TO_CHAR(TO_DATE(A.CHG_AFT_CNT), 'YYYY-MM-DD')   /* 일자가 입력된 곳은 YYYY-MM-DD형식으로 변경 */
+	                         WHEN A.CHG_CD = 'MBL_NO' AND LENGTH(A.CHG_AFT_CNT) = 10 THEN SUBSTR(A.CHG_AFT_CNT,1,3) || '-' || SUBSTR(A.CHG_AFT_CNT,4,3) || '-' || SUBSTR(A.CHG_AFT_CNT,7) /* 데이터에 숫자가 아닌 것이 하나라도 포함되면 제외: 숫자 */
+	                         WHEN A.CHG_CD = 'MBL_NO' AND LENGTH(A.CHG_AFT_CNT) = 11 THEN SUBSTR(A.CHG_AFT_CNT,1,3) || '-' || SUBSTR(A.CHG_AFT_CNT,4,4) || '-' || SUBSTR(A.CHG_AFT_CNT,8) /* 중간자리 양옆에 - 추가 */
+	                         ELSE NVL(A.CHG_AFT_CNT, '-') END   /* NULL인 것은 '-'로 대체하고 그 외엔 내용 그대로 표시 */
+                END AS CHG_AFT_CNT
+	     , A.LST_UPD_ID || '/' ||                                                   		/* 최종수정자 ID / */
+		       (SELECT USER_NM FROM MA_USER_MT WHERE USER_ID = A.LST_UPD_ID) AS LST_UPD_ID  /* 최종수정자 이름 */
+		 , TO_CHAR(A.LST_UPD_DT, 'YYYY-MM-DD HH24MISS') AS LST_UPD_DT             			/* 최종수정일시 */
+	FROM SD_CUST01_HT A INNER JOIN CS_CUST01_MT B ON A.CUST_NO = B.CUST_NO                  /* 고객관리 테이블과 고객이력 테이블을 INNER JOIN  고객번호가 같은 항목들에 대해 */
+	JOIN MA_CODE_MT CMT ON A.CHG_CD = CMT.CODE_CD
+	LEFT OUTER JOIN MA_CODE_DT BDT ON A.CHG_CD = BDT.CODE_CD AND A.CHG_BF_CNT = BDT.DTL_CD
+	LEFT OUTER JOIN MA_CODE_DT ADT ON A.CHG_CD = ADT.CODE_CD AND A.CHG_AFT_CNT = ADT.DTL_CD
+	WHERE B.CUST_NO = #{SEARCHWORD}                                                 		/* 고객번호가 일치하는 것들만 */
+	ORDER BY A.CHG_DT DESC, A.LST_UPD_DT DESC                                               /* 변경일자의 내림차순, 최종수정일시 내림차순으로 정렬 */
   	</select> 
   	
   	<!-- 매장 월별실적 가져오기 -->
@@ -445,144 +347,43 @@
  		<result property="SUM" 			column="SUM" 			javaType="String" />
  	</resultMap>
  	<select id="getPerformanceList" parameterType="HashMap" resultMap="performMap">
- 	/*
- 		1. 이 쿼리문은 크게 WITH WS절과 VIEW V절의 INNER JOIN으로 이루어져 있으며 조인조건은 매장코드의 일치이다.
- 		2. WITH WS절의 목적은 매장별 1개월동안 실제로 판매되어진 수량을 구해오는 SUM 컬럼을 생성하기 위해서이다.
- 			2-1. WS절은 VIEW S절을 포함하고 있으며, S절은 판매구분코드를 통해 구매와 반품을 구분한 컬럼을 생성(TOT_SAL_TP_QTY)하여
- 				 WS절에서 매장코드별로(GROUP BY) 실제 판매합계를 구해온다.
- 		3. VIEW V절의 목적은 매장별로 각 일자마다 실제로 판매되어진 수량을 구해오는 컬럼들을 생성하기 위해서이다.
- 			3-1. V절은 판매, 반품을 구분하기 위한 WITH W1절을 통해 
- 					  일별 판매,반품의 합을 알아오기 위한 WITH W2절을 생성하고
- 					  W2의 실판매수량의 합을 이용한 PIVOT을 일자별로 실시한다. 
- 		4. 파라미터는 총 2개가 들어간다. 
- 		   - 파라미터 SAL_DT 는 해당년도와 월을 포함하고 있어, W1절의 일자를 조회하는데 있어 해당년도와 월을 선택하는 조건으로 사용된다.
- 		   - 파라미터 PRT_CD_NM 은 매장명을 포함하고 있어, 최종적으로 어떤 매장을 조회할 것인지에 대한 조건으로 사용된다.
- 	*/
- 	
-	WITH WS AS                                                                      /* 합계를 삽입하기 위한 WITH WS절(최종) */
-	(
-	    SELECT S.PRT_CD AS PRT_CD                                                   /* JOIN을 위한 매장코드 */
-	         , SUM(S.TOT_SAL_TP_QTY) AS SUM                                         /* 반품, 판매를 구분한 수량의 합계 */
-	    FROM
-	    (
-	        SELECT PRT_CD                                           
-	             , SAL_DT
-	             , SAL_NO   
-	             , SAL_TP_CD
-	             , CASE SAL_TP_CD WHEN 'SAL' THEN NVL(TOT_SAL_QTY, 0)               /* 판매구분코드가 판매면 그대로 */
-	                              WHEN 'RTN' THEN NVL(TOT_SAL_QTY * (-1), 0)        /* 판매구분코드가 반품이면 -1을 곱해준다(음수) */
-	                              END AS TOT_SAL_TP_QTY                             /* 총 판매수량 */
-	        FROM CS_SAL01_MT                                                    	/* 고객판매상세 테이블에서 */
-	        WHERE TO_CHAR( TO_DATE(SAL_DT), 'YYYY-MM-DD') LIKE #{SAL_DT} || '%'     /* 날짜 파라미터 넣는 곳 */
-	        ORDER BY PRT_CD ASC, SAL_DT ASC, SAL_NO ASC
-	    ) S                                                                         
-	    GROUP BY S.PRT_CD                                                           /* 매장번호별로 묶음 */
+	WITH TMP AS (																		/* 매장별 일 판매실적을 알아오기 위한 TMP */
+			        SELECT A.PRT_CD AS PRT_CD											/* 매장코드 */
+			             , B.PRT_NM AS PRT_NM											/* 매장명 */
+			             , SUBSTR(A.SAL_DT, 7, 2) AS DD 								/* 일자 */
+			             , SUM(CASE WHEN A.SAL_TP_CD = 'SAL' THEN A.TOT_SAL_QTY ELSE A.TOT_SAL_QTY*-1 END) AS TOT_SAL_QTY /* 판매수량 */
+			        FROM CS_SAL01_MT A													/* 고객판매테이블 */
+			        JOIN MA_PRT_MT B ON A.PRT_CD = B.PRT_CD								/* 거래처관리 테이블 INNER JOIN (조건 : 매장코드일치) */	
+			        WHERE 1=1												
+			        AND TO_CHAR( TO_DATE(A.SAL_DT), 'YYYY-MM-DD') LIKE #{SAL_DT} || '%' /* 특정 월에 대해서만 */
+			        GROUP BY A.PRT_CD, B.PRT_NM, A.SAL_DT, SUBSTR(SAL_DT, 7, 2)			
 	)
-	SELECT V.PRT_CD AS PRT_CD                                                       /* 매장코드 */
-	     , V.PRT_NM AS PRT_NM                                                    	/* 매장명 */
-	     , NVL("01", 0) AS "D01"                                                    /* 1일부터 31일까지 */
-	     , NVL("02", 0) AS "D02"
-	     , NVL("03", 0) AS "D03"
-	     , NVL("04", 0) AS "D04"
-	     , NVL("05", 0) AS "D05"
-	     , NVL("06", 0) AS "D06"
-	     , NVL("07", 0) AS "D07"
-	     , NVL("08", 0) AS "D08"
-	     , NVL("09", 0) AS "D09"
-	     , NVL("10", 0) AS "D10"
-	     , NVL("11", 0) AS "D11"
-	     , NVL("12", 0) AS "D12"
-	     , NVL("13", 0) AS "D13"
-	     , NVL("14", 0) AS "D14"
-	     , NVL("15", 0) AS "D15"
-	     , NVL("16", 0) AS "D16"
-	     , NVL("17", 0) AS "D17"
-	     , NVL("18", 0) AS "D18"
-	     , NVL("19", 0) AS "D19"
-	     , NVL("20", 0) AS "D20"
-	     , NVL("21", 0) AS "D21"
-	     , NVL("22", 0) AS "D22"
-	     , NVL("23", 0) AS "D23"
-	     , NVL("24", 0) AS "D24"
-	     , NVL("25", 0) AS "D25"
-	     , NVL("26", 0) AS "D26"
-	     , NVL("27", 0) AS "D27"
-	     , NVL("28", 0) AS "D28"
-	     , NVL("29", 0) AS "D29"
-	     , NVL("30", 0) AS "D30"
-	     , NVL("31", 0) AS "D31"
-	     , WS.SUM AS SUM                                                            /* 합계 */
-	FROM 
-	(																				/* 컬럼을 표시하기 위한 뷰 V 시작(최종) */
-	    WITH W1 AS                                                                  /* 판매, 반품을 구분하기 위한 WITH W1절 */
-	    (
-	        SELECT PRT_CD															/* 매장명 */
-	             , SAL_DT															/* 판매일자 */
-	             , SAL_NO															/* 판매번호 */
-	             , SAL_TP_CD														/* 판매구분코드(판매, 반품) */
-	             , CASE SAL_TP_CD WHEN 'SAL' THEN NVL(TOT_SAL_QTY, 0)				/* 실판매수량 */				
-	                              WHEN 'RTN' THEN NVL(TOT_SAL_QTY * (-1), 0)		/* 구분코드가 SAL 이면 현상유지(판매) */
-	                              END AS TOT_SAL_TP_QTY								/* 구분코드가 RTN 이면 -를 곱함(반품) */
-	        FROM CS_SAL01_MT
-	        WHERE TO_CHAR( TO_DATE(SAL_DT), 'YYYY-MM-DD') LIKE #{SAL_DT} || '%'     /* 날짜 파라미터 넣는 곳 */
-	        ORDER BY PRT_CD ASC, SAL_DT ASC, SAL_NO ASC
-	    ), 
-	    W2 AS(                                                                      /* 일별 판매,반품의 합을 알아오기 위한 WITH W2절 */
-		    SELECT A.PRT_CD AS PRT_CD												/* 매장번호 */
-		         , (SELECT PRT_NM FROM MA_PRT_MT WHERE PRT_CD = A.PRT_CD) AS PRT_NM	/* 매장명 */
-		         , SUBSTR(A.SAL_DT, 7,2) AS DAY										/* 일자 */
-		         , SUM(B.TOT_SAL_TP_QTY) AS TOT_SAL_TP_QTY							/* 판매, 반품이 적용된 실수령합계 */
-		    FROM CS_SAL01_MT A INNER JOIN W1 B
-		    ON  A.PRT_CD = B.PRT_CD
-		    AND A.SAL_DT = B.SAL_DT
-		    AND A.SAL_NO = B.SAL_NO
-		    GROUP BY A.PRT_CD, A.SAL_DT
-		    ORDER BY PRT_CD ASC
-	    )
-	    SELECT * FROM W2
-	    PIVOT   (                                                                   /* 피벗을 실시 */
-	                SUM(TOT_SAL_TP_QTY)                                             /* 총 판매량을 기준 */
-	                FOR DAY IN   (                                                  /* 일자별로 판매량을 구분 */
-	                                    '01' AS "01",
-	                                    '02' AS "02",
-	                                    '03' AS "03",
-	                                    '04' AS "04",
-	                                    '05' AS "05",
-	                                    '06' AS "06",
-	                                    '07' AS "07",
-	                                    '08' AS "08",
-	                                    '09' AS "09",
-	                                    '10' AS "10",
-	                                    '11' AS "11",
-	                                    '12' AS "12",
-	                                    '13' AS "13",
-	                                    '14' AS "14",
-	                                    '15' AS "15",
-	                                    '16' AS "16",
-	                                    '17' AS "17",
-	                                    '18' AS "18",
-	                                    '19' AS "19",
-	                                    '20' AS "20",
-	                                    '21' AS "21",
-	                                    '22' AS "22",
-	                                    '23' AS "23",
-	                                    '24' AS "24",
-	                                    '25' AS "25",
-	                                    '26' AS "26",
-	                                    '27' AS "27",
-	                                    '28' AS "28",
-	                                    '29' AS "29",
-	                                    '30' AS "30",
-	                                    '31' AS "31"
-	                           )
-	                
-	            )																		/* 피벗 끝 */
-	    ORDER BY PRT_CD ASC											
-	) V INNER JOIN WS																	/* 뷰 V 끝 */	
-	ON V.PRT_CD = WS.PRT_CD																/* WITH WS절과 INNER JOIN(매장코드가 같은 것에 대해) */
-	<if test='JN_PRT_CD != "" '>														/* 세션에 저장된 사용자구분코드가 2라면 */
-	WHERE V.PRT_CD LIKE '%' || #{JN_PRT_CD} || '%' 										/* 매장이름이 부분일치 하는 것 */
+	SELECT PRT_CD
+	     , PRT_NM
+	     , SUM(D01) AS D01, SUM(D02) AS D02, SUM(D03) AS D03, SUM(D04) AS D04, SUM(D05) AS D05, SUM(D06) AS D06, SUM(D07) AS D07, SUM(D08) AS D08, SUM(D09) AS D09, SUM(D10) AS D10
+	     , SUM(D11) AS D11, SUM(D12) AS D12, SUM(D13) AS D13, SUM(D14) AS D14, SUM(D15) AS D15, SUM(D16) AS D16, SUM(D17) AS D17, SUM(D18) AS D18, SUM(D19) AS D19, SUM(D20) AS D20
+	     , SUM(D21) AS D21, SUM(D22) AS D22, SUM(D23) AS D23, SUM(D24) AS D24, SUM(D25) AS D25, SUM(D26) AS D26, SUM(D27) AS D27, SUM(D28) AS D28, SUM(D29) AS D29, SUM(D30) AS D30, SUM(D31) AS D31
+	     , SUM(TOT) AS SUM
+	 FROM (
+	        SELECT PRT_CD
+	             , PRT_NM
+	             , NVL(D01, 0) AS D01, NVL(D02, 0) AS D02, NVL(D03, 0) AS D03, NVL(D04, 0) AS D04, NVL(D05, 0) AS D05, NVL(D06, 0) AS D06, NVL(D07, 0) AS D07, NVL(D08, 0) AS D08, NVL(D09, 0) AS D09, NVL(D10, 0) AS D10
+	             , NVL(D11, 0) AS D11, NVL(D12, 0) AS D12, NVL(D13, 0) AS D13, NVL(D14, 0) AS D14, NVL(D15, 0) AS D15, NVL(D16, 0) AS D16, NVL(D17, 0) AS D17, NVL(D18, 0) AS D18, NVL(D19, 0) AS D19, NVL(D20, 0) AS D20
+	             , NVL(D21, 0) AS D21, NVL(D22, 0) AS D22, NVL(D23, 0) AS D23, NVL(D24, 0) AS D24, NVL(D25, 0) AS D25, NVL(D26, 0) AS D26, NVL(D27, 0) AS D27, NVL(D28, 0) AS D28, NVL(D29, 0) AS D29, NVL(D30, 0) AS D30, NVL(D31, 0) AS D31
+	             , (NVL(D01, 0) + NVL(D02, 0) + NVL(D03, 0) + NVL(D04, 0) + NVL(D05, 0) + NVL(D06, 0) + NVL(D07, 0) + NVL(D08, 0) + NVL(D09, 0) + NVL(D10, 0)
+	              + NVL(D11, 0) + NVL(D12, 0) + NVL(D13, 0) + NVL(D14, 0) + NVL(D15, 0) + NVL(D16, 0) + NVL(D17, 0) + NVL(D18, 0) + NVL(D19, 0) + NVL(D20, 0)
+	              + NVL(D21, 0) + NVL(D22, 0) + NVL(D23, 0) + NVL(D24, 0) + NVL(D25, 0) + NVL(D26, 0) + NVL(D27, 0) + NVL(D28, 0) + NVL(D29, 0) + NVL(D30, 0) + NVL(D31, 0)) AS TOT 
+	         FROM TMP
+	        PIVOT (SUM(TOT_SAL_QTY)	 /* 일자별 합계를 나타내기 위한 PIVOT */
+	               FOR DD IN ('01' AS D01, '02' AS D02, '03' AS D03, '04' AS D04, '05' AS D05, '06' AS D06, '07' AS D07, '08' AS D08, '09' AS D09, '10' AS D10
+	                         , '11' AS D11, '12' AS D12, '13' AS D13, '14' AS D14, '15' AS D15, '16' AS D16, '17' AS D17, '18' AS D18, '19' AS D19, '20' AS D20
+	                         , '21' AS D21, '22' AS D22, '23' AS D23, '24' AS D24, '25' AS D25, '26' AS D26, '27' AS D27, '28' AS D28, '29' AS D29, '30' AS D30, '31' AS D31))
+	)
+	WHERE 1=1
+	<if test='JN_PRT_CD != "" '>														
+	AND PRT_CD = #{JN_PRT_CD} 	/* 매장이름이 일치 하는 것 */
  	</if>
+	GROUP BY PRT_CD, PRT_NM		/* 매장별로 GROUP */
  	</select>
  
  
@@ -598,6 +399,53 @@
 		FROM MA_CODE_DT
 		WHERE CODE_CD = 'CUST_SS_CD'													/* 코드가 고객상태인 것 */
 		AND USE_YN = 'Y'																/* 사용여부가 사용중인 것 */
+ 	</select>
+ 	
+ 	<!-- 고객정보 조회 -->
+ 	<select id="readCustInfo" parameterType="String" resultType="com.spring.shopping.model.CustVO">
+ 		SELECT CUST_NO                                      /* 고객번호 */
+		     , CUST_NM                                      /* 고객명 */
+		     , SEX_CD                                       /* 성별코드 */
+		     , SCAL_YN                                      /* 양음력구분 */
+		     , BRDY_DT                                      /* 생년월일 */
+		     , NVL(MRRG_DT, ' ') AS MRRG_DT                 /* 결혼기념일 */
+		     , POC_CD                                       /* 직업코드 */
+		     , MBL_NO                                       /* 휴대폰번호 */
+		     , NVL(PSMT_GRC_CD, ' ') AS PSMT_GRC_CD         /* 우편물수령코드 */
+		     , NVL(EMAIL, ' ') AS EMAIL                     /* 이메일 */
+		     , NVL(ZIP_CD, ' ') AS ZIP_CD                   /* 우편번호코드 */
+		     , NVL(ADDR, ' ') AS ADDR                       /* 주소 */
+		     , NVL(ADDR_DTL, ' ') AS ADDR_DTL               /* 상세주소 */
+		     , CUST_SS_CD                                   /* 고객상태코드 */
+		     , NVL(CNCL_CNTS, ' ') AS CNCL_CNTS             /* 해지사유내용 */
+		     , JN_PRT_CD                                    /* 가입매장코드 */
+		     , (SELECT PRT_NM FROM MA_PRT_MT WHERE PRT_CD = JN_PRT_CD) AS PRT_NM  /* 가입매장명 */
+		     , EMAIL_RCV_YN                                 /* 이메일수신동의 */
+		     , SMS_RCV_YN                                   /* SMS수신동의 */
+		     , DM_RCV_YN                                    /* DM수신동의 */
+		     , FST_JS_DT                                    /* 최초가입일자 */
+		     , JS_DT                                        /* 가입일자 */
+		     , NVL(STP_DT, ' ') AS STP_DT                   /* 중지일자 */
+		     , NVL(CNCL_DT, ' ') AS CNCL_DT                 /* 해지일자 */
+		     , FST_REG_DT                                   /* 최초등록일자 */
+		     , FST_USER_ID                                  /* 최초등록자 */
+		     , LST_UPD_DT                                   /* 최종수정일자 */
+		     , LST_UPD_ID                                   /* 최종수정자 */
+		FROM CS_CUST01_MT 
+		WHERE CUST_NO = #{viewCust}
+ 	</select>
+ 	
+ 	<!-- 중복유무를 검사 -->
+ 	<select id="compareItem" parameterType="HashMap" resultType="String">
+ 		SELECT COUNT(*)
+		FROM CS_CUST01_MT
+		WHERE 1=1
+		<if test='type != "EMAIL"'>
+		AND MBL_NO = #{item}
+		</if>
+		<if test='type != "MBL"'>
+		AND EMAIL = #{item}
+ 		</if>
  	</select>
   	
   	<!-- 검색기능을 위한 동적SQL -->
