@@ -327,11 +327,11 @@
 	} // end of function checkWord() {})---------------------
 	
 	//천단위 콤마 펑션
-   function addComma(value){
-        value = value.toString();															// 값을 문자열형태로 받아온다
-		value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");								// 3자리마다 ,를 추가해준다
-        return value; 																		// 변환한 값을 return
-    }
+    function addComma(value){
+         value = value.toString();															// 값을 문자열형태로 받아온다
+		 value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");								// 3자리마다 ,를 추가해준다
+         return value; 																		// 변환한 값을 return
+     }
 	
 </script>
 

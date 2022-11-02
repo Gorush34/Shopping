@@ -38,7 +38,7 @@ button.btn_check {
 td.f_left {float: left;}
 td.f_right {float: right;}
 /* td.item_name {width: 20%;} */
-input.sm { max-width: 80px; }
+input.sm { max-width: 50px; }
 input.med { max-width: 120px; }
 input.lg { max-width: 140px; }
 
@@ -58,3 +58,5 @@ td.yn_name {
 }
 
 input.dk { background-color: #b3b3b3; }	
+
+img { margin-left: 12px !important; }

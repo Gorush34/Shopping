@@ -20,11 +20,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.spring.shopping.common.MyUtil;
 import com.spring.shopping.common.SearchCriteria;
 import com.spring.shopping.common.Sha256;
 import com.spring.shopping.model.CustVO;
 import com.spring.shopping.model.EmpVO;
+import com.spring.shopping.model.HistVO;
 import com.spring.shopping.service.InterEmpService;
 
 @Controller
@@ -311,8 +314,7 @@ public class EmpController {
 		return jsonObj.toString();									// jsonObj를 화면단으로 return;
 		
 	} // end of public String getTotalCount(ModelAndView mav, @RequestParam Map<String, Object> map)--------------
-		
-	// 고객조회 테이블 고객목록 불러오기
+	
 	@ResponseBody
 	@RequestMapping(value = "/readCust.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
 	public String readCust(ModelAndView mav, @RequestParam Map<String, Object> map) {
@@ -405,6 +407,7 @@ public class EmpController {
 				jsonObj.put("CUST_NM", custList.get("CUST_NM"));
 				jsonObj.put("MBL_NO", custList.get("MBL_NO"));
 				jsonObj.put("CUST_SS_CD", custList.get("CUST_SS_CD"));
+				jsonObj.put("AVB_PNT", custList.get("AVB_PNT"));
 				jsonArr.put(jsonObj); 
 				// Map에서 받아온 값들은 jsonObj에 저장한 뒤, jsonObj를 배열 형태인 jsonArr에 담는다.
 			}
@@ -483,34 +486,6 @@ public class EmpController {
 	} // end of public String getCustHistoryPopUp(ModelAndView mav, @RequestParam Map<String, Object> map)------------------------	
 	
 	
-
-	
-	// 비밀번호 변경완료 버튼 클릭시(추후수정)
-	/*
-	@RequestMapping(value="/pwdUpdateEnd.dowell", method = {RequestMethod.POST})
-	public ModelAndView pwdUpdateEnd(ModelAndView mav, HttpServletRequest request) {
-		
-		String method = request.getMethod();
-		String pk_emp_no = request.getParameter("pk_emp_no");
-		String emp_pwd = request.getParameter("emp_pwd");
-		emp_pwd = Sha256.encrypt(emp_pwd);
-		
-		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("emp_pwd", emp_pwd);
-		paraMap.put("pk_emp_no", pk_emp_no);
-		
-		
-		int n = empService.pwdUpdate(paraMap);
-		
-		mav.addObject("n", n);
-		mav.addObject("pk_emp_no", pk_emp_no);
-		mav.addObject("method", method);
-		mav.setViewName("/tiles1/main/pwdUpdate");
-		
-		return mav;
-	}
-	*/
-	
 	/* ================================ 과제2 시작 ================================== */
 	
 	// 고객정보조회 페이지 요청
@@ -522,7 +497,7 @@ public class EmpController {
 			viewCust = "";																	// 공란처리
 		}
 		else if(viewCust != null) {															// 고객번호가 비어있지 않다면
-			CustVO custInfo = empService.readCustInfo(viewCust);							// 고객번호를 parameter로 고객정보를 조회
+			List<Map<String, String>> custInfo = empService.readCustInfo(viewCust);							// 고객번호를 parameter로 고객정보를 조회
 			if(custInfo != null) {															// 조회된 결과가 비어있지 않다면
 				mav.addObject("custInfo", custInfo);										// mav에 담는다
 			}
@@ -573,8 +548,94 @@ public class EmpController {
 		jsonObj.put("result", result);						// 결과를 담는다
 		
 		return jsonObj.toString();
-	} // end of public String getCustHistoryPopUp(ModelAndView mav, @RequestParam Map<String, Object> map)------------------------	
+	} // end of public String compareItem(ModelAndView mav, @RequestParam Map<String, Object> map)------------------------	
 		
+	// DB를 통해 비교하여 중복검사를 실행하는 함수
+	@ResponseBody
+	@RequestMapping(value = "/registerCustSubmit.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String registerCustSubmit(ModelAndView mav, @RequestParam Map<String, Object> map) {
+		
+		int result = empService.registerCust(map);		// DB에 중복된 값이 존재하는지 확인
+		
+		if(result == 1) {
+		int pnt = empService.insert_TBL_PNT_D(map);	// 포인트 상세테이블에 방금 가입한 회원의 정보를 insert
+			if(pnt == 1) {
+				pnt = empService.insert_TBL_PNT_M(map);	// 포인트 상세테이블 정보를 기반으로 마스터테이블에 방금 가입한 회원의 정보를 insert
+				// int pnt = empService.insert_TBL_PNT(map); // 고장날시 단순하게 한 번에 insert하는 서비스
+			}
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("result", result);						// 결과를 담는다
+			
+		return jsonObj.toString();
+	} // end of public String compareItem(ModelAndView mav, @RequestParam Map<String, Object> map)------------------------	
+		
+	
+	
+	// 고객정보조회 페이지에서 고객정보를 조회
+	@ResponseBody
+	@RequestMapping(value = "/readCustInfo.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String readCustInfo(ModelAndView mav, @RequestParam Map<String, Object> map) {
+		
+		String viewCust = (String) map.get("viewCust");
+		
+		List<Map<String, String>> custInfo = empService.readCustInfo(viewCust);		// 고객 정보를 List에 담는다
+		
+		JSONObject jsonObj = new JSONObject();										// ajax 통신을 위한 jsonObj 선언
+		
+		for(Map<String, String> info : custInfo) {									// List에 담긴 map 각각에 대한 반복문 실행
+			for(String key : info.keySet()) {										// map에 담긴 key의 이름을 가져오는 반복문 실행
+				jsonObj.put(key, info.get(key));									// jsonObj에 key / value 형태로 넣는다.
+			}
+		}
+
+		return jsonObj.toString();
+	} // end of public String registerCustSubmit(ModelAndView mav, @RequestParam Map<String, Object> map)------------------------	
+	
+	// 고객정보 수정
+	@ResponseBody
+	@RequestMapping(value = "/updateCustInfo.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String updateCustInfo(ModelAndView mav, @RequestParam Map<String, Object> map) {
+		
+		int result = empService.updateCustInfo(map);		// 고객 정보를 update한다
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("result", result);						// 결과를 담는다
+
+		return jsonObj.toString();
+	} // end of public String registerCustSubmit(ModelAndView mav, @RequestParam Map<String, Object> map)------------------------	
+	
+	
+	// 변경이력 삽입
+	@ResponseBody
+	@RequestMapping(value = "/insertHistory.dowell", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String insertHistory(ModelAndView mav, String data) {
+		
+		int result = 0;	// update 성공여부 담는 변수 선언
+		
+		try {
+		    List<Map<String, Object>> info = new Gson().fromJson(String.valueOf(data),	// view에서 보낸 data를 List<Map<String, Object>> 타입으로 받는다
+		            new TypeToken<List<Map<String, Object>>>(){}.getType());
+	
+		    for (Map<String, Object> history : info) {					// 리스트 info에 있는 Map 요소인 history 에 대해 반복문 실행
+		        // System.out.println(history.get("CUST_NO") + " : " + history.get("CHG_CD")+ " : " + history.get("CHG_BF_CNT")+ " : " + history.get("CHG_AFT_CNT")+ " : " + history.get("UPD_ID"));
+				result = empService.insertHistory(history);				// 변경이력을 insert
+		    	if(result != 1) {
+		    		System.out.println("잘못됐다");
+		    		break;
+		    	}
+		    }  
+		} catch (Exception e) {
+			
+		}
+
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("result", String.valueOf(result));						// 결과를 담는다
+		
+		return jsonObj.toString();
+	} // end of public String registerCustSubmit(ModelAndView mav, @RequestParam Map<String, Object> map)------------------------
+	
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	

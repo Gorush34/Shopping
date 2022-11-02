@@ -48,9 +48,27 @@ public interface InterEmpService {
 	List<Map<String, String>> getcodeDetailList(Map<String, String> code);
 
 	// 고객정보 조회
-	CustVO readCustInfo(String viewCust);
+	List<Map<String, String>> readCustInfo(String viewCust);
 
 	// DB를 통해 비교하여 중복검사를 실행하는 함수
 	String compareItem(Map<String, Object> map);
+
+	// 고객 등록 요청
+	int registerCust(Map<String, Object> map);
+
+	// 최초등록고객 포인트 테이블 생성
+	int insert_TBL_PNT(Map<String, Object> map);
+
+	// 고객정보 수정
+	int updateCustInfo(Map<String, Object> map);
+
+	// 변경이력 추가
+	int insertHistory(Map<String, Object> paraMap);
+
+	// 포인트 상세테이블에 방금 가입한 회원의 정보를 insert
+	int insert_TBL_PNT_D(Map<String, Object> map);
+
+	// 포인트 마스터테이블에 방금 가입한 회원의 정보를 insert
+	int insert_TBL_PNT_M(Map<String, Object> map);
 
 }

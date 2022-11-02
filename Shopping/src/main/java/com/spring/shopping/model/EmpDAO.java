@@ -108,9 +108,9 @@ public class EmpDAO implements InterEmpDAO {
 
 	// 고객정보 조회
 	@Override
-	public CustVO readCustInfo(String viewCust) {
+	public List<Map<String, String>> readCustInfo(String viewCust) {
 		
-		return sqlsession.selectOne("shopping.readCustInfo", viewCust);
+		return sqlsession.selectList("shopping.readCustInfo", viewCust);
 	}
 
 	// DB를 통해 비교하여 중복검사를 실행하는 함수
@@ -118,6 +118,48 @@ public class EmpDAO implements InterEmpDAO {
 	public String compareItem(Map<String, Object> map) {
 		
 		return sqlsession.selectOne("shopping.compareItem", map);
+	}
+
+	// 고객 등록 요청
+	@Override
+	public int registerCust(Map<String, Object> map) {
+		
+		return sqlsession.insert("shopping.registerCust", map);
+	}
+
+	// 최초등록고객 포인트 테이블 생성
+	@Override
+	public int insert_TBL_PNT(Map<String, Object> map) {
+		
+		return sqlsession.insert("shopping.insert_TBL_PNT", map);
+	}
+
+	// 고객정보 수정
+	@Override
+	public int updateCustInfo(Map<String, Object> map) {
+		
+		return sqlsession.update("shopping.updateCustInfo", map);
+	}
+
+	// 변경이력 추가
+	@Override
+	public int insertHistory(Map<String, Object> paraMap) {
+		
+		return sqlsession.insert("shopping.insertHistory", paraMap);
+	}
+
+	// 포인트 상세테이블에 방금 가입한 회원의 정보를 insert
+	@Override
+	public int insert_TBL_PNT_D(Map<String, Object> map) {
+		
+		return sqlsession.insert("shopping.insert_TBL_PNT_D", map);
+	}
+
+	// 포인트 마스터테이블에 방금 가입한 회원의 정보를 insert
+	@Override
+	public int insert_TBL_PNT_M(Map<String, Object> map) {
+		
+		return sqlsession.insert("shopping.insert_TBL_PNT_M", map);
 	}
 
 

@@ -53,7 +53,7 @@
 </head>
 <body>
 
-	<h1>&nbsp;&nbsp;&nbsp;메인페이지입니다. 좋은 하루 되세요!</span></h1>
+	<h1 style="margin-top: 20px;">&nbsp;&nbsp;&nbsp;메인페이지입니다. 좋은 하루 되세요!</span></h1>
 	
 	<div id="boardContainer">
 		<!-- 

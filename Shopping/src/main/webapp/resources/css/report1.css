@@ -77,8 +77,8 @@ body {
 	
 	div#adminContainer {
 		margin: auto 0;
-		padding: 20px 20px 20px 0;
-		float: right;
+		padding: 10px 20px 0 0;
+		text-align: right;
 		
 	}
 	
@@ -294,6 +294,11 @@ td.border_td {
 
 }
 
+td.border {
+	border: solid 1px #000000  !important;
+
+}
+
 tbody#PERFORM_DISPLAY > tr, tbody#PERFORM_DISPLAY > tr > td, tfoot#TFOOT_SUM > tr, tfoot#TFOOT_SUM > tr > td   {
 	min-height: 30px !important;
 	max-height: 30px !important;
@@ -374,3 +379,92 @@ td.yn_name {
 	font-size: 17px;
 }
 /* viewCustomer.jsp(고객정보조회) 끝 */
+
+
+
+/* custSalManagement.jsp(고객판매관리) 시작 */
+
+div#searchContainer {
+	background-color: #b3d9ff;
+	border: solid 1px gray;
+	width: 100%;
+	min-height: 100px;
+}
+
+div#rowContainer {
+	width:100%;
+	padding: 10px 0;
+	min-height: 30px;
+}
+
+span#title_text {
+	min-width: 150px;
+	padding: 0 20px 0 10px;
+	text-align: left;	
+}
+
+span#input_text {
+	width: 100px;	
+}
+
+input.date {
+	width: 100px;
+	text-align: center;
+}
+
+span#blank {
+	min-width: 30px;
+}
+
+div#inline {
+	display: inline;
+}
+
+div.mg_left {
+	margin-left: 300px;
+}
+
+
+
+/* custSalManagement.jsp(고객판매관리) 시작 */
+	table#tbl_cust_sal_mag{
+		width: 100%;
+	}
+	
+	#tbl_cust_sal_mag > thead > tr > th {
+		border: solid 1px #000000 !important;
+	} 
+	
+	.tbl_sm {
+		width: 125px;
+	}
+	
+	.tbl_md {
+		width: 140px;
+	}
+	
+	.scrolltable2 {
+	  	table-layout: fixed;	
+	  	width:100%;
+	}
+	
+	.scrolltable2 thead {
+	    min-width:90%;
+	    display:block;
+	}
+
+	.scrolltable2 tbody{
+		min-width:90%;
+	    display:block;
+	    overflow:auto;
+	    height:400px;
+	} 
+	
+	.scrolltable2 tfoot{
+		min-width:90%;
+	    display:block;
+	    overflow:auto;
+	    height:100px;
+	} 
+/* custSalManagement.jsp(고객판매관리) 끝 */
+	

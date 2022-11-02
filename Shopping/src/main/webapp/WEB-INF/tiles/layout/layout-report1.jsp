@@ -11,7 +11,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>혼자하는 프론트엔드 연습!</title>
+<title>두웰쇼핑몰</title>
   	<!-- Required meta tags -->
   	<meta charset="UTF-8">
   	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> 
@@ -24,6 +24,9 @@
   
   	<!-- 직접 만든 CSS 1 -->
   	<link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/report1.css" />
+  	<!-- 
+  	<link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/custSalManagement.css" />
+	 -->
 
    
   	<!-- Optional JavaScript -->

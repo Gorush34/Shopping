@@ -79,6 +79,85 @@ public class ShoppingDAO implements InterShoppingDAO {
 		
 		return sqlsession.selectList("shopping.getPerformanceList", map);
 	}
+
+	// 제품목록을 조회하기
+	@Override
+	public List<Map<String, String>> getProductList(Map<String, Object> map) {
+		
+		return sqlsession.selectList("shopping.getProductList", map);
+	}
+
+	// ##1-10. 고객판매관리 목록조회하기
+	@Override
+	public List<Map<String, String>> getSalList(Map<String, Object> map) {
+		
+		return sqlsession.selectList("shopping.getSalList", map);
+	}
+
+	// ## 피드백 이후 반품여부 가져오기
+	@Override
+	public String getReturnYN(Map<String, Object> map) {
+		
+		return sqlsession.selectOne("shopping.getReturnYN", map);
+	}	
+	
+	// 판매상세조회 리스트 조회하기
+	@Override
+	public List<Map<String, String>> getsalDetailList(Map<String, Object> map) {
+		
+		return sqlsession.selectList("shopping.getsalDetailList", map);
+	}
+
+	// ##피드백 이후 마스터테이블 판매 및 반품 insert
+	@Override
+	public int insertSalMT(Map<String, Object> masterMap) {
+		
+		return sqlsession.insert("shopping.insertSalMT", masterMap);
+	}
+
+	// ##피드백 이후 판매상세테이블 insert
+	@Override
+	public int insertSalDT(Map<String, Object> detail) {
+		
+		return sqlsession.insert("shopping.insertSalDT", detail);
+	}
+
+	// ##피드백 이후 재고수량 테이블 update
+	@Override
+	public int updateIvcoQty(Map<String, Object> detail) {
+		
+		return sqlsession.update("shopping.updateIvcoQty", detail);
+	}
+
+	// ## 피드백 이후 포인트상세테이블 insert
+	@Override
+	public int insertPNT_D(Map<String, Object> masterMap) {
+		
+		return sqlsession.insert("shopping.insertPNT_D", masterMap);
+	}
+
+	// ## 피드백 이후 포인트마스터테이블 update
+	@Override
+	public int updatePNT_M(Map<String, Object> masterMap) {
+		
+		return sqlsession.update("shopping.updatePNT_M", masterMap);
+	}
+
+	// 실시간 고객상태 알아오기
+	@Override
+	public Map<String, String> getCUstStatus(Map<String, String> ssParam) {
+		
+		return (Map<String, String>) sqlsession.selectOne("shopping.getCUstStatus", ssParam);
+	}
+
+	// 실시간 상품상태 알아오기
+	@Override
+	public Map<String, String> getPrd(Map<String, String> prd) {
+		
+		return (Map<String, String>) sqlsession.selectOne("shopping.getPrd", prd);
+	}
+
+
 	
 	
 

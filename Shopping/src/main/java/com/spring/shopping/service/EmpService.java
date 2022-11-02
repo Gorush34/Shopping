@@ -41,6 +41,12 @@ public class EmpService implements InterEmpService {
 	@Override
 	public List<Map<String, String>> getCustList(Map<String, Object> map) {
 		
+		String sdate = String.valueOf(map.get("SDATE"));
+		String edate = String.valueOf(map.get("EDATE"));
+		
+		map.put("SDATE", sdate.replaceAll("-", ""));				// 시작일자 파라미터 값 사이의 - 제거
+		map.put("EDATE", edate.replaceAll("-", ""));				// 종료일 파라미터 값 사이의 - 제거
+		
 		return empDAO.getCustList(map);
 	}
 
@@ -123,7 +129,7 @@ public class EmpService implements InterEmpService {
 
 	// 고객정보 조회
 	@Override
-	public CustVO readCustInfo(String viewCust) {
+	public List<Map<String, String>> readCustInfo(String viewCust) {
 		
 		return empDAO.readCustInfo(viewCust);
 	}
@@ -133,6 +139,54 @@ public class EmpService implements InterEmpService {
 	public String compareItem(Map<String, Object> map) {
 		
 		return empDAO.compareItem(map);
+	}
+
+	// 고객 등록 요청
+	@Override
+	public int registerCust(Map<String, Object> map) {
+		
+		String brdy = String.valueOf(map.get("BRDY_DT"));
+		String mrrg = String.valueOf(map.get("MRRG_DT"));
+		
+		map.put("BRDY_DT", brdy.replaceAll("-", ""));				// 생년월일 파라미터 값 사이의 - 제거
+		map.put("MRRG_DT", mrrg.replaceAll("-", ""));				// 결혼기념일 파라미터 값 사이의 - 제거
+		
+		return empDAO.registerCust(map);
+	}
+
+	// 최초등록고객 포인트 테이블 생성
+	@Override
+	public int insert_TBL_PNT(Map<String, Object> map) {
+		
+		return empDAO.insert_TBL_PNT(map);
+	}
+
+	// 고객정보 수정
+	@Override
+	public int updateCustInfo(Map<String, Object> map) {
+		
+		return empDAO.updateCustInfo(map);
+	}
+
+	// 변경이력 추가
+	@Override
+	public int insertHistory(Map<String, Object> paraMap) {
+		
+		return empDAO.insertHistory(paraMap);
+	}
+
+	// 포인트 상세테이블에 방금 가입한 회원의 정보를 insert
+	@Override
+	public int insert_TBL_PNT_D(Map<String, Object> map) {
+		
+		return empDAO.insert_TBL_PNT_D(map);
+	}
+
+	// 포인트 마스터테이블에 방금 가입한 회원의 정보를 insert
+	@Override
+	public int insert_TBL_PNT_M(Map<String, Object> map) {
+		
+		return empDAO.insert_TBL_PNT_M(map);
 	}
 
 

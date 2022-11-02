@@ -153,7 +153,11 @@
 		    	closeTabClick(); 																			// 팝업창 닫는 함수 실행
 		    	
 		    }); // end of $("button#apply").click(function(){}---------------
-
+		    		
+		    $(opener).one('beforeunload', function() {							// 부모창의 새로고침/닫기/앞으로/뒤로
+				closeTabClick();												// 팝업을 닫는다
+            });	// end of $(opener).one('beforeunload', function() {}--------------------
+            		
 		});	// end of $(document).ready(function(){})----------
 	
 		
@@ -171,7 +175,7 @@
 			
 			$.ajax({
 				url:"<%= request.getContextPath()%>/getPrtList.dowell",
-				data: {"searchWord":PRT_CD_NM}, 
+				data: {"SEARCHWORD":PRT_CD_NM}, 
 				dataType:"JSON", 												// 데이터 타입을 JSON 형태로 전송
 				type:"POST",													// POST 방식을 적용
 				async: false,

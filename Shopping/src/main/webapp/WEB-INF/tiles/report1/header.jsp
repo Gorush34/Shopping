@@ -46,6 +46,14 @@
 		      </li>
 		      <%-- 매장월별실적조회 끝 --%>
 	      
+	          <%-- 고객판매관리 시작 --%>
+		      <li class="nav-item">
+		        <a class="nav-link" href="<%= ctxPath %>/custSalManagement.dowell" id="navbar" role="button" aria-expanded="false">
+		        	고객판매관리
+		        </a>
+		      </li>
+		      <%-- 고객판매관리 끝 --%>
+	      	  
 	      <c:if test="${empty sessionScope.loginuser}">
 	      	<li class="nav-item right">	
 	      		<a class="nav-link" id="navbar" role="button" aria-expanded="false" href="<%=ctxPath%>/login.dowell">로그인(임시)</a>

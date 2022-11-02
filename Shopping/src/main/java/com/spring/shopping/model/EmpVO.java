@@ -2,8 +2,13 @@ package com.spring.shopping.model;
 
 import lombok.Data;
 
+
 @Data
 public class EmpVO {
+	/*
+	 * 안녕 지은아?
+	 * 반가워
+	 */
 	private String USER_ID;						// 사용자ID
 	private String USER_NM;						// 사용자명
 	private String USER_DT_CD;					// 사용자구분코드

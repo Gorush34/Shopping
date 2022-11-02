@@ -33,4 +33,16 @@ public class CustVO {
 	private String FST_USER_ID;			// 최초등록자
 	private String LST_UPD_DT;			// 최종수정일자
 	private String LST_UPD_ID;			// 최종수정자
+	
+	
+	// 구매테이블 데이터
+	private String TOT_SAL_AMT;			// 총구매금액
+	private String MON_SAL_AMT;			// 당월구매금액
+	private String LAST_SAL;			// 최종구매일
+
+	// 포인트 데이터
+	private String TOT_PNT;				// 총포인트
+	private String MON_RSVG_PNT;			// 당월적립포인트
+	private String MON_US_PNT;			// 당월사용포인트
+	
 }

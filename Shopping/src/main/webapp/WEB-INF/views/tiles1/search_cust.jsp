@@ -121,6 +121,7 @@
 	var searchWord_nm = "";														// 고객이름 검색어를 담는 변수 선언
 	var searchWord_mobile = "";													// 핸드폰번호 검색어를 담는 변수 선언
 	var regexHan = RegExp(/[ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z]+/);
+	var checkStatus = opener.regSal;											// 고객판매수금등록에서 왔는지 구별하는 변수
 	
 	let flag = false;															// 올바른 형식에 맞게 검색어를 입력하였는지 구분하기 위한 flag 변수 선언
 	
@@ -165,15 +166,29 @@
 		    		alert("항목을 선택한 후 적용버튼을 눌러주세요!");
 		    		return false;
 		    	}
-		    	
+		    	var TO_CUST_NO = $("input[name='chBox']:checked").parent().parent().children().eq(1).text();	// 체크한 위치를 기반으로 고객명을 가져온다
 				var TO_CUST_NM = $("input[name='chBox']:checked").attr('id');	// name 이 chBox인 체크박스의 id(고객번호)를 가져온다
-				var TO_CUST_NO = $("input[name='chBox']:checked").parent().parent().children().eq(1).text();	// 체크한 위치를 기반으로 고객명을 가져온다
-		    	
+				var TO_CUST_PNT = $("input[name='chBox']:checked").parent().parent().children().eq(5).text();	// 체크한 위치를 기반으로 가용포인트를 가져온다
+				
 		    	$("#CUST_NO", opener.document).val(TO_CUST_NO); 	 			// 자식창에서 부모창으로 온전한 고객번호 전달하기
 		    	$("#IN_CUST_NO", opener.document).val(TO_CUST_NM); 		 		// 자식창에서 부모창으로 온전한 고객명 전달하기
+		    	$("#AVB_PNT", opener.document).val(addComma(TO_CUST_PNT)); 		 		// 자식창에서 부모창으로 가용포인트 전달하기
+		    	
+		    	// 과제3 고객판매수금등록 전용 시작 ====================================
+		    	if(typeof window.opener.regSal !== 'undefined') {	// 과제3 2페이지에서 왔다면
+		    		window.opener.org_cust_no = TO_CUST_NO;
+		    		window.opener.org_cust_nm = TO_CUST_NM;
+		    		window.opener.org_avb_pnt = TO_CUST_PNT;
+		    	}
+		    	// 과제3 고객판매수금등록 전용 끝 ====================================	
+		    	
 		    	closeTabClick(); 												// 팝업창 닫는 함수 실행
 		    	
 		    });
+			
+		    $(opener).one('beforeunload', function() {							// 부모창의 새로고침/닫기/앞으로/뒤로
+				closeTabClick();												// 팝업을 닫는다
+            });	// end of $(opener).one('beforeunload', function() {}--------------------
 		   
 		});	// end of $(document).ready(function(){})----------
 	
@@ -205,7 +220,7 @@
 			
 			$.ajax({
 				url:"<%= request.getContextPath()%>/getPopUpCustList.dowell",
-				data: {"CUST_NO":CUST_NO,
+				data: {"SEARCHWORD":CUST_NO,
 					   "SEARCHWORD_NM":searchWord_nm,
 					   "SEARCHWORD_MBL":searchWord_mobile}, 
 				dataType:"JSON", 												// 데이터 타입을 JSON 형태로 전송
@@ -219,16 +234,17 @@
 						$.each(json, function(index, item){						// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
 							
 							html += "<tr style='width: 100%;'>";  
-							html += "<td class='center'><input type='checkbox' name='chBox' class='chkBox' id='"+item.CUST_NM+"'/></td>";
+							html += "<td class='center'><input type='checkbox' name='chBox' class='chkBox chB"+index+"' id='"+item.CUST_NM+"'/></td>";
 							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:190px;' id='CUST_NO'>"+item.CUST_NO+"</td>";
 							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:190px;' id='CUST_NM'>"+item.CUST_NM+"</td>";
 							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:190px;' id='MBL_NO'>"+item.MBL_NO+"</td>";
 							html += "<td class='center' ondblclick='sendPopupToOpener_cust()' style='width:190px;' id='CUST_SS_CD'>"+item.CUST_SS_CD+"</td>";
+							html += "<td class='center' style='display:none;'>"+item.AVB_PNT+"</td>";
 							html += "</tr>";
 							
 						});
 					}
-					else {
+					else {											
 						html += "<tr>";
 						html += "<td colspan='5' id='no' style='width:810px;'>결과와 일치하는 고객이 없습니다.</td>";
 						html += "</tr>";
@@ -236,7 +252,16 @@
 					}
 					
 					$("tbody#CUST_DISPLAY").html(html); 						// tbody의 id가 PRT_DISPLAY인 부분에 html 변수에 담긴 html 태그를 놓는다.
-	
+					
+					
+					if(checkStatus) {											// 과제3 2페이지전용 (고객상태가 정상이 아닌것 구분 시작)
+						$.each(json, function(index, item){						// return된 json 배열의 각각의 값에 대해서 반복을 실시한다.
+							if( item.CUST_SS_CD != "정상" ){
+								$(".chB"+index).prop('disabled', true);						// 체크박스 선택 불가
+							}
+						});
+					}
+					
 				},
 				error: function(request, status, error){
 					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -294,11 +319,27 @@
 			var tr = $target.parent();													// 해당 위치의 부모(tr)의 위치를 담는다
 			var td = tr.children();														// tr의 자식(td)의 위치를 담는다.
 			
+			var status = td.eq(4).text();												// tr안에 있는 td에서 index가 2인 td의 text(고객명)를 담는다
+			if( checkStatus && status != "정상" ){										// 과제3 2페이지 전용(고객상태가 정상이 아니라면)
+				alert("고객상태가 정상인 고객을 대상으로 판매가 가능합니다.");
+				return false;
+			}
+			
 			var cst_no = td.eq(1).text();												// tr안에 있는 td에서 index가 1인 td의 text(고객번호)를 담는다
     		var cst_nm = td.eq(2).text();												// tr안에 있는 td에서 index가 2인 td의 text(고객명)를 담는다
+    		var cst_pnt = td.eq(5).text();												// tr안에 있는 td에서 index가 5인 td의 text(포인트)를 담는다
 
 			$("#CUST_NO", opener.document).val(cst_no); 								// 자식창에서 부모창으로 온전한 고객번호 전달하기
 		    $("#IN_CUST_NO", opener.document).val(cst_nm); 	 							// 자식창에서 부모창으로 온전한 고객명 전달하기
+	    	$("#AVB_PNT", opener.document).val(addComma(cst_pnt)); 		 						// 자식창에서 부모창으로 가용포인트 전달하기
+	    	
+	    	// 과제3 고객판매수금등록 전용 시작 ====================================
+	    	if(typeof window.opener.regSal !== 'undefined') {	// 과제3 2페이지에서 왔다면
+	    		window.opener.org_cust_no = cst_no;
+	    		window.opener.org_cust_nm = cst_nm;
+	    		window.opener.org_avb_pnt = cst_pnt;
+	    	}
+	    	// 과제3 고객판매수금등록 전용 끝 ====================================	
 	    	
 	    	closeTabClick(); // 팝업창 닫는 함수 실행
 		} // end of function sendPopupToOpener_cust()---------------
@@ -334,6 +375,13 @@
 			  }
 			 obj.value = phone;
 		} // end of function autoHypen(obj) {}--------------------------------	
+		
+		//천단위 콤마 펑션
+		function addComma(value){
+		     value = value.toString();															// 값을 문자열형태로 받아온다
+			 value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");								// 3자리마다 ,를 추가해준다
+		     return value; 																		// 변환한 값을 return
+		} // end of function addComma(value){}-------------
 		
 	</script>
 

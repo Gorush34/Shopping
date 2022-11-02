@@ -294,10 +294,10 @@
 				
 				if(json.status != "1"){									// json으로 받아온 status의 값이 1이 아니라면(결과가 1이 아니라면)
 					if(from_prt) { 										// 매장코드 검색했을 때
-						search_popup("search_prt", "900", "600");						// 매장검색 팝업을 실행
+						search_popup("search_prt", "900", "600");		// 매장검색 팝업을 실행
 					}
 					else if(from_cust) {								// 고객정보 검색했을 때 
-						search_popup("search_cust", "900", "600");					// 고객정보 팝업을 실행
+						search_popup("search_cust", "900", "600");		// 고객정보 팝업을 실행
 					}
 				}
 				else if(from_prt) { 									// 결과가 1이고 매장검색란에서 함수를 실행했다면(결과가 하나일 때)
@@ -344,17 +344,9 @@
 		
 		// 필수입력사항 검사 끝
 		
-		/*
-		if(checkWord($("input#PRT_CD_NM").val()) === false || checkWord($("input#IN_CUST_NO").val()) === false ) {
-			// 매장검색란과 고객검색란의 검색어가 정규표현식에 맞지 않으면
-			return false;												// 함수 종료
-		}
-		*/
-		
 		$.trim("input#PRT_CD_NM");										// 검색란의 공백을 제거한다.
 		$.trim("input#IN_CUST_NO");										// 검색란의 공백을 제거한다.
 		var formData = $("form[name=searchFrm]").serialize(); 			// form 이름이 searchFrm 인 곳의 input name과 value들을 직렬화
-		
 		
 		$.ajax({
 			url:"<%= request.getContextPath()%>/readCust.dowell",
@@ -406,7 +398,7 @@
 		var his_cust_no = CUST_NO;										// 버튼으로부터 고객번호를 받아온다
 		$("input#HIS_CUST_NO").val(his_cust_no);						// input 태그(hidden)에 값을 저장(예비용)
 		
-		search_popup("change_history", "900", "600"); 								// 이력변경사항 팝업을 실행
+		search_popup("change_history", "900", "600"); 					// 이력변경사항 팝업을 실행
 		
 	} // end of function change_history(CUST_NO)--------------------
 	
@@ -548,12 +540,6 @@
 		
 		<!--  신규등록 버튼 부분 시작 -->
 		<div id="adminContainer">
-			<!-- 
-			<button type="button" class="btn-secondary" onclick="createPopup('register_cust','1000','600')">신규등록</button>
-			 -->
-			<!-- 
-			<button type="button" class="btn-secondary" id="register" onclick="createPopup('register_cust','1000','700')">신규등록</button>
-			-->
 			<button type="button" class="btn-secondary" id="register" onclick="search_popup('register_cust', '1100', '700')">신규등록</button>
 		</div>
 		<!--  신규등록 버튼 부분 끝 -->

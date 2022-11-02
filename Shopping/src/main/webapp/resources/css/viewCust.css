@@ -28,7 +28,7 @@ table#tbl_receiveYN, #tbl_purchase, #tbl_point  {
 td.f_left {float: left;}
 td.f_right {float: right;}
 
-input.sm { max-width: 80px; }
+input.sm { max-width: 50px; }
 input.med { max-width: 120px; }
 input.lg { max-width: 140px; }
 
@@ -75,4 +75,7 @@ button.btn_check {
     font-size: 14px;
     padding: 0 !important;
 }
+
+img { margin-left: 12px !important; }
+
 /* viewCustomer.jsp(고객정보조회) 끝 */

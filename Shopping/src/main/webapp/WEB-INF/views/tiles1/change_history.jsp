@@ -172,8 +172,8 @@
     						html += "<tr style='width: 100%;'>";  
     						html += "<td class='center' style='width:100px;'>"+item.CHG_DT+"</td>";
     						html += "<td class='center' style='width:150px;'>"+item.CHG_CD+"</td>";
-    						html += "<td class='left' 	style='width:170px; max-width:170px;'>"+item.CHG_BF_CNT+"</td>";
-    						html += "<td class='left' 	style='width:170px; max-width:170px;'>"+item.CHG_AFT_CNT+"</td>";
+    						html += "<td class='left' 	style='width:170px; max-width:170px; word-break:break-all;'>"+item.CHG_BF_CNT+"</td>";
+    						html += "<td class='left' 	style='width:170px; max-width:170px; word-break:break-all;'>"+item.CHG_AFT_CNT+"</td>";
     						html += "<td class='left' 	style='width:130px;'>"+item.LST_UPD_ID+"</td>";
     						html += "<td class='center' style='width:110px;'>"+item.LST_UPD_DT+"</td>";
     						html += "</tr>";

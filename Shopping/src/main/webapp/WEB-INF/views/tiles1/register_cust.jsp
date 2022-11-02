@@ -49,12 +49,19 @@
   
  	<!-- Optional JavaScript-->
 	<script type="text/javascript" src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-
-	<!-- 직접 만든 CSS -->
-  	<link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/registerPopUp.css" />
   		 
 	<!-- 모듈화 연습 -->
 	<script type="text/javascript" src="<%= ctxPath%>/resources/js/common.js"></script>  
+	<script type="text/javascript" src="<%= ctxPath%>/resources/js/register.js"></script> 
+	<script type="text/javascript" src="<%= ctxPath%>/resources/js/common_search.js"></script> 
+	
+	<!-- 직접 만든 CSS -->
+  	<link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/registerPopUp.css" />
+
+	
+	<style type="text/css">
+		img { margin-left: 5px !important; }
+	</style>
 	
 	<script type="text/javascript">
 
@@ -68,59 +75,27 @@
 			var SE_PRT_NM = opener.$("input#SE_PRT_NM").val(); 				// 부모창에서 id가 SE_PRT_NM인 태그의 val()
 			$("input#JN_PRT_CD").val(SE_PRT_CD); 							// 자식창에서 id가 JN_PRT_CD인 val에 id를 넣기
 			$("input#PRT_CD_NM").val(SE_PRT_NM); 							// 자식창에서 id가 PRT_CD_NM인 val에 id를 넣기
+			$("input#MRRG_DT").val(""); 									// 결혼기념일 기본값 공란 지정
 			
 			$("input[name='SEX_CD'][value='F']").prop("checked", true);			// 초기값 설정(성별)
 			$("input[name='PSMT_GRC_CD'][value='H']").prop("checked", true);	// 초기값 설정(우편물수령)
 			
-			$("button#btn_search_prt").on("click", function (event) { 		// 매장 찾기 버튼을 클릭했을 때
-				if(checkWord($("input#PRT_CD_NM").val()) === true ) {		// 정규표현식(checkWord)에 위배되지 않는다면
-					getPrtCodeName();										// 검색조건의 결과가 몇 개인지 알아오는 함수 실행
-				}
-			}); // end of $("button#btnSearch_prt").on("click", function (event) {})---------------------
-			
-			$("input.blank_key").keyup(function(event){						// 매장조건 입력란에서 키보드를 입력할 때
-				if(event.keyCode == 8 || event.keyCode == 46) { 			// 백스페이스(8) 또는 Delete(46)키를 입력했을 경우
-					if( $("input#PRT_CD_NM").val() == "" ) {				// 매장검색란의 내용이 아무것도 없다면
-						$("input#JN_PRT_CD").val("");						// 매장코드를 비운다
-					} 
-				}
-			}); // end of $("input.blank_key").keyup(function(event){})------------- 
-			
-			$("input.enter_prt").keydown(function(event){					// 매장조건 입력란에서 키를 입력 후 	
-				if(event.keyCode == 13) { 									// 엔터를 했을 경우
-					if(checkWord($("input#PRT_CD_NM").val()) === true ) {	// 정규표현식(checkWord)에 위배되지 않는다면
-						getPrtCodeName();									// 검색조건의 결과가 몇 개인지 알아오는 함수 실행	
-					} 
-				}
-			}); // end of $("input#PRT_CD_NM").keydown(function(event){})-------------------------------
 			
 			$("button#btn_close").click(function(){							// 닫기 버튼 클릭시		
 				closeTabClick(); 
 		    }); // end of $("button#btn_close").click(function(){})------------
 				
-			$("button#register").click(function(){							// 등록 버튼 클릭시
-				if(confirm("신규고객으로 등록하시겠습니까?")){						// 확인창에서 확인버튼을 누른다면
-					reqCheck();												// 필수입력항목 검사
-					if(flag_req) {											// 필수입력항목에 값이 모두 입력되었다면
-						checkInfo();										// 각 항목에 대한 유효성 검사 함수 실행
+			$("button#register").click(function(){										// 등록 버튼 클릭시
+				if(confirm("신규고객으로 등록하시겠습니까?")){									// 확인창에서 확인버튼을 누른다면
+					reqCheck();															// 필수입력항목 검사
+					if(flag_req) {														// 필수입력항목에 값이 모두 입력되었다면
+						if(checkInfo()) {													// 각 항목에 대한 유효성 검사 함수 실행
+							insertItemWithForm("custInfoFrm", "/shopping/registerCustSubmit.dowell");	// insert 함수 실행
+						}										
 					}
 				}
 			}); // end of $("button#register").click(function(){})---------------
-		    
-		 	$(".req, .req_rad, .req_sel").bind("change",()=>{  				// 필수입력사항 값이 변경되면 등록 버튼 클릭시 확인 flag 초기화 시키기
-		 		flag_req = false;
-		 	});
-		   	
-		 	$("#MBL1, #MBL2, #MBL3").bind("change",()=>{  					// 핸드폰값이 변경되면 등록 버튼 클릭시 중복확인 flag 초기화 시키기
-		 		flag_mblDuplicated = false;
-		 		$("#checkMblDuplicated").css("background-color","red");
-		 	});
-			
-		 	$("#EMAIL1, #EMAIL2").bind("change",()=>{  						// 이메일값이 변경되면 등록 버튼 클릭시 중복확인 flag 초기화 시키기
-				flag_emailDuplicated = false;
-				$("#checkEmailDuplicated").css("background-color","red");
-		 	});
-		   	
+		    		   	
 		});	// end of $(document).ready(function(){})----------
 	    
 		// Function Declaration
@@ -129,226 +104,7 @@
 		function closeTabClick() {
 			window.close();																// 팝업을 닫는다
 		} // end of function closeTabClick()---------------------------
-		
-		// 신규고객을 등록하는 함수
-		function regCust() {
-			alert("여기 옵니까? onclick");	
-			
-		} // end of end of function regCust()---------------------------
-		
-		// 각 항목에 대한 유효성 검사를 실시하는 부분
-		function checkInfo() {
-			alert($("#CUST_NM").val());	
-			if( !checkWord($("#CUST_NM").val()) ){
-				return;
-			} else {
-				alert("어저라고");	
-			}
-			
-		} // end of end of function checkInfo()---------------------------
-		
-		// 모듈화 해야할 부분 ================================================================================
-		
-		// 검색시 유효성 검사를 실행하는 함수
-		function checkWord(obj) {
-			
-			let search_length = obj.length;												// 고객이름의 길이를 알아온다
-			
-			var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);								// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
-			var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);											// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
-			var pattern = /\s/g;														// " "공백(스페이스)이 있는지 체크하는 정규표현식
-			
-			if( (!regex.test(obj) && search_length != 0) || regex2.test(obj) ) { 		// 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
-				alert("검색은 특수문자 및 공백을 제외한 최소 두글자 이상 한글 혹은 숫자로 입력하셔야 합니다.");
-				return false;															// false를 반환
-			}
-			else if( obj.match(pattern) ){												// 공백이 체크되었다면
-				alert("검색시 공백은 허용하지 않습니다.");
-				return false;															// false를 반환
-			}
-			else if(search_length == 0) {												// 아무것도 적지 않았다면
-				return true;															// true를 반환
-			}
-			else {																		// 위의 경우들을 제외한 나머지
-				return true;															// true를 반환
-			}
-			
-		} // end of function checkWord() {})---------------------
-		
-		// 매장정보를 검색하여 정보를 받거나 팝업을 띄우는 함수
-		function getPrtCodeName() {
-			var searchWord = $("input#PRT_CD_NM").val();
-			
-			getList(searchWord, "getPrtList");
-		} // end of function getPrtCodeName() {}-----------
-		
-		// 리스트를 불러오는 함수
-		function getList(searchWord, url) {
-			
-			if(searchWord == undefined) {												// 아무것도 입력하지 않았다면
-				searchWord = "";														// 빈칸처리
-			} 
-			
-			$.ajax({
-				url:"<%= request.getContextPath()%>/"+url+".dowell",
-				dataType:"JSON", 														// 데이터 타입을 JSON 형태로 전송
-				data: {"searchWord":searchWord}, 
-				type:"POST",															// POST 방식을 적용
-				success:function(json){ 												// return된 값이 존재한다면
-					
-					if(json.length == 1) { 												// 결과가 하나라면
-						$("input#JN_PRT_CD").val(json[0].PRT_CD); 						// 자식창에서 id가 JN_PRT_CD인 val에 id를 넣기
-						$("input#PRT_CD_NM").val(json[0].PRT_NM); 						// 자식창에서 id가 PRT_CD_NM인 val에 id를 넣기
-					}
-					else {																// 결과가 하나가 아니라면
-						createPopup('search_prt','900','600');							// 매장검색 팝업을 띄운다
-					}
-					
-				},
-				error: function(request, status, error){
-					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-				}
-					
-			});
-		} // end of function getList(searchWord, url)----------------------
-		
-		// 필수입력항목을 검사하는 함수
-		function reqCheck() {
 
-			let b_FlagRequiredInfo = false;			
-			
-			$("input.req").each(function(index, item) {						// 태그의 class가 필수입력항목인 것에 대해서 각각 실행
-				const data = $(item).val().trim();							// 공백을 제거한 값이
-				if(data == ""){												// 비었다면
-					console.log("item : " + data);
-					alert("*표시된 필수입력사항은 모두 입력하셔야 합니다.");
-					b_FlagRequiredInfo = true;								// flag에 true를 담는다
-					return false; 											// 종료
-				}
-			});
-			
-			if(b_FlagRequiredInfo) {										// flag가 true라면(필수입력항목이 충족이 안되었다면)
-				console.log("b_FlagRequiredInfo : " + b_FlagRequiredInfo);
-				return;														// 함수 종료
-			} else if( $("[name='POC_CD'").val() == "") {					// select가 선택되어지지 않았다면
-				  	alert("*표시된 필수입력사항은 모두 선택 혹은 입력하셔야 합니다.");
-					b_FlagRequiredInfo = true;								// flag에 true를 담는다
-					return false;
-			} else {														// 모든 조건이 충족되었다면
-				flag_req = true;											// 필수입력항목 flag에 true를 담는다	
-				alert("다 넣었다!");
-			}
-			
-		} // end of function reqCheck() {}---------------------
-		
-		// 중복검사 버튼 클릭시 실행 함수
-		function checkDuplicated(obj) {
-			
-			if(obj == "email") {		// 체크할 대상이 이메일이라면
-				alert("난 이메일검사다!");
-				var email = $("#EMAIL1").val() + "@" + $("#EMAIL2").val();
-				if( checkText(email, "EMAIL") ){							// 정규표현식에 맞는다면
-					compareItem(email, "EMAIL");							// 이메일 중복검사 실행
-					
-					// flag_emailDuplicated = true;							// 이메일중복검사 flag를 true로 변경
-				}
-			}
-			else if(obj == "mbl") {		// 체크할 대상이 핸드폰번호라면
-				alert("난 핸드폰번호다!");
-				var mbl = $("#MBL1").val() + $("#MBL2").val() + $("#MBL3").val();
-				if( checkText(mbl, "MBL") ){								// 정규표현식에 맞는다면
-					compareItem(mbl, "MBL");								// 휴대폰 중복검사 실행
-							
-					// flag_mblDuplicated = true;							// 휴대폰중복검사 flag를 true로 변경
-				}
-			}
-			
-		} // end of function checkDuplicated(obj) {}--------------------
-		
-		// 항목에 대한 유효성검사를 실시하는 함수(시험용)
-		function checkText(obj, type) {
-			
-			let text_length = obj.length;												// 고객이름의 길이를 알아온다
-			
-			if(type == "NM") {		// 유효성 검사할 대상이 이름이라면
-				var regex = RegExp(/[가-힣a-zA-Z0-9]{2,20}$/);								// 2-20글자 사이에 완전한 음절과 영어가 들어갔는지 체크하는 정규표현식
-				var regex2 = RegExp(/[ㄱ-ㅎㅏ-ㅣ]+/);											// 자음, 모음이 한글자라도 있는지 체크하는 정규표현식
-				var pattern = /\s/g;														// " "공백(스페이스)이 있는지 체크하는 정규표현식
-				
-				if( (!regex.test(obj) && text_length != 0) || regex2.test(obj) ) { 		// 공란이 아니거나 고객이름 정규표현식에 맞지 않다면
-					alert("검색은 특수문자 및 공백을 제외한 최소 두글자 이상 한글 혹은 숫자로 입력하셔야 합니다.");
-					return false;															// false를 반환
-				}
-				else if( obj.match(pattern) ){												// 공백이 체크되었다면
-					alert("검색시 공백은 허용하지 않습니다.");
-					return false;															// false를 반환
-				}
-				else {																		// 위의 경우들을 제외한 나머지
-					return true;															// true를 반환
-				}
-			}
-			else if(type == "EMAIL") { 	// 유효성 검사할 대상이 이메일이라면
-				const regExp = new RegExp(/^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i); // 이메일 정규표현식
-				if( !regExp.test(obj) ){													// 이메일주소가 정규표현식에 맞지 않다면
-					alert("이메일주소를 정확하게 입력해주세요.");
-					return false;															// false를 반환
-				}
-				else{																		// 공란이거나 핸드폰번호 정규표현식에 맞다면
-					return true;															// true를 반환
-				}
-			}
-			else if(type == "MBL") { 	// 유효성 검사할 대상이 핸드폰이라면
-				var mofmt = RegExp(/[0-9]{10,11}$/);										// 핸드폰번호는 10-11자리 숫자만 들어가게끔 정규표현식을 선언한다
-				if( !mofmt.test(obj) || text_length > 11 ){									// 핸드폰번호가 11자리 초과거나 정규표현식에 맞지 않다면
-					alert("핸드폰번호는 공백없이 숫자로만 10~11자리 입력하셔야 합니다!");
-					return false;															// false를 반환
-				}
-				else{																		// 공란이거나 핸드폰번호 정규표현식에 맞다면
-					return true;															// true를 반환
-				}
-			}
-		
-		} // end of function checkText(obj, type) {}-----------------
-		
-		// DB를 통해 비교하여 중복검사를 실행하는 함수
-		function compareItem(obj, type) {
-			
-			var tp = "";							// 검사대상 텍스트 출력 변수 선언
-			if(type == "MBL") { tp = "핸드폰"; }		// type이 MBL 이면 핸드폰
-			else { tp ="이메일"; }					// 외엔 이메일
-			
-			$.ajax({
-	 			url:"<%= ctxPath%>/compareItem.dowell",
-	 			data:{"item": obj,
-	 				  "type": type}, 
-	 			type: "post" , 
-	 			dataType: "json",
-				success: function(json){	
-	
-                   if(json.result == "0" && type == "MBL") {			// 중복값이 없고 type이 MBL 이면
-                   		alert(tp +" "+ obj +" 은(는) 가입이 가능합니다!" );
-                   		flag_mblDuplicated = true;						// 핸드폰 중복검사 flag를 true로 변경
-                   		$("#checkMblDuplicated").css("background-color","green");
-                   }
-                   else if(json.result == "0" && type == "EMAIL") {		// 중복값이 없고 type이 EMAIL 이면
-                	   alert(tp +" "+ obj +" 은(는) 가입이 가능합니다!" );
-                	   flag_emailDuplicated = true;						// 이메일 중복검사 flag를 true로 변경
-                	   $("#checkEmailDuplicated").css("background-color","green");
-                   }
-                   else {												// 중복값이 존재하면
-                	   alert(tp +" "+ obj +" 은(는) 이미 사용중입니다. 다른 "+tp+"를 입력해주세요." );
-                   }
-	 			}, 
-	 			error: function(request, status, error){
-	 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-	 			}
-	 			
-	 		}); // end of $.ajax({})
-			
-			
-		} // end of function compareItem(obj, type) {}--------------------
-		
-		
 	</script>
 
 <meta charset="UTF-8">
@@ -372,7 +128,7 @@
 					<tbody>
 						<tr>
 							<td class="f_right item_name"><strong style="color:red;">*&nbsp;</strong>고객명</td>
-							<td class="item_value"><input type="text" class="req med" name="CUST_NM" id="CUST_NM" value="" placeholder="2글자이상 입력" autofocus /></td>
+							<td class="item_value"><input type="text" class="req med" name="CUST_NM" id="CUST_NM" value="" placeholder="2글자이상 입력" maxlength="20" spellcheck="false" autofocus maxlength='50'/></td>
 							<td class="f_right item_name"><strong style="color:red;">*&nbsp;</strong>직업코드</td>
 							<td>
 								<select class="req_sel" name="POC_CD" id="POC_CD" required>
@@ -398,15 +154,15 @@
 						<tr>
 							<td class="f_right item_name"><strong style="color:red;">*&nbsp;</strong>휴대폰번호</td>
 							<td class="item_value">
-								<input type="text" class="req sm" name="MBL1" id="MBL1" value="" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" />&nbsp;
-								<input type="text" class="req sm" name="MBL2" id="MBL2" value="" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" />&nbsp;
-								<input type="text" class="req sm" name="MBL3" id="MBL3" value="" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" />
+								<input type="text" class="req sm" name="MBL1" id="MBL1" value="" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="3"/>&nbsp;
+								<input type="text" class="req sm" name="MBL2" id="MBL2" value="" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4"/>&nbsp;
+								<input type="text" class="req sm" name="MBL3" id="MBL3" value="" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="4"/>
 								<button type='button' class='btn btn-secondary btn_td btn_check' id='checkMblDuplicated'  onclick="checkDuplicated('mbl')" style='margin-bottom:5px;'>중복확인</button>
 							</td>
 							<td class="f_right item_name">생일</td>
 							<td class="item_value">
-								<input type="radio" id="SCAL_YN" name="SCAL_YN" value="Y" checked/>&nbsp;양력&nbsp;&nbsp;
-								<input type="radio" id="SCAL_YN" name="SCAL_YN" value="N" />&nbsp;음력
+								<input type="radio" id="SCAL_YN" name="SCAL_YN" value="0" checked/>&nbsp;양력&nbsp;&nbsp;
+								<input type="radio" id="SCAL_YN" name="SCAL_YN" value="1" />&nbsp;음력
 							</td>
 						</tr>
 						
@@ -419,18 +175,21 @@
 							</td>
 							<td class="f_right item_name"><strong style="color:red;">*&nbsp;</strong>이메일</td>
 							<td class="item_value">
-								<input type="text" class="req med" name="EMAIL1" id="EMAIL1" value="" />&nbsp;@
-								<input type="text" class="req med" name="EMAIL2" id="EMAIL2" value="" />
+								<input type="text" class="req med" name="EMAIL1" id="EMAIL1" value="" maxlength='50'/>&nbsp;@
+								<input type="text" class="req med" name="EMAIL2" id="EMAIL2" value="" style="max-width: 160px !important;" maxlength='50'/>
 								<button type='button' class='btn btn-secondary btn_td btn_check' id='checkEmailDuplicated'  onclick='checkDuplicated("email")' style='margin-bottom:5px;'>중복확인</button>
 							</td>
 						</tr>
 						
 						<tr>
 							<td class="f_right item_name" >주소</td>
-							<td>
-								<input type="text" class="ADD" name="ZIP_CD" id="ZIP_CD" value="" style="width: 50px;" />
-								<input type="text" class="ADD" name="ADDR" id="ADDR" value="" placeholder="주소" style="width: 300px;" />
-								<input type="text" class="ADD" name="ADDR_DTL" id="ADDR_DTL" value="" placeholder="상세주소" style="width: 100px;" />
+							<td colspan="3">
+								<input type="text" class="ADD" name="ZIP_CD" id="ZIP_CD" value="" placeholder="우편번호" style="width: 100px;" readonly maxlength='10'/>
+								<button type="button" id="btn_tmp" class="btn btn-secondary" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" disabled>
+									<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
+								</button>
+								&nbsp;<input type="text" class="ADD" name="ADDR" id="ADDR" value="" placeholder="주소" style="width: 450px;" maxlength="100"/>
+								<input type="text" class="ADD" name="ADDR_DTL" id="ADDR_DTL" value="" placeholder="상세주소" style="width: 250px;" maxlength="100"/>
 							</td>
 						</tr>
 						
@@ -440,10 +199,10 @@
 							<td class="f_right item_name"><strong style="color:red;">*&nbsp;</strong>매장</td>
 							<td class="item_value">
 								<input type="text" class="dk med" name="JN_PRT_CD" id="JN_PRT_CD" style="background-color: #b3b3b3;" readonly />&nbsp;
-								<button type="button" id="btn_search_prt" class="btn btn-secondary" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" >
+								<button type="button" id="btn_search_prt" class="btn btn-secondary" style="margin-bottom: 5px; width: 35px; height: 35px; padding: 0 0 0 7px;" disabled>
 									<span style="padding-right: 10px;"><i class="fa fa-search" aria-hidden="true" style="font-size:20px;"></i></span>
 								</button>
-								&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="lg enter_prt blank_key" value="" placeholder="매장코드 / 매장명" spellcheck="false" autofocus />
+								&nbsp;<input type="text"  id="PRT_CD_NM" name="PRT_CD_NM" class="lg enter_prt blank_key" value="" placeholder="매장코드 / 매장명" spellcheck="false" readonly autofocus />
 							</td>
 						</tr>
 						
@@ -489,15 +248,14 @@
 			
 			<input type="hidden" name="MBL_NO" id="MBL_NO" value="" />
 			<input type="hidden" name="EMAIL" id="EMAIL" value="" />
+			<input type="hidden" name="SE_USER_ID" id="SE_USER_ID" value="${sessionScope.loginuser.USER_ID}" />
 		</form>
 		<!-- 고객정보를 등록하기 위한 form 끝 -->
-		
-		
 		
 	</div>
 	
 	<!-- 닫기 / 등록 버튼이 포함되어 있는 하단 부분 시작 -->
-	<div id="container_btn" style="padding: 0 auto; text-align: center;">
+	<div id="container_btn" style="padding: 0 auto; margin-top:30px; text-align: center;">
 		<button type="button" id="btn_close" class="btn btn-secondary" >닫기</button>
 		<span style="padding: 10px 20px 10px 0;"></span>
 		<button type="button" id="register" class="btn btn-secondary">등록</button>
